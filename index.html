@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f8d818">
+  <meta name="description" content="Ээлж — оюутны хуваарьт таарах цагийн ажлын туршилтын платформ. Жишээ ажлуудыг харьцуулж, хүсэлт илгээх үйл явцыг туршаарай.">
+  <title>Ээлж — Оюутны хуваарьт таарах ажлууд</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/FiraSans-Regular.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="assets/fonts/FiraSans-Bold.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Үндсэн хэсэгт очих</a>
+  <header class="site-header">
+    <a class="wordmark" href="#jobs" aria-label="Ээлж — нүүр хуудас">Ээлж</a>
+    <p class="demo-note"><span class="demo-dot" aria-hidden="true"></span><span>ТУРШИЛТЫН ХУВИЛБАР <span class="demo-note-extra">· ЖИШЭЭ ЗАРУУД</span></span></p>
+    <nav class="main-nav" aria-label="Үндсэн цэс">
+      <a href="#jobs" data-nav="jobs">Ажлын зарууд</a>
+      <a href="#applications" data-nav="applications">Миний хүсэлтүүд <span id="application-count" class="nav-count" hidden>0</span></a>
+      <a href="#guide" class="guide-link">Зөвлөмж</a>
+    </nav>
+    <button class="button button-soft account-button" data-action="account"><span id="account-label">Нэвтрэх</span><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg></button>
+  </header>
+
+  <div id="storage-warning" class="storage-warning" role="status" hidden>Энэ хөтөч мэдээлэл хадгалах боломжгүй байна. Өөрчлөлтүүд хуудас нээлттэй байх хугацаанд ажиллана.</div>
+
+  <main id="main" tabindex="-1">
+    <div id="browse-view" class="view">
+      <section class="sign-section" aria-labelledby="hero-title">
+        <div class="sign-supports" aria-hidden="true"><span></span><span></span></div>
+        <div class="search-sign">
+          <div class="sign-message">
+            <svg class="wayfinding-arrow" viewBox="0 0 88 88" aria-hidden="true"><path d="M9 66 51 24H24L45 3h40v40L64 64V37L22 79Z" fill="currentColor"/></svg>
+            <h1 id="hero-title">Оюутны хуваарьт<br>таарах ажлууд</h1>
+          </div>
+          <form id="search-form" class="search-form">
+            <label class="search-field"><span>Ямар ажил?</span><span class="select-wrap"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><select id="category" name="category" aria-label="Ажлын төрөл"><option value="">Ажил сонгох</option><option value="event">Эвент, арга хэмжээ</option><option value="retail">Дэлгүүр, худалдаа</option><option value="office">Оффис, үйлчилгээ</option><option value="cafe">Кафе, ресторан</option><option value="warehouse">Агуулах, хүргэлт</option></select><svg class="icon chevron" aria-hidden="true"><use href="#i-chevron"/></svg></span></label>
+            <label class="search-field"><span>Дүүрэг</span><span class="select-wrap"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><select id="district" name="district" aria-label="Дүүрэг"><option value="">Дүүрэг сонгох</option><option>Сүхбаатар</option><option>Чингэлтэй</option><option>Хан-Уул</option><option>Баянгол</option><option>Баянзүрх</option><option>Сонгинохайрхан</option></select><svg class="icon chevron" aria-hidden="true"><use href="#i-chevron"/></svg></span></label>
+            <button class="button button-dark search-button" type="submit">Ажил хайх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+          </form>
+        </div>
+      </section>
+
+      <section class="jobs-section content-width" id="jobs" aria-labelledby="jobs-title">
+        <div class="section-heading">
+          <div class="heading-with-count"><h2 id="jobs-title">Ажлын зарууд</h2><span id="job-count" class="muted"></span></div>
+          <div class="listing-controls">
+            <button id="saved-toggle" class="button button-quiet" data-action="saved" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-bookmark"/></svg><span>Хадгалсан</span><span id="saved-count">0</span></button>
+            <label class="sort-control"><span>Эрэмбэлэх:</span><select id="sort" aria-label="Зарыг эрэмбэлэх"><option value="newest">Шинэ нь эхэнд</option><option value="pay">Цалин өндөр</option><option value="date">Өдөр ойр</option><option value="short">Богино ээлж</option></select></label>
+          </div>
+        </div>
+        <div id="active-filters" class="active-filters" hidden></div>
+        <div id="job-list" class="job-list" aria-live="polite"></div>
+        <div id="load-more-wrap" class="load-more-wrap"><button class="button button-outline" id="load-more" data-action="more">Бусад ажлыг харах<svg class="icon" aria-hidden="true"><use href="#i-down"/></svg></button><p id="visible-count" class="small muted"></p></div>
+      </section>
+
+      <section class="guide-section content-width" id="guide" aria-labelledby="guide-title">
+        <div class="guide-intro"><h2 id="guide-title">Хичээл. Зав.<br><span>Ээлж.</span></h2><p>Өөрт тохирох ажлыг<br>гурван алхмаар.</p></div>
+        <ol class="guide-steps">
+          <li><span class="step-index">1</span><div><h3>Зараа харьцуул</h3><p>Дүүрэг, ажлын цаг, цагийн хөлсөө хар. Хичээлийн хуваарьтайгаа тааруулаарай.</p></div></li>
+          <li><span class="step-index">2</span><div><h3>Хүсэлтээ илгээ</h3><p>Ажлын дэлгэрэнгүйг уншаад богино хүсэлт бөглөнө. Энд жишээ мэдээлэл ашиглаарай.</p></div></li>
+          <li><span class="step-index">3</span><div><h3>Явцаа хяна</h3><p>“Миний хүсэлтүүд” хэсгээс төлөвөө харна. Ажил олгогчийн горимоор хариуг нь өөрчилж туршаарай.</p></div></li>
+        </ol>
+      </section>
+
+      <section class="faq-section content-width" id="faq" aria-labelledby="faq-title">
+        <div><h2 id="faq-title">Мэдэхэд илүүдэхгүй</h2><p class="muted">Туршилтын хувилбарын тухай.</p></div>
+        <div class="faq-list">
+          <details><summary>Эдгээр нь бодит ажлын зар уу?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Бүх зар, байгууллага, цалин нь жишээ мэдээлэл. Энэ хувилбар нь ажил хайх, хүсэлт илгээх, хүсэлтийг удирдах үйл явцыг харуулна. Бодит ажилд зуучлахгүй.</p></details>
+          <details><summary>Миний хүсэлт хаашаа очих вэ?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Хүсэлт зөвхөн таны ашиглаж буй хөтөч дээр хадгалагдана. Байгууллага руу илгээгдэхгүй. Иймд хувийн мэдээллийн оронд жишээ нэр, утас ашиглаарай.</p></details>
+          <details><summary>Ажил олгогчийн горимыг яаж турших вэ?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Дээд талын “Нэвтрэх” товчоор орж “Ажил олгогч” горимыг сонгоно. Шинэ зар үүсгэх, зарыг түр зогсоох, энэ хөтөч дээр илгээсэн хүсэлтүүдийн төлөвийг өөрчлөх боломжтой.</p></details>
+        </div>
+      </section>
+    </div>
+
+    <section id="applications-view" class="view workspace content-width" hidden aria-labelledby="applications-title">
+      <div class="workspace-heading"><div><a class="back-link" href="#jobs"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg>Ажлын зарууд руу</a><h1 id="applications-title">Миний хүсэлтүүд</h1><p class="muted">Энэ хөтөч дээр илгээсэн туршилтын хүсэлтүүд.</p></div><button class="button button-outline" data-action="account">Горим солих<svg class="icon" aria-hidden="true"><use href="#i-user"/></svg></button></div>
+      <div id="applications-summary" class="summary-strip"></div>
+      <div id="applications-list" class="application-list"></div>
+    </section>
+
+    <section id="employer-view" class="view workspace content-width" hidden aria-labelledby="employer-title">
+      <div class="workspace-heading"><div><a class="back-link" href="#jobs"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg>Оюутны самбарыг харах</a><h1 id="employer-title">Ажил олгогчийн самбар</h1><p class="muted">Энэ хөтөч дээрх жишээ зар, хүсэлтүүдийг удирдана.</p></div><button class="button button-dark" data-action="new-job">Зар нэмэх<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button></div>
+      <div class="employer-notice"><span class="demo-dot" aria-hidden="true"></span><p>Туршилтын горим · Өөрчлөлтүүд зөвхөн энэ хөтөч дээр харагдана.</p></div>
+      <div class="workspace-tabs" role="tablist" aria-label="Ажил олгогчийн хэсгүүд"><button id="employer-jobs-tab" role="tab" aria-selected="true" aria-controls="employer-panel" tabindex="0" data-action="employer-tab" data-tab="jobs">Миний зарууд <span id="employer-job-count"></span></button><button id="employer-applications-tab" role="tab" aria-selected="false" aria-controls="employer-panel" tabindex="-1" data-action="employer-tab" data-tab="applications">Ирсэн хүсэлтүүд <span id="employer-application-count"></span></button></div>
+      <div id="employer-panel" role="tabpanel" aria-labelledby="employer-jobs-tab"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer content-width"><div><a class="wordmark" href="#jobs">Ээлж</a><p>Чиний цаг. Чиний ээлж.</p></div><div class="footer-links"><a href="#faq">Түгээмэл асуулт</a><button class="text-button" data-action="reset">Туршилтын өгөгдөл шинэчлэх</button><span class="small muted">Улаанбаатар · Туршилтын хувилбар</span></div></footer>
+
+  <dialog id="panel" class="panel-dialog" aria-labelledby="panel-title"><div class="panel-shell"><div class="panel-top"><span class="panel-demo"><span class="demo-dot" aria-hidden="true"></span>ТУРШИЛТЫН ГОРИМ</span><button class="icon-button" data-action="close" aria-label="Цонх хаах"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div><div id="panel-content"></div></div></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <svg class="svg-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M20 12H5m6-6-6 6 6 6"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v15m-6-6 6 6 6-6"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="17" rx="1"/><path d="M7 2v6m10-6v6M3 11h18m-13 6 3-3"/></symbol>
+    <symbol id="i-pay" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v13c0 4 18 4 18 0V5M3 10c0 4 18 4 18 0M3 14c0 4 18 4 18 0"/></symbol>
+    <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4Z"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="m15 4 5 5M4 20l5-1L21 7a2 2 0 0 0-5-5L4 14Z"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+  </defs></svg>
+</body>
+</html>

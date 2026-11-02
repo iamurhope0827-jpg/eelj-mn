@@ -1,0 +1,10 @@
+node_modules/
+.openai/
+*.tar.gz
+.DS_Store
+artifacts/
+.impeccable/
+dist/
+PRODUCT.md
+FUNCTIONAL-FLOWS.md
+BUILD-NOTES.md

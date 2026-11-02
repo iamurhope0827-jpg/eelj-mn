@@ -1,0 +1,52 @@
+# Ээлж prototype
+
+A Mongolian student shift marketplace in plain HTML, CSS, and JavaScript, using the Ulaanbaatar Wayfinding visual direction.
+
+## Run
+
+Requires Node.js. No package installation is needed.
+
+```sh
+npm run dev
+```
+
+Open http://127.0.0.1:4173/. Use the `PORT` environment variable to choose another local port.
+
+```sh
+npm run check
+npm run build
+```
+
+The build copies the website into `dist/` for optional static export. GitHub Pages serves the root files from the `main` branch; pushes publish updates automatically. The empty `.nojekyll` file keeps the site as plain static files.
+
+Live prototype: https://iamurhope0827-jpg.github.io/eelj-mn/
+
+Repository: https://github.com/iamurhope0827-jpg/eelj-mn
+
+## Try the connected workflow
+
+1. Filter shifts by role and district, sort, save a job, or open its details.
+2. Apply using a sample name and contact such as `student@example.com`.
+3. Open “Миний хүсэлтүүд” to see the received application.
+4. Choose “Нэвтрэх” → “Ажил олгогч” → “Ирсэн хүсэлтүүд”. Change the application to reviewing, selected, or declined.
+5. Return to “Миний хүсэлтүүд” to see the same status. Withdraw a selected request to release its place.
+6. In employer mode, create, edit, pause, or reopen a sample shift.
+
+The footer has a reset action with confirmation. Seed shifts use upcoming dates calculated in the Asia/Ulaanbaatar timezone.
+
+## Prototype boundaries
+
+Listings and employers are examples. Both roles share the same data in this browser's `localStorage` under `eelj.prototype.v1`. Applications keep a snapshot of the shift terms at submission. A selected application consumes one opening; full shifts disappear from available results. Saved shifts remain viewable even if paused or full.
+
+There are no accounts, remote database, real applications, employer notifications, payments, or cross-device sync. Role switching demonstrates the workflow and provides no production access control. Use sample contact data. The interface reports when browser storage is unavailable.
+
+## Source
+
+- `index.html`: page shell, navigation, and SVG icon symbols.
+- `styles.css`: responsive signboard design, lists, dialogs, and accessibility states.
+- `app.js`: sample data, persistence, student flows, and employer management.
+- `assets/fonts/`: self-hosted Fira Sans and its SIL Open Font License.
+- `SYSTEM-APPROACH.md`: researched operating approach and later pilot scope.
+- `DESIGN.md`: visual tokens extracted from the implemented prototype.
+
+Browser verification covered filters, saves, invalid contact handling, applications, persistence, employer decisions, create/edit/pause/resume, capacity, withdrawal, reset, escaped user text, dialogs, and horizontal overflow at 320, 390, 768, 1024, 1280, 1440, and 1586 pixels. Local verification captures are in ignored `artifacts/`.
