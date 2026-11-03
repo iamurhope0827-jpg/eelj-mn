@@ -244,10 +244,56 @@
     app.status = status; app.updatedAt = Date.now(); persist(); renderAll(); document.querySelector(`[data-application="${CSS.escape(id)}"]`)?.focus(); toast('Хүсэлтийн төлөв өөрчлөгдлөө. Оюутны хэсэгт мөн харагдана.');
   }
 
+  const palettes = [
+    { id: 'original', name: 'Одоогийн өнгө', colors: ['#FFFFFF', '#BBBFBF', '#878787', '#05AD98'] },
+    { id: 'ocean', name: 'Далайн цэнхэр', colors: ['#03045E', '#023E8A', '#0077B6', '#0096C7', '#00B4D8', '#48CAE4', '#90E0EF', '#ADE8F4', '#CAF0F8'], bg: '#CAF0F8', surface: '#FFFFFF', soft: '#ADE8F4', ink: '#03045E', muted: '#023E8A', button: '#0077B6', buttonText: '#FFFFFF', accent: '#90E0EF' },
+    { id: 'sand', name: 'Элсэн дулаан', colors: ['#EDEDE9', '#D6CCC2', '#F5EBE0', '#E3D5CA', '#D5BDAF'], bg: '#F5EBE0', surface: '#EDEDE9', soft: '#E3D5CA', ink: '#352B26', muted: '#63534A', button: '#D5BDAF', buttonText: '#352B26', accent: '#D6CCC2' },
+    { id: 'mono', name: 'Хар цагаан', colors: ['#FFFFFF', '#BFBFBF', '#7F7F7F', '#404040', '#000000'], bg: '#FFFFFF', surface: '#FFFFFF', soft: '#F2F2F2', ink: '#000000', muted: '#404040', button: '#000000', buttonText: '#FFFFFF', accent: '#BFBFBF' },
+    { id: 'classic', name: 'Улаан ба хөх', colors: ['#780000', '#C1121F', '#FDF0D5', '#003049', '#669BBC'], bg: '#FDF0D5', surface: '#FFFAEF', soft: '#F4E4C5', ink: '#003049', muted: '#435C69', button: '#C1121F', buttonText: '#FFFFFF', accent: '#669BBC' },
+    { id: 'pastel', name: 'Зөөлөн пастель', colors: ['#CDB4DB', '#FFC8DD', '#FFAFCC', '#BDE0FE', '#A2D2FF'], bg: '#FFF5FA', surface: '#FFFFFF', soft: '#FFC8DD', ink: '#352C45', muted: '#63516E', button: '#CDB4DB', buttonText: '#352C45', accent: '#BDE0FE' }
+  ];
+  const paletteKey = 'eelj.palette.v1';
+  let selectedPalette = 'original';
+  let paletteProperties = [];
+  function applyPalette(id) {
+    const palette = palettes.find((item) => item.id === id);
+    if (!palette) return;
+    const root = document.documentElement;
+    paletteProperties.forEach((key) => root.style.removeProperty(key));
+    paletteProperties = [];
+    selectedPalette = id;
+    root.dataset.palette = id;
+    if (id !== 'original') {
+      const values = {
+        '--bg': palette.bg, '--surface': palette.surface, '--bg-2': palette.soft, '--hover': palette.soft,
+        '--ink': palette.ink, '--muted': palette.muted, '--faint': palette.muted,
+        '--line': `color-mix(in srgb, ${palette.ink} 14%, ${palette.surface})`, '--line-2': `color-mix(in srgb, ${palette.ink} 28%, ${palette.surface})`,
+        '--blue': palette.ink, '--teal': palette.button, '--teal-text': palette.ink,
+        '--accent': palette.accent, '--accent-t': palette.ink, '--grad-end': palette.muted,
+        '--dark-bg': palette.button, '--dark-fg': palette.buttonText, '--dark-hover': `color-mix(in srgb, ${palette.button} 88%, ${palette.ink})`,
+        '--glow-1': `color-mix(in srgb, ${palette.accent} 45%, transparent)`, '--glow-2': `color-mix(in srgb, ${palette.soft} 60%, transparent)`,
+        '--grid': `color-mix(in srgb, ${palette.ink} 8%, transparent)`, '--b-gray': palette.soft, '--b-gray-t': palette.ink,
+        'color-scheme': 'light'
+      };
+      paletteProperties = Object.keys(values);
+      Object.entries(values).forEach(([key, value]) => root.style.setProperty(key, value));
+    }
+    document.querySelectorAll('[data-action="palette"]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.id === id)));
+    try { localStorage.setItem(paletteKey, id); } catch { /* Keep the selection for this page session. */ }
+  }
+  function openColors() {
+    ui.panelJob = null;
+    showPanel(`<h2 id="panel-title" class="panel-heading">Өнгө сонгох</h2><p class="panel-subtitle">Таалагдсан өнгөө сонгоорой. Сонголт энэ хөтөч дээр хадгалагдана.</p><div class="palette-options">${palettes.map((palette) => `<button class="palette-option" data-action="palette" data-id="${palette.id}" aria-pressed="${selectedPalette === palette.id}"><span class="palette-swatches" aria-hidden="true">${palette.colors.map((color) => `<span style="background:${color}"></span>`).join('')}</span><span class="palette-label">${palette.name}<span class="palette-selected">${icon('check')}</span></span></button>`).join('')}</div><div class="form-actions"><button class="button button-dark" data-action="close">Болсон${icon('check')}</button></div>`);
+    $('#panel').classList.add('job-detail-dialog');
+  }
+  try { const savedPalette = localStorage.getItem(paletteKey); if (savedPalette) applyPalette(savedPalette); } catch { /* Use the original palette. */ }
+
   document.addEventListener('click', (event) => {
     const button = event.target.closest('[data-action]'); if (!button || button.disabled) return;
     const { action, id } = button.dataset;
-    if (action === 'account') openAccount();
+    if (action === 'colors') openColors();
+    else if (action === 'palette') applyPalette(id);
+    else if (action === 'account') openAccount();
     else if (action === 'close') closePanel();
     else if (action === 'detail') openJob(id);
     else if (action === 'apply') openApply(id);
