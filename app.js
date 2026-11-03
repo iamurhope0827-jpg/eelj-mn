@@ -83,14 +83,13 @@
     return result.sort((a, b) => ui.sort === 'pay' ? b.pay - a.pay || b.createdAt - a.createdAt : ui.sort === 'date' ? a.date.localeCompare(b.date) || a.start.localeCompare(b.start) : ui.sort === 'short' ? hours(a) - hours(b) || b.createdAt - a.createdAt : b.createdAt - a.createdAt);
   }
   function jobRow(job) {
-    const app = applicationFor(job.id);
     const available = availability(job) === 'active';
     return `<article class="job-row" data-job="${escape(job.id)}">
-      <div class="job-description"><button class="job-title" data-action="detail" data-id="${escape(job.id)}">${escape(job.title)}</button><p>${escape(job.description)}</p><span class="job-company">${escape(job.company)} · Жишээ байгууллага${!available ? ' · ' + ({ paused: 'Түр зогсоосон', full: 'Орон тоо дүүрсэн', expired: 'Өдөр өнгөрсөн' })[availability(job)] : ''}</span></div>
+      <div class="job-description"><span class="job-company">${escape(job.company)}</span><button class="job-title" data-action="detail" data-id="${escape(job.id)}" aria-haspopup="dialog">${escape(job.title)}</button><p>${escape(job.description)}</p><span class="job-note">Жишээ байгууллага${!available ? ' · ' + ({ paused: 'Түр зогсоосон', full: 'Орон тоо дүүрсэн', expired: 'Өдөр өнгөрсөн' })[availability(job)] : ''}</span></div>
       <div class="job-meta">${icon('pin')}<div><span class="meta-label">Дүүрэг</span><strong>${escape(job.district)}</strong></div></div>
       <div class="job-meta">${icon('calendar')}<div><span class="meta-label">${shortDate(job.date)} · Ажлын өдөр</span><strong>${dayName(job.date)}</strong><span class="meta-extra">${job.start} – ${job.end}</span></div></div>
       <div class="job-meta pay-meta">${icon('pay')}<div><span class="meta-label">Цалин</span><strong>${money(job.pay)} <small>/ цаг</small></strong></div></div>
-      <div class="job-actions"><button class="button button-dark" data-action="${app ? 'my-applications' : 'apply'}" data-id="${escape(job.id)}" ${!app && !available ? 'disabled' : ''}>${app ? 'Хүсэлт илгээсэн' : available ? 'Өргөдөл гаргах' : 'Хаалттай'}${icon(app ? 'check' : 'arrow')}</button>${saveButton(job.id)}</div>
+      <div class="job-actions"><button class="button button-dark" data-action="detail" data-id="${escape(job.id)}" aria-haspopup="dialog">Дэлгэрэнгүй${icon('arrow')}</button>${saveButton(job.id)}</div>
     </article>`;
   }
   function saveButton(id, large = false) {
@@ -162,6 +161,7 @@
   }
   function showPanel(content, focus) {
     $('#toast').hidden = true;
+    $('#panel').classList.remove('job-detail-dialog');
     $('#panel-content').innerHTML = content;
     if (!$('#panel').open) $('#panel').showModal();
     $('#panel').scrollTop = 0;
@@ -178,6 +178,7 @@
     const app = applicationFor(id);
     const available = availability(job) === 'active';
     showPanel(`<div class="detail-company">${escape(job.company)} <span class="badge">Жишээ байгууллага</span></div><h2 id="panel-title" class="panel-heading">${escape(job.title)}</h2><p class="panel-subtitle">${escape(categories[job.category])} · ${placesLeft(job)} сул орон тоо</p><div class="detail-pay"><div><span>Цагийн хөлс</span><strong>${money(job.pay)} <small>/ цаг</small></strong></div><div class="total-pay">${hours(job)} цагийн ээлж<strong>${money(Math.round(job.pay * hours(job)))}</strong></div></div><div class="detail-grid"><div>${icon('calendar')}<div><span>Ажлын өдөр</span><strong>${dateLabel(job.date)}</strong></div></div><div>${icon('clock')}<div><span>Ажлын цаг</span><strong>${job.start} – ${job.end}</strong><p>${hours(job)} цагийн ээлж</p></div></div><div>${icon('pin')}<div><span>Байршил</span><strong>${escape(job.district)}</strong><p>${escape(job.address)}</p></div></div><div>${icon('user')}<div><span>Орон тоо</span><strong>${placesLeft(job)} / ${job.openings} сул</strong><p>Жишээ зар</p></div></div></div><div class="detail-block"><h3>Хийх ажил</h3><p>${escape(job.duties)}</p></div><div class="detail-block"><h3>Тавигдах шаардлага</h3><ul>${job.requirements.split('\n').filter(Boolean).map((item) => `<li>${escape(item)}</li>`).join('')}</ul></div><div class="detail-actions"><button class="button button-dark" data-action="${app ? 'my-applications' : 'apply'}" data-id="${escape(id)}" ${!app && !available ? 'disabled' : ''}>${app ? 'Илгээсэн хүсэлтээ харах' : available ? 'Өргөдөл гаргах' : 'Энэ зар хаалттай'}${icon(app ? 'check' : 'arrow')}</button>${saveButton(id, true)}</div><p class="local-note">Бүх мэдээлэл нь жишээ. Ээлжийн нийт хөлсийг цагийн хөлс × ажлын цагаар тооцов. Татвар, завсарлага, төлбөрийн нөхцөлийг энэ загварт тооцоогүй.</p>`);
+    $('#panel').classList.add('job-detail-dialog');
   }
   function openApply(id) {
     const job = jobById(id);
