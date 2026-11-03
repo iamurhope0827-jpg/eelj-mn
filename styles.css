@@ -420,8 +420,11 @@ svg.icon{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-w
   .job-actions>.button .icon{display:none}
   .pay-meta strong small{display:block;margin-top:2px}
 }
-/* Top bar keeps the published Geist look. */
-.site-header{font-family:Geist,Tugrik,ui-sans-serif,system-ui,sans-serif}
+/* Top bar: Fjalla One. It has no basic Cyrillic (U+0400-045F), so those letters fall back to Oswald. */
+@font-face{font-family:'Fjalla One';src:url('assets/fonts/fjalla/fjalla-one-latin-400-normal.woff2') format('woff2');font-weight:400;font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Fjalla One';src:url('assets/fonts/fjalla/fjalla-one-latin-ext-400-normal.woff2') format('woff2');font-weight:400;font-display:swap;unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Fjalla One';src:url('assets/fonts/fjalla/fjalla-one-cyrillic-ext-400-normal.woff2') format('woff2');font-weight:400;font-display:swap;unicode-range:U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F}
+.site-header{font-family:'Fjalla One',Oswald,Geist,Tugrik,ui-sans-serif,system-ui,sans-serif}
 /* Display font for headings: Oswald is already condensed, so drop the negative tracking. */
 h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.heading-with-count h2,.job-title,.empty-state h3{font-family:var(--display);letter-spacing:.005em;font-weight:600}
 .hero h1{letter-spacing:-.005em;line-height:1.05}
