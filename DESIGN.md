@@ -18,21 +18,15 @@ colors:
   dark-surface: "#1A1D1D"
   dark-ink: "#F2F4F4"
 typography:
-  sans: "Geist (variable, self-hosted), Fira Sans for ₮ only"
+  headings: "Oswald (variable, self-hosted), weight 600, near-zero tracking"
+  body: "Roboto (variable, self-hosted)"
+  top-bar: "Geist (variable, self-hosted)"
   mono: "Geist Mono (variable, self-hosted)"
   display:
     fontSize: "clamp(40px, 6.4vw, 76px)"
     fontWeight: 600
-    lineHeight: 1
-    letterSpacing: "-0.055em"
-  page-title:
-    fontSize: "36px"
-    fontWeight: 600
-    letterSpacing: "-0.05em"
-  body:
-    fontSize: "14–16px"
-    fontWeight: 400
-    lineHeight: 1.6
+    lineHeight: 1.05
+  body-size: "14–16px, line-height 1.6"
 rounded:
   control: "6px"
   card: "12px"
@@ -57,9 +51,11 @@ Every color is a CSS custom property on `:root`, and dark mode redefines the sam
 
 ## Typography
 
-- Headings: weight 600 with negative letter-spacing (−0.04em to −0.055em). The hero headline uses a subtle top-to-bottom ink gradient.
-- Numbers (pay, times, counts, step indices, metadata) use Geist Mono with tabular figures.
-- Geist lacks ₮, so a `Tugrik` face loads Fira Sans for U+20AE only.
+- **Headings** (h1–h4, job titles, dialog and page titles) use Oswald through `--display`. It is already condensed, so letter-spacing stays near zero. Don't apply the old negative tracking.
+- **Body text**, buttons, labels and forms use Roboto through `--font`. Roboto includes ₮.
+- **The top bar** (logo, nav, account button) uses Geist so it matches the published header.
+- **Numbers** (pay, times, counts, step indices, demo pills) use Geist Mono with tabular figures. Geist has no ₮, so a `Tugrik` face supplies that glyph from Fira Sans.
+- Fonts are self-hosted from `assets/fonts/`, as Latin and Cyrillic subsets loaded by `unicode-range`. Any new font must include basic Cyrillic (U+0400–045F) plus Өө (U+04E8/04E9) and Үү (U+04AE/04AF). Fjalla One, for example, lacks basic Cyrillic and can't be used.
 
 ## Layout
 
