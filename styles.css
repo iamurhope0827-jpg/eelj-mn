@@ -420,8 +420,12 @@ svg.icon{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-w
   .job-actions>.button .icon{display:none}
   .pay-meta strong small{display:block;margin-top:2px}
 }
-/* Top bar keeps the published Geist look. */
-.site-header{font-family:Geist,Tugrik,ui-sans-serif,system-ui,sans-serif}
+/* Top bar: Oswald SemiBold. */
+.site-header{font-family:var(--display)}
+.site-header .wordmark,.site-header .main-nav a,.site-header .main-nav a[aria-current=page],.site-header .account-button{font-weight:600;letter-spacing:.01em}
+.site-header .wordmark{font-size:21px}
+.site-header .main-nav{font-size:15px}
+.site-header .account-button{font-size:14px}
 /* Display font for headings: Oswald is already condensed, so drop the negative tracking. */
 h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.heading-with-count h2,.job-title,.empty-state h3{font-family:var(--display);letter-spacing:.005em;font-weight:600}
 .hero h1{letter-spacing:-.005em;line-height:1.05}

@@ -20,7 +20,7 @@ colors:
 typography:
   headings: "Oswald (variable, self-hosted), weight 600, near-zero tracking"
   body: "Roboto (variable, self-hosted)"
-  top-bar: "Geist (variable, self-hosted)"
+  top-bar: "Oswald SemiBold 600"
   mono: "Geist Mono (variable, self-hosted)"
   display:
     fontSize: "clamp(40px, 6.4vw, 76px)"
@@ -53,7 +53,7 @@ Every color is a CSS custom property on `:root`, and dark mode redefines the sam
 
 - **Headings** (h1–h4, job titles, dialog and page titles) use Oswald through `--display`. It is already condensed, so letter-spacing stays near zero. Don't apply the old negative tracking.
 - **Body text**, buttons, labels and forms use Roboto through `--font`. Roboto includes ₮.
-- **The top bar** (logo, nav, account button) uses Geist so it matches the published header.
+- **The top bar** (logo, nav, account button) uses Oswald SemiBold 600; the demo pill stays in Geist Mono.
 - **Numbers** (pay, times, counts, step indices, demo pills) use Geist Mono with tabular figures. Geist has no ₮, so a `Tugrik` face supplies that glyph from Fira Sans.
 - Fonts are self-hosted from `assets/fonts/`, as Latin and Cyrillic subsets loaded by `unicode-range`. Any new font must include basic Cyrillic (U+0400–045F) plus Өө (U+04E8/04E9) and Үү (U+04AE/04AF). Fjalla One, for example, lacks basic Cyrillic and can't be used.
 
