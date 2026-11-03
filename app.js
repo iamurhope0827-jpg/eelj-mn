@@ -263,6 +263,13 @@
     paletteProperties = [];
     selectedPalette = id;
     root.dataset.palette = id;
+    const favicon = document.querySelector('link[rel="icon"]');
+    if (favicon) {
+      const background = palette.button || '#05AD98';
+      const foreground = palette.buttonText || '#062A25';
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="${background}"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z" fill="${foreground}"/></svg>`;
+      favicon.href = 'data:image/svg+xml,' + encodeURIComponent(svg);
+    }
     if (id !== 'original') {
       const values = {
         '--bg': palette.bg, '--surface': palette.surface, '--bg-2': palette.soft, '--hover': palette.soft,
