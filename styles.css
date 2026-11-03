@@ -430,10 +430,11 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
 .palette-toggle{flex:none;height:30px;padding:0 10px;font-family:var(--font);font-size:12px;gap:6px}
 .palette-dot{width:12px;height:12px;border-radius:50%;background:var(--dark-bg);box-shadow:inset 0 0 0 1px var(--line-2)}
 .palette-options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.palette-option{padding:18px;display:flex;justify-content:center;background:var(--surface);border-radius:10px;box-shadow:inset 0 0 0 1px var(--line-2)}
+.palette-option{padding:0;display:flex;justify-content:center;background:var(--surface);border-radius:10px;position:relative;box-shadow:inset 0 0 0 1px var(--line-2)}
+.palette-option::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inherit;pointer-events:none}
 .palette-option:hover{box-shadow:inset 0 0 0 2px var(--muted)}
 .palette-option[aria-pressed=true]{box-shadow:inset 0 0 0 2px var(--ink)}
-.palette-button-preview{display:block;width:130px;max-width:100%;height:36px;border-radius:var(--radius)}
+.palette-button-preview{display:block;width:100%;height:72px;border-radius:inherit}
 :root[data-palette]:not([data-palette=original]) .logo-mark rect{fill:var(--dark-bg)}
 :root[data-palette]:not([data-palette=original]) .logo-mark path{fill:var(--dark-fg)}
 @media(max-width:600px){.palette-toggle{font-size:11px;padding:0 8px}.site-header .account-button{margin-left:auto}}
