@@ -2,22 +2,21 @@
 name: Ээлж
 description: Monochrome, Geist-based interface for a student shift marketplace.
 colors:
-  palette: ["#F5E9E7 blush", "#ECC5C6 rose", "#C1C0C2 mist", "#8A9DB1 slate", "#837D68 olive"]
-  background: "#F5E9E7"
-  surface: "#FBF6F5"
-  background-2: "#F0E2DF"
-  ink: "#2B2924"
-  muted: "#655F4C"
-  faint: "#6E6854"
-  line: "#E6D7D4"
-  line-strong: "#C1C0C2"
-  accent: "#ECC5C6"
-  focus-slate: "#4F657D"
-  demo-red: "#B23A44"
-  dark-background: "#1B1A17"
-  dark-surface: "#23211D"
-  dark-ink: "#F5E9E7"
-  dark-primary: "#ECC5C6"
+  palette: ["#FFFFFF white", "#BBBFBF mist", "#878787 grey", "#05AD98 teal"]
+  background: "#FFFFFF"
+  background-2: "#F6F7F7"
+  ink: "#1C1F1F"
+  muted: "#5E6262"
+  faint: "#6B6F6F"
+  line: "#E4E6E6"
+  line-strong: "#BBBFBF"
+  primary: "#05AD98 (text #062A25)"
+  teal-text: "#048A79"
+  accent-tint: "#DDF4F0 (text #03695D)"
+  demo-red: "#D93F45"
+  dark-background: "#121414"
+  dark-surface: "#1A1D1D"
+  dark-ink: "#F2F4F4"
 typography:
   sans: "Geist (variable, self-hosted), Fira Sans for ₮ only"
   mono: "Geist Mono (variable, self-hosted)"
@@ -44,18 +43,17 @@ rounded:
 
 ## Overview
 
-A quiet developer-tool layout in a soft five-color palette (blush, rose, mist, slate, olive): blush canvas with lighter card surfaces, hairline borders, Geist type with tight negative tracking, and Geist Mono for numbers. Color is reserved for meaning, either status badges or the red demo marker. The UI follows the system light/dark preference automatically.
+A quiet developer-tool layout in a white, grey and teal palette: white canvas with ring-shadow cards, hairline borders, Geist type with tight negative tracking, and Geist Mono for numbers. Color is reserved for meaning, either status badges or the red demo marker. The UI follows the system light/dark preference automatically.
 
 ## Color
 
-Every color is a CSS custom property on `:root`, and dark mode redefines the same tokens under `prefers-color-scheme: dark`. Don't hard-code colors in components. Use `--ink`, `--muted`, `--faint`, `--line`, `--line-2`, `--bg-2`, `--hover`, and the badge pairs `--b-{gray,blue,amber,green,red}` / `-t`.
+Every color is a CSS custom property on `:root`, and dark mode redefines the same tokens under `prefers-color-scheme: dark`. Don't hard-code colors in components.
 
-- The page is `--bg` (blush); cards, inputs, dialogs and the search bar use `--surface`.
-- Rose (`--accent`) is the highlight: active filter chips, the nav count, text selection and the hero glow. Slate tints the hero glow and gradient.
-- Text uses darkened olive (`--muted`, `--faint`) because the raw palette olive and slate fall below 4.5:1 on blush.
-- Primary actions use `--dark-bg`/`--dark-fg`: warm ink on blush in light mode, and a rose button with ink text in dark mode.
-- Focus is a 2px dark-slate ring offset by the background (`--focus`).
-- Red only marks the prototype/demo state.
+- Teal `#05AD98` is the primary color: main buttons, the logo mark, the hero glow and text selection. White text on this teal is only 2.8:1, so buttons use dark text `#062A25`, which gives 5.5:1.
+- Teal as text (the "Ээлж." heading, the focus ring) uses `--teal-text` `#048A79`, which keeps 3:1 or better for large text on white.
+- Greys: `#BBBFBF` for strong borders and control outlines, `#878787` for the headline gradient and the hero grid. Small grey text uses `--muted` `#5E6262` and `--faint` `#6B6F6F`, because `#878787` is only 3.6:1 on white.
+- Teal tint `--accent` (`#DDF4F0` with `#03695D` text) marks active filter chips, the nav count and the selected status.
+- Status badges also use semantic amber, blue and red tints. Red marks the demo state.
 
 ## Typography
 
