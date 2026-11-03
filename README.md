@@ -1,6 +1,6 @@
 # Ээлж prototype
 
-A Mongolian student shift marketplace in plain HTML, CSS, and JavaScript, using the Ulaanbaatar Wayfinding visual direction.
+A Mongolian student shift marketplace in plain HTML, CSS, and JavaScript, with a monochrome Geist-based design (light and dark).
 
 ## Run
 
@@ -43,9 +43,9 @@ There are no accounts, remote database, real applications, employer notification
 ## Source
 
 - `index.html`: page shell, navigation, and SVG icon symbols.
-- `styles.css`: responsive signboard design, lists, dialogs, and accessibility states.
+- `styles.css`: design tokens (light/dark), responsive layout, lists, dialogs, and accessibility states.
 - `app.js`: sample data, persistence, student flows, and employer management.
-- `assets/fonts/`: self-hosted Fira Sans and its SIL Open Font License.
+- `assets/fonts/`: self-hosted Geist and Geist Mono (OFL, `OFL-Geist.txt`), plus Fira Sans (OFL) used only for the ₮ glyph.
 - `SYSTEM-APPROACH.md`: researched operating approach and later pilot scope.
 - `DESIGN.md`: visual tokens extracted from the implemented prototype.
 
