@@ -283,7 +283,7 @@
   }
   function openColors() {
     ui.panelJob = null;
-    showPanel(`<h2 id="panel-title" class="panel-heading">Өнгө сонгох</h2><p class="panel-subtitle">Таалагдсан өнгөө сонгоорой. Сонголт энэ хөтөч дээр хадгалагдана.</p><div class="palette-options">${palettes.map((palette) => `<button class="palette-option" data-action="palette" data-id="${palette.id}" aria-pressed="${selectedPalette === palette.id}"><span class="palette-swatches" aria-hidden="true">${palette.colors.map((color) => `<span style="background:${color}"></span>`).join('')}</span><span class="palette-label">${palette.name}<span class="palette-selected">${icon('check')}</span></span></button>`).join('')}</div><div class="form-actions"><button class="button button-dark" data-action="close">Болсон${icon('check')}</button></div>`);
+    showPanel(`<h2 id="panel-title" class="panel-heading">Өнгө сонгох</h2><p class="panel-subtitle">Таалагдсан өнгөө сонгоорой. Сонголт энэ хөтөч дээр хадгалагдана.</p><div class="palette-options">${palettes.map((palette) => `<button class="palette-option" data-action="palette" data-id="${palette.id}" aria-label="${palette.name}" aria-pressed="${selectedPalette === palette.id}"><span class="palette-button-preview" style="background:${palette.button || '#05AD98'};color:${palette.buttonText || '#062A25'}" aria-hidden="true">Дэлгэрэнгүй${icon('arrow')}</span></button>`).join('')}</div><div class="form-actions"><button class="button button-dark" data-action="close">Болсон${icon('check')}</button></div>`);
     $('#panel').classList.add('job-detail-dialog');
   }
   try { const savedPalette = localStorage.getItem(paletteKey); if (savedPalette) applyPalette(savedPalette); } catch { /* Use the original palette. */ }
