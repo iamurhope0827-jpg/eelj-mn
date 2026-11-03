@@ -115,6 +115,8 @@
     $('#application-count').textContent = state.applications.filter((app) => app.status !== 'withdrawn').length;
     $('#application-count').hidden = !Number($('#application-count').textContent);
     $('#account-label').textContent = state.role === 'employer' ? 'Ажил олгогч' : 'Нэвтрэх';
+    $('#greeting-name').textContent = state.profile.name ? ' ' + state.profile.name : '';
+    $('#greeting-name').hidden = !state.profile.name;
   }
 
   function renderApplications() {

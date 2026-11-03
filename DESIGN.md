@@ -58,7 +58,7 @@ Every color is a CSS custom property on `:root`, and dark mode redefines the sam
 
 ## Layout
 
-The content column is 1200px max, with 24px gutters (16px on phones). The header is sticky with a blurred translucent background and a bottom hairline. The hero is centered over a faded 56px grid, and becomes left-aligned on phones.
+The content column is 1200px max, with 24px gutters (16px on phones). The header is sticky with a blurred translucent background and a bottom hairline. The hero greets the student ("Өдрийн мэнд!" plus the name saved from their last application, if any), centered over a faded 56px grid and left-aligned on phones.
 
 ## Surfaces
 
@@ -77,7 +77,7 @@ The content column is 1200px max, with 24px gutters (16px on phones). The header
 ## Do's and Don'ts
 
 - Do keep pay, time, district and status in the same columns across rows.
-- Do keep the demo labels visible (header pill, hero pill, sheet pill, employer notice).
+- Do keep the demo labels visible (header pill, sheet pill, employer notice).
 - Do use tokens so dark mode keeps working.
 - Don't introduce brand colors for decoration; use hierarchy through weight, size and grey levels.
 - Don't rely on color alone for status.
