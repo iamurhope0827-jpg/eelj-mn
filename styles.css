@@ -433,7 +433,7 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
 .palette-option{padding:18px;display:flex;justify-content:center;background:var(--surface);border-radius:10px;box-shadow:inset 0 0 0 1px var(--line-2)}
 .palette-option:hover{box-shadow:inset 0 0 0 2px var(--muted)}
 .palette-option[aria-pressed=true]{box-shadow:inset 0 0 0 2px var(--ink)}
-.palette-button-preview{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:0 14px;height:36px;border-radius:var(--radius);font-size:13px;font-weight:600}
+.palette-button-preview{display:block;width:130px;max-width:100%;height:36px;border-radius:var(--radius)}
 :root[data-palette]:not([data-palette=original]) .logo-mark rect{fill:var(--dark-bg)}
 :root[data-palette]:not([data-palette=original]) .logo-mark path{fill:var(--dark-fg)}
 @media(max-width:600px){.palette-toggle{font-size:11px;padding:0 8px}.site-header .account-button{margin-left:auto}}
