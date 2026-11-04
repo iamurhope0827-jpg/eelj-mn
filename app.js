@@ -90,7 +90,7 @@
       <div class="job-description"><button class="job-title" data-action="detail" data-id="${escape(job.id)}" aria-haspopup="dialog">${escape(job.title)}</button><span class="job-company" style="margin-top:6px;margin-bottom:0">${escape(job.company)}</span><span class="job-note">Жишээ байгууллага${!available ? ' · ' + ({ paused: 'Түр зогсоосон', full: 'Орон тоо дүүрсэн', expired: 'Өдөр өнгөрсөн' })[availability(job)] : ''}</span></div>
       <div class="job-meta">${icon('pin')}<div><span class="meta-label">Дүүрэг</span><strong>${escape(job.district)}</strong></div></div>
       <div class="job-meta">${icon('calendar')}<div><span class="meta-label">${shortDate(job.date)} · Ажлын өдөр</span><strong>${dayName(job.date)}</strong><span class="meta-extra">${job.start} – ${job.end}</span></div></div>
-      <div class="job-meta pay-meta">${icon('pay')}<div><span class="meta-label">Цалин</span><strong>${money(job.pay)} <small>/ цаг</small></strong></div></div>
+      <div class="job-meta pay-meta">${icon('pay')}<div><span class="meta-label">Цалин</span><strong>${money(job.pay)} <small>/ цаг</small></strong>${mealOf(job) === 'lunch' ? `<span class="pay-perk">${icon('meal')}Хоолтой</span>` : mealOf(job) === 'allowance' && job.mealAllowance ? `<span class="pay-perk">+${money(job.mealAllowance)} <small>хоолны мөнгө</small></span>` : ''}</div></div>
       <div class="job-actions"><button class="button button-dark" data-action="detail" data-id="${escape(job.id)}" aria-haspopup="dialog">Дэлгэрэнгүй${icon('arrow')}</button>${saveButton(job.id)}</div>
     </article>`;
   }
