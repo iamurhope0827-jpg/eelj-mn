@@ -11,8 +11,8 @@
   <link rel="preload" href="assets/fonts/roboto/roboto-cyrillic-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/GeistMono-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/oswald/oswald-cyrillic-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=days3">
-  <script src="app.js?v=days3" defer></script>
+  <link rel="stylesheet" href="styles.css?v=invite1">
+  <script src="app.js?v=invite1" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Үндсэн хэсэгт очих</a>
@@ -41,6 +41,7 @@
             <label class="search-field"><span>Ямар ажил?</span><span class="select-wrap"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><select id="category" name="category" aria-label="Ажлын төрөл"><option value="">Ажил сонгох</option><option value="event">Эвент, арга хэмжээ</option><option value="retail">Дэлгүүр, худалдаа</option><option value="office">Оффис, үйлчилгээ</option><option value="cafe">Кафе, ресторан</option><option value="warehouse">Агуулах, хүргэлт</option></select><svg class="icon chevron" aria-hidden="true"><use href="#i-chevron"/></svg></span></label>
             <label class="search-field"><span>Дүүрэг</span><span class="select-wrap"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><select id="district" name="district" aria-label="Дүүрэг"><option value="">Дүүрэг сонгох</option><option>Сүхбаатар</option><option>Чингэлтэй</option><option>Хан-Уул</option><option>Баянгол</option><option>Баянзүрх</option><option>Сонгинохайрхан</option></select><svg class="icon chevron" aria-hidden="true"><use href="#i-chevron"/></svg></span></label>
             <button class="button button-dark search-button" type="submit">Ажил хайх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+            <div id="my-avail" class="avail-slot"></div>
           </form>
       </section>
 
@@ -85,7 +86,7 @@
     <section id="employer-view" class="view workspace content-width" hidden aria-labelledby="employer-title">
       <div class="workspace-heading"><div><a class="back-link" href="#jobs"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg>Оюутны самбарыг харах</a><h1 id="employer-title">Ажил олгогчийн самбар</h1><p class="muted">Энэ хөтөч дээрх жишээ зар, хүсэлтүүдийг удирдана.</p></div><button class="button button-dark" data-action="new-job">Зар нэмэх<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button></div>
       <div class="employer-notice"><span class="demo-dot" aria-hidden="true"></span><p>Туршилтын горим · Өөрчлөлтүүд зөвхөн энэ хөтөч дээр харагдана.</p></div>
-      <div class="workspace-tabs" role="tablist" aria-label="Ажил олгогчийн хэсгүүд"><button id="employer-jobs-tab" role="tab" aria-selected="true" aria-controls="employer-panel" tabindex="0" data-action="employer-tab" data-tab="jobs">Миний зарууд <span id="employer-job-count"></span></button><button id="employer-applications-tab" role="tab" aria-selected="false" aria-controls="employer-panel" tabindex="-1" data-action="employer-tab" data-tab="applications">Ирсэн хүсэлтүүд <span id="employer-application-count"></span></button></div>
+      <div class="workspace-tabs" role="tablist" aria-label="Ажил олгогчийн хэсгүүд"><button id="employer-jobs-tab" role="tab" aria-selected="true" aria-controls="employer-panel" tabindex="0" data-action="employer-tab" data-tab="jobs">Миний зарууд <span id="employer-job-count"></span></button><button id="employer-seekers-tab" role="tab" aria-selected="false" aria-controls="employer-panel" tabindex="-1" data-action="employer-tab" data-tab="seekers">Ажил хайгчид <span id="employer-seekers-count"></span></button><button id="employer-applications-tab" role="tab" aria-selected="false" aria-controls="employer-panel" tabindex="-1" data-action="employer-tab" data-tab="applications">Ирсэн хүсэлтүүд <span id="employer-application-count"></span></button></div>
       <div id="employer-panel" role="tabpanel" aria-labelledby="employer-jobs-tab"></div>
     </section>
   </main>
