@@ -874,3 +874,15 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
 :root[data-page=app][data-palette=mono]{--bg:#FFFFFF;--surface:#FFFFFF;--ink:#000000;color-scheme:light}
 :root[data-page=app][data-palette=classic]{--bg:#FDF0D5;--surface:#FFFAEF;--ink:#003049;color-scheme:light}
 :root[data-page=app][data-palette=pastel]{--bg:#FFF5FA;--surface:#FFFFFF;--ink:#352C45;color-scheme:light}
+
+/* Reload splash: logo in the middle, eelj.mn at the bottom. Shown only on a browser reload
+   (the <head> script adds .is-reloading), then fades out. Never blocks clicks. */
+.reload-splash{display:none}
+.is-reloading .reload-splash{--splash-time:480ms;position:fixed;inset:0;z-index:1000;display:grid;place-items:center;background:var(--bg);pointer-events:none;animation:splash-out var(--splash-time) ease-in forwards}
+.splash-mark{width:64px;height:64px;animation:splash-mark var(--splash-time) var(--ease) both}
+.splash-mark rect{fill:var(--ink)}
+.splash-mark path{fill:var(--bg)}
+.splash-domain{position:absolute;left:0;right:0;bottom:max(32px,env(safe-area-inset-bottom));text-align:center;font-family:var(--mono);font-size:13px;letter-spacing:.08em;color:var(--muted)}
+@keyframes splash-out{0%,40%{opacity:1;visibility:visible}100%{opacity:0;visibility:hidden}}
+@keyframes splash-mark{0%{transform:scale(.92)}40%,100%{transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.splash-mark{animation:none}}
