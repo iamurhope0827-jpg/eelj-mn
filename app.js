@@ -55,6 +55,17 @@
   let storageMessage = '';
   let toastTimer;
   let state;
+  // Firebase web app config (Project settings → Your apps). These values are public by design.
+  const FIREBASE_CONFIG = { apiKey: '', authDomain: '', projectId: '', appId: '' };
+  const FIREBASE_SDK = 'https://www.gstatic.com/firebasejs/10.14.1/';
+  let authReady;
+  function firebaseAuth() {
+    if (!FIREBASE_CONFIG.apiKey) return Promise.reject(Object.assign(new Error('Firebase is not configured'), { code: 'eelj/not-configured' }));
+    authReady ||= Promise.all([import(FIREBASE_SDK + 'firebase-app.js'), import(FIREBASE_SDK + 'firebase-auth.js')])
+      .then(([app, fb]) => { const auth = fb.getAuth(app.initializeApp(FIREBASE_CONFIG)); auth.languageCode = 'mn'; return { auth, fb }; })
+      .catch((error) => { authReady = null; throw Object.assign(error, { code: error.code || 'auth/network-request-failed' }); });
+    return authReady;
+  }
 
   function nextDay(weekday) {
     const base = new Date(today() + 'T12:00:00Z');
@@ -138,7 +149,7 @@
   const invitesFor = (id) => state.invites.filter((item) => item.seekerId === id);
   const invitedIds = () => new Set(state.invites.map((item) => item.seekerId));
   const SEED_LEVEL = 3;
-  function freshState() { return { version: 1, seedLevel: SEED_LEVEL, jobs: seedJobs(), applications: [], saved: [], invites: [], profile: { name: '', contact: '', dates: [], from: '', to: '' }, role: 'student', signedIn: false, accounts: [], userId: '' }; }
+  function freshState() { return { version: 1, seedLevel: SEED_LEVEL, jobs: seedJobs(), applications: [], saved: [], invites: [], profile: { name: '', contact: '', dates: [], from: '', to: '' }, role: 'student', signedIn: false, roles: {}, userId: '' }; }
   const string = (value, max = 2000) => typeof value === 'string' && value.length <= max;
   const validDate = (value) => /^\d{4}-\d{2}-\d{2}$/.test(value) && Number.isFinite(dateObject(value).getTime()) && dateObject(value).toISOString().slice(0, 10) === value;
   const validTime = (value) => /^([01]\d|2[0-3]):[0-5]\d$/.test(value);
@@ -147,7 +158,7 @@
   }
   function validState(value) {
     if (!value || value.version !== 1 || !Array.isArray(value.jobs) || value.jobs.length > 500 || !value.jobs.every(validJob) || new Set(value.jobs.map((j) => j.id)).size !== value.jobs.length || !Array.isArray(value.applications) || value.applications.length > 2000 || !Array.isArray(value.saved)) return false;
-    return value.applications.every((app) => app && string(app.id, 100) && value.jobs.some((job) => job.id === app.jobId) && string(app.name, 80) && string(app.contact, 100) && string(app.note, 600) && Object.hasOwn(statusNames, app.status) && Number.isFinite(app.createdAt) && validJob(app.snapshot)) && value.saved.every((id) => string(id, 100)) && (value.picked === undefined || Array.isArray(value.picked)) && (value.invites === undefined || (Array.isArray(value.invites) && value.invites.length <= 2000 && value.invites.every((item) => item && string(item.id, 100) && string(item.seekerId, 100) && string(item.jobId, 100) && string(item.message, 600) && Number.isFinite(item.createdAt)))) && value.profile && string(value.profile.name, 80) && string(value.profile.contact, 100) && ['student', 'employer'].includes(value.role) && (value.signedIn === undefined || typeof value.signedIn === 'boolean') && (value.accounts === undefined || (Array.isArray(value.accounts) && value.accounts.length <= 200 && value.accounts.every(validAccount))) && (value.userId === undefined || string(value.userId, 100));
+    return value.applications.every((app) => app && string(app.id, 100) && value.jobs.some((job) => job.id === app.jobId) && string(app.name, 80) && string(app.contact, 100) && string(app.note, 600) && Object.hasOwn(statusNames, app.status) && Number.isFinite(app.createdAt) && validJob(app.snapshot)) && value.saved.every((id) => string(id, 100)) && (value.picked === undefined || Array.isArray(value.picked)) && (value.invites === undefined || (Array.isArray(value.invites) && value.invites.length <= 2000 && value.invites.every((item) => item && string(item.id, 100) && string(item.seekerId, 100) && string(item.jobId, 100) && string(item.message, 600) && Number.isFinite(item.createdAt)))) && value.profile && string(value.profile.name, 80) && string(value.profile.contact, 100) && ['student', 'employer'].includes(value.role) && (value.signedIn === undefined || typeof value.signedIn === 'boolean') && (value.accounts === undefined || Array.isArray(value.accounts)) && (value.roles === undefined || (value.roles && typeof value.roles === 'object' && !Array.isArray(value.roles) && Object.values(value.roles).every((role) => ['student', 'employer'].includes(role)))) && (value.userId === undefined || string(value.userId, 128));
   }
   function validAccount(item) { return item && string(item.id, 100) && string(item.name, 80) && string(item.email, 100) && ['student', 'employer'].includes(item.role) && string(item.salt, 64) && string(item.hash, 64) && Number.isFinite(item.createdAt); }
   function loadState() {
@@ -157,10 +168,11 @@
   }
   function upgrade(value) {
     delete value.picked;
-    value.accounts = value.accounts || [];
+    delete value.accounts;
+    value.roles = value.roles || {};
     value.userId = value.userId || '';
-    // Sessions from the old name-only sign-in have no account, so they start signed out.
-    value.signedIn = value.signedIn === true && value.accounts.some((item) => item.id === value.userId);
+    // Firebase confirms the cached session on load; old browser-only accounts are signed out there.
+    value.signedIn = value.signedIn === true && Boolean(value.userId);
     if (!value.signedIn) value.userId = '';
     value.invites = (value.invites || []).filter((item) => seekerById(item.seekerId) && value.jobs.some((job) => job.id === item.jobId));
     delete value.profile.days; Object.assign(value.profile, cleanAvail(value.profile));
@@ -327,6 +339,7 @@
     $('#user-dropdown').innerHTML = `<div class="menu-head"><span class="avatar avatar-lg" aria-hidden="true">${escape(name.trim().charAt(0).toUpperCase())}</span><div><strong>${escape(name)}</strong><small>${escape(state.profile.contact || roleNames[state.role])}</small></div></div>
       <div class="menu-group">${employer ? `<a class="menu-item" href="#employer">${icon('pay')}Ажил олгогчийн самбар</a>` : `<a class="menu-item" href="#applications">${icon('clock')}Миний хүсэлтүүд${sent ? `<span class="nav-count">${sent}</span>` : ''}</a><button class="menu-item" data-action="saved-menu">${icon('bookmark')}Хадгалсан ажлууд</button>`}
       <button class="menu-item" data-action="${employer ? 'student' : 'employer'}">${icon('swap')}${employer ? 'Оюутан болох' : 'Ажил олгогч болох'}</button></div>
+      <div class="menu-group">${ui.verified ? '' : `<button class="menu-item menu-warn" data-action="verify-email">${icon('check')}И-мэйл баталгаажуулах</button>`}<button class="menu-item" data-action="change-password">${icon('edit')}Нууц үг солих</button></div>
       <div class="menu-group"><button class="menu-item menu-danger" data-action="signout">${icon('logout')}Гарах</button></div>`;
   }
   function setMenu(open, focusButton = false) {
@@ -398,58 +411,121 @@
     const signup = mode === 'signup';
     const pick = role || state.role;
     const roleCard = (value, symbol, title, text) => `<label class="signin-role"><input type="radio" name="role" value="${value}" ${pick === value ? 'checked' : ''}><span>${icon(symbol)}<strong>${title}</strong><small>${text}</small></span></label>`;
-    const password = `<label class="field field-full">Нууц үг<span class="password-field"><input name="password" type="password" required minlength="${signup ? 8 : 1}" maxlength="128" autocomplete="${signup ? 'new-password' : 'current-password'}"${signup ? ' aria-describedby="password-hint"' : ''}><button type="button" class="password-toggle" data-action="toggle-password" aria-pressed="false">Харах</button></span>${signup ? '<span class="field-hint" id="password-hint">8-аас доошгүй тэмдэгт.</span>' : ''}</label>`;
+    const password = `<label class="field field-full">Нууц үг<span class="password-field"><input name="password" type="password" required minlength="${signup ? 8 : 1}" maxlength="128" autocomplete="${signup ? 'new-password' : 'current-password'}"${signup ? ' aria-describedby="password-hint"' : ''}><button type="button" class="password-toggle" data-action="toggle-password" aria-pressed="false">Харах</button></span>${signup ? '<span class="field-hint" id="password-hint">8-аас доошгүй тэмдэгт.</span>' : ''}</label>${signup ? '' : '<p class="forgot-link"><button type="button" class="text-button" data-action="forgot-password">Нууц үгээ мартсан уу?</button></p>'}`;
     showPanel(`<h2 class="panel-heading" id="panel-title">${signup ? 'Ээлжид бүртгүүлэх' : 'Тавтай морил'}</h2><p class="panel-subtitle">${signup ? 'Хэдхэн секундэд бүртгэл үүсгээрэй.' : 'И-мэйл, нууц үгээрээ нэвтэрнэ үү.'}</p>
       <form id="signin-form" data-mode="${signup ? 'signup' : 'signin'}" novalidate>${signup ? `<fieldset class="signin-roles"><legend>Та хэн бэ?</legend>${roleCard('student', 'user', 'Оюутан', 'Ажил хайх, хүсэлт илгээх')}${roleCard('employer', 'pay', 'Ажил олгогч', 'Зар нэмэх, ажилтан сонгох')}</fieldset>` : ''}
       <div class="form-grid">${signup ? '<label class="field field-full">Нэр<input name="name" required minlength="2" maxlength="80" autocomplete="name" placeholder="Жишээ: Бат"></label>' : ''}<label class="field field-full">И-мэйл<input name="email" type="email" required maxlength="100" autocomplete="email" inputmode="email" spellcheck="false" placeholder="Жишээ: student@example.com" value="${escape(email)}"></label>${password}</div>
       <p id="signin-error" class="form-error" role="alert" hidden></p>
       <div class="form-actions"><button type="submit" class="button button-dark">${signup ? 'Бүртгүүлэх' : 'Нэвтрэх'}${icon('arrow')}</button></div>
       <p class="signin-switch">${signup ? `Бүртгэлтэй юу? <button type="button" class="text-button" data-action="signin" data-id="${pick}">Нэвтрэх</button>` : `Шинэ хэрэглэгч үү? <button type="button" class="text-button" data-action="signup" data-id="${pick}">Бүртгүүлэх</button>`}</p>
-      <p class="local-note">Туршилтын бүртгэл: мэдээлэл зөвхөн энэ хөтөч дээр хадгалагдана. Бодит нууц үгээ бүү ашиглаарай.</p></form>`, signup ? '#signin-form [name=name]' : email ? '#signin-form [name=password]' : '#signin-form [name=email]');
+      </form>`, signup ? '#signin-form [name=name]' : email ? '#signin-form [name=password]' : '#signin-form [name=email]');
   }
-  const toBase64 = (bytes) => btoa(String.fromCharCode(...new Uint8Array(bytes)));
-  async function hashPassword(password, salt) {
-    const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']);
-    return toBase64(await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: Uint8Array.from(atob(salt), (c) => c.charCodeAt(0)), iterations: 100000 }, key, 256));
+  const authMessages = {
+    'auth/email-already-in-use': 'Энэ и-мэйлээр бүртгэл үүссэн байна. Нэвтэрнэ үү.',
+    'auth/invalid-email': 'Зөв и-мэйл хаяг бичээрэй.',
+    'auth/missing-email': 'И-мэйлээ бичээрэй.',
+    'auth/weak-password': 'Нууц үг 8-аас доошгүй тэмдэгттэй байна.',
+    'auth/invalid-credential': 'И-мэйл эсвэл нууц үг буруу байна.',
+    'auth/invalid-login-credentials': 'И-мэйл эсвэл нууц үг буруу байна.',
+    'auth/wrong-password': 'И-мэйл эсвэл нууц үг буруу байна.',
+    'auth/user-not-found': 'И-мэйл эсвэл нууц үг буруу байна.',
+    'auth/user-disabled': 'Энэ бүртгэлийг идэвхгүй болгосон байна.',
+    'auth/too-many-requests': 'Хэт олон оролдлого хийлээ. Түр хүлээгээд дахин оролдоно уу.',
+    'auth/network-request-failed': 'Интернэт холболтоо шалгаад дахин оролдоно уу.',
+    'eelj/not-configured': 'Нэвтрэх систем одоогоор тохируулагдаагүй байна.'
+  };
+  const authMessage = (error) => authMessages[error?.code] || 'Алдаа гарлаа. Дахин оролдоно уу.';
+  // Called by Firebase on load and whenever the session changes, including in other tabs.
+  function syncUser(user) {
+    ui.verified = Boolean(user?.emailVerified);
+    if (!user) { if (state.signedIn) clearSession(); return; }
+    const arriving = !state.signedIn || state.userId !== user.uid;
+    if (ui.pendingRole) { state.roles[user.uid] = ui.pendingRole; ui.pendingRole = ''; }
+    state.userId = user.uid; state.signedIn = true;
+    state.role = state.roles[user.uid] || state.role;
+    Object.assign(state.profile, { name: user.displayName || user.email.split('@')[0], contact: user.email });
+    persist(); renderAll();
+    if (arriving) navigate(state.role === 'employer' ? 'employer' : 'jobs');
   }
   async function submitSignIn(form) {
     const data = new FormData(form);
     const signup = form.dataset.mode === 'signup';
-    const email = String(data.get('email')).trim().toLowerCase();
+    const email = String(data.get('email')).trim();
     const password = String(data.get('password'));
     const button = form.querySelector('[type=submit]');
     $('#signin-error').hidden = true;
-    let account = state.accounts.find((item) => item.email === email);
     if (signup) {
       const name = String(data.get('name')).trim();
       if (name.length < 2) return formError('signin-error', 'Нэрээ 2-оос доошгүй тэмдэгтээр бичээрэй.');
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return formError('signin-error', 'Зөв и-мэйл хаяг бичээрэй.');
       if (password.length < 8) return formError('signin-error', 'Нууц үг 8-аас доошгүй тэмдэгттэй байна.');
-      if (account) return formError('signin-error', 'Энэ и-мэйлээр бүртгэл үүссэн байна. Нэвтэрнэ үү.');
-      if (!crypto.subtle) return formError('signin-error', 'Энэ хөтөч нууц үг хамгаалах боломжгүй байна. HTTPS холбоосоор нээгээрэй.');
       button.disabled = true;
-      const salt = toBase64(crypto.getRandomValues(new Uint8Array(16)));
-      account = { id: crypto.randomUUID(), name, email, role: data.get('role') === 'employer' ? 'employer' : 'student', salt, hash: await hashPassword(password, salt), createdAt: Date.now() };
-      state.accounts.push(account);
-    } else {
-      if (!email || !password) return formError('signin-error', 'И-мэйл, нууц үгээ бичээрэй.');
-      if (!crypto.subtle) return formError('signin-error', 'Энэ хөтөч нууц үг шалгах боломжгүй байна. HTTPS холбоосоор нээгээрэй.');
-      button.disabled = true;
-      const hash = await hashPassword(password, account?.salt || toBase64(new Uint8Array(16)));
-      if (!account || hash !== account.hash) { button.disabled = false; return formError('signin-error', 'И-мэйл эсвэл нууц үг буруу байна.'); }
+      try {
+        const { auth, fb } = await firebaseAuth();
+        ui.pendingRole = data.get('role') === 'employer' ? 'employer' : 'student';
+        const { user } = await fb.createUserWithEmailAndPassword(auth, email, password);
+        await fb.updateProfile(user, { displayName: name });
+        syncUser(user);
+        fb.sendEmailVerification(user).catch(() => {});
+        toast(`Бүртгэл үүслээ. ${user.email} руу баталгаажуулах холбоос илгээлээ.`);
+      } catch (error) { ui.pendingRole = ''; button.disabled = false; formError('signin-error', authMessage(error)); }
+      return;
     }
-    Object.assign(state.profile, { name: account.name, contact: account.email });
-    state.role = account.role; state.userId = account.id; state.signedIn = true;
-    persist(); renderAll(); navigate(account.role === 'employer' ? 'employer' : 'jobs');
-    toast(signup ? `Бүртгэл үүслээ. Тавтай морил, ${account.name}!` : `Тавтай морил, ${account.name}!`);
+    if (!email || !password) return formError('signin-error', 'И-мэйл, нууц үгээ бичээрэй.');
+    button.disabled = true;
+    try {
+      const { auth, fb } = await firebaseAuth();
+      const { user } = await fb.signInWithEmailAndPassword(auth, email, password);
+      syncUser(user);
+      toast(`Тавтай морил, ${state.profile.name}!`);
+    } catch (error) { button.disabled = false; formError('signin-error', authMessage(error)); }
+  }
+  function openReset(email = '') {
+    ui.panelJob = null;
+    showPanel(`<button class="back-link text-button" data-action="signin">${icon('back')}Нэвтрэх</button><h2 class="panel-heading" id="panel-title">Нууц үг сэргээх</h2><p class="panel-subtitle">Бүртгэлтэй и-мэйлээ оруулбал нууц үг шинэчлэх холбоос илгээнэ.</p>
+      <form id="reset-form" novalidate><div class="form-grid"><label class="field field-full">И-мэйл<input name="email" type="email" required maxlength="100" autocomplete="email" inputmode="email" spellcheck="false" value="${escape(email)}"></label></div>
+      <p id="reset-error" class="form-error" role="alert" hidden></p>
+      <div class="form-actions"><button type="submit" class="button button-dark">Холбоос илгээх${icon('arrow')}</button></div></form>`, '#reset-form [name=email]');
+  }
+  async function submitReset(form) {
+    const email = String(new FormData(form).get('email')).trim();
+    const button = form.querySelector('[type=submit]');
+    $('#reset-error').hidden = true;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return formError('reset-error', 'Зөв и-мэйл хаяг бичээрэй.');
+    button.disabled = true;
+    try {
+      const { auth, fb } = await firebaseAuth();
+      await fb.sendPasswordResetEmail(auth, email);
+      // Same message whether or not the account exists, so the form does not reveal registered emails.
+      showPanel(`<h2 class="panel-heading" id="panel-title">И-мэйлээ шалгана уу</h2><p class="panel-subtitle">Хэрэв <strong>${escape(email)}</strong> хаягаар бүртгэл байгаа бол нууц үг шинэчлэх холбоос илгээлээ. Spam хавтсаа ч шалгаарай.</p><div class="form-actions"><button class="button button-dark" data-action="signin" data-email="${escape(email)}">Нэвтрэх${icon('arrow')}</button></div>`);
+    } catch (error) { button.disabled = false; formError('reset-error', authMessage(error)); }
+  }
+  async function accountEmail(kind) {
+    try {
+      const { auth, fb } = await firebaseAuth();
+      const user = auth.currentUser; if (!user) return;
+      if (kind === 'verify') {
+        await user.reload();
+        if (user.emailVerified) { syncUser(user); return toast('И-мэйл баталгаажсан байна.'); }
+        await fb.sendEmailVerification(user);
+        toast(`${user.email} руу баталгаажуулах холбоос илгээлээ.`);
+      } else {
+        await fb.sendPasswordResetEmail(auth, user.email);
+        toast(`${user.email} руу нууц үг солих холбоос илгээлээ.`);
+      }
+    } catch (error) { toast(authMessage(error)); }
   }
   function signOut() {
-    state.signedIn = false; state.userId = ''; ui.savedOnly = false;
+    firebaseAuth().then(({ auth, fb }) => fb.signOut(auth)).catch(() => {});
+    clearSession();
+    toast('Системээс гарлаа.');
+  }
+  function clearSession() {
+    state.signedIn = false; state.userId = ''; ui.savedOnly = false; ui.verified = false;
     Object.assign(state.profile, { name: '', contact: '' });
     persist(); closePanel();
     history.pushState(null, '', location.pathname + location.search);
     renderAll(); route();
-    toast('Системээс гарлаа.');
   }
   function showPanel(content, focus) {
     $('#toast').hidden = true;
@@ -745,7 +821,7 @@
     else if (action === 'colors') { if (state.signedIn) openColors(); }
     else if (action === 'palette') { if (state.signedIn) applyPalette(id); }
     else if (action === 'account') openAccount();
-    else if (action === 'signin' || action === 'signup') openSignIn(action, id);
+    else if (action === 'signin' || action === 'signup') openSignIn(action, id, button.dataset.email || '');
     else if (action === 'signout') signOut();
     else if (action === 'user-menu') setMenu(!ui.menuOpen);
     else if (action === 'saved-menu') { ui.savedOnly = true; ui.limit = 3; ui.scrollTo = 'jobs'; renderBrowse(); navigate('jobs'); }
@@ -762,7 +838,10 @@
     else if (action === 'browse') navigate('jobs');
     else if (action === 'toggle-password') { const input = button.parentElement.querySelector('input'); const show = input.type === 'password'; input.type = show ? 'text' : 'password'; button.textContent = show ? 'Нуух' : 'Харах'; button.setAttribute('aria-pressed', String(show)); input.focus(); }
     else if ((action === 'student' || action === 'employer') && !state.signedIn) openSignIn('signin', action);
-    else if (action === 'student' || action === 'employer') { const changed = state.role !== action; state.role = action; const account = state.accounts.find((item) => item.id === state.userId); if (account) account.role = action; persist(); renderAll(); navigate(action === 'employer' ? 'employer' : 'jobs'); if (changed) toast(`${roleNames[action]} горимд шилжлээ.`); }
+    else if (action === 'forgot-password') openReset($('#signin-form [name=email]')?.value.trim());
+    else if (action === 'verify-email') accountEmail('verify');
+    else if (action === 'change-password') accountEmail('password');
+    else if (action === 'student' || action === 'employer') { const changed = state.role !== action; state.role = action; state.roles[state.userId] = action; persist(); renderAll(); navigate(action === 'employer' ? 'employer' : 'jobs'); if (changed) toast(`${roleNames[action]} горимд шилжлээ.`); }
     else if (action === 'save') {
       if (!jobById(id)) return;
       const saved = state.saved.includes(id);
@@ -781,7 +860,7 @@
     else if (action === 'job-applicants') { ui.employerTab = 'applications'; ui.applicantJob = id; renderEmployer(); $('#employer-applications-tab').focus(); }
     else if (action === 'pause-job') { const job = jobById(id); if (job) { job.status = job.status === 'active' ? 'paused' : 'active'; persist(); renderAll(); toast(job.status === 'paused' ? 'Зарыг түр зогсоолоо.' : 'Зарыг дахин нээлээ.'); } }
     else if (action === 'reset') showPanel(`<h2 id="panel-title" class="panel-heading">Өгөгдлийг шинэчлэх үү?</h2><p class="panel-subtitle">Энэ хөтөч дээрх хадгалсан ажил, хүсэлт болон таны нэмсэн заруудыг арилгаж, анхны жишээ заруудыг сэргээнэ.</p><div class="form-actions"><button class="button button-outline" data-action="close">Болих</button><button class="button button-dark" data-action="confirm-reset">Шинээр эхлэх</button></div>`);
-    else if (action === 'confirm-reset') { const { signedIn, role, accounts, userId, profile: { name, contact } } = state; state = freshState(); Object.assign(state, { signedIn, role, accounts, userId }); Object.assign(state.profile, { name, contact }); ui.category = ''; ui.district = ''; ui.savedOnly = false; ui.limit = 3; ui.applicantJob = ''; ui.employerTab = 'jobs'; persist(); renderAll(); navigate('jobs'); toast('Туршилтын өгөгдлийг шинэчиллээ.'); }
+    else if (action === 'confirm-reset') { const { signedIn, role, roles, userId, profile: { name, contact } } = state; state = freshState(); Object.assign(state, { signedIn, role, roles, userId }); Object.assign(state.profile, { name, contact }); ui.category = ''; ui.district = ''; ui.savedOnly = false; ui.limit = 3; ui.applicantJob = ''; ui.employerTab = 'jobs'; persist(); renderAll(); navigate('jobs'); toast('Туршилтын өгөгдлийг шинэчиллээ.'); }
   });
   document.addEventListener('submit', (event) => {
     if (event.target.id === 'search-form') { event.preventDefault(); const data = new FormData(event.target); ui.category = data.get('category'); ui.district = data.get('district'); ui.limit = 3; renderBrowse(); $('#jobs').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
@@ -789,6 +868,7 @@
     else if (event.target.id === 'job-form') { event.preventDefault(); submitJob(event.target); }
     else if (event.target.id === 'invite-form') { event.preventDefault(); submitInvite(event.target); }
     else if (event.target.id === 'signin-form') { event.preventDefault(); submitSignIn(event.target); }
+    else if (event.target.id === 'reset-form') { event.preventDefault(); submitReset(event.target); }
   });
   document.addEventListener('click', (event) => {
     if (!ui.menuOpen) return;
@@ -825,7 +905,9 @@
   const isPageReload = performance.getEntriesByType('navigation')[0]?.type === 'reload';
   if (isPageReload) history.scrollRestoration = 'manual';
   state = loadState();
+  if (!FIREBASE_CONFIG.apiKey && state.signedIn) { state.signedIn = false; state.userId = ''; persist(); }
   renderAll(); route(); setupShowcase();
+  if (FIREBASE_CONFIG.apiKey) firebaseAuth().then(({ auth, fb }) => fb.onAuthStateChanged(auth, syncUser)).catch(() => {});
   if (isPageReload) {
     const showHeader = () => requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'instant' }));
     if (document.readyState === 'complete') showHeader();
