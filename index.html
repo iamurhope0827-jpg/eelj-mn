@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#121414" media="(prefers-color-scheme: dark)">
-  <meta name="description" content="Ээлж — оюутны хуваарьт таарах цагийн ажлын туршилтын платформ. Жишээ ажлуудыг харьцуулж, хүсэлт илгээх үйл явцыг туршаарай.">
-  <title>Ээлж — Оюутны хуваарьт таарах ажлууд</title>
+  <meta name="description" content="Ээлж — таны хуваарьт таарах цагийн ажлын туршилтын платформ. Жишээ ажлуудыг харьцуулж, хүсэлт илгээх үйл явцыг туршаарай.">
+  <title>Ээлж — Хуваарьт тань таарах цагийн ажлууд</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/roboto/roboto-cyrillic-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/GeistMono-Variable.woff2" as="font" type="font/woff2" crossorigin>
@@ -26,8 +26,8 @@
       if (page === 'landing') document.querySelectorAll('meta[name=theme-color]').forEach(function (m) { m.content = '#0B0E11'; });
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=seekers2">
-  <script src="app.js?v=seekers2" defer></script>
+  <link rel="stylesheet" href="styles.css?v=seeker-role1">
+  <script src="app.js?v=seeker-role1" defer></script>
 </head>
 <body>
   <div class="reload-splash" aria-hidden="true">
@@ -75,7 +75,7 @@
         <div class="landing-hero-inner content-width">
           <p class="eyebrow"><span class="demo-dot" aria-hidden="true"></span>Туршилтын хувилбар · Жишээ зарууд</p>
           <h1 id="landing-title">Хичээлийнхээ завсар <span>ээлжээ ол.</span></h1>
-          <p class="landing-lead">Ээлж оюутнуудыг хуваарьт нь таарсан цагийн ажилтай холбоно. Байршил, цаг, цалингаа нэг дор харьцуулж, хүсэлтээ хэдхэн товшилтоор илгээ.</p>
+          <p class="landing-lead">Ээлж ажил горилогчдыг хуваарьт нь таарсан цагийн ажилтай холбоно. Байршил, цаг, цалингаа нэг дор харьцуулж, хүсэлтээ хэдхэн товшилтоор илгээ.</p>
           <div class="landing-ctas">
             <button class="button button-dark button-lg" data-action="signup" data-id="student">Ажил хайж эхлэх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
             <button class="button button-outline button-lg" data-action="signup" data-id="employer">Ажилтан хайх</button>
@@ -144,7 +144,7 @@
       <section class="landing-section content-width" id="how" aria-labelledby="how-title">
         <div class="landing-section-head"><p class="eyebrow">Хэрхэн ажилладаг</p><h2 id="how-title">Гурван алхам. Нэг ээлж.</h2></div>
         <ol class="landing-steps">
-          <li><span class="step-icon"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg></span><span class="step-index">01</span><h3>Зараа харьцуул</h3><p>Дүүрэг, ажлын өдөр, цагийн хөлсөөр шүүж, хичээлийнхээ хуваарьт таарах ээлжийг ол.</p></li>
+          <li><span class="step-icon"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg></span><span class="step-index">01</span><h3>Зараа харьцуул</h3><p>Дүүрэг, ажлын өдөр, цагийн хөлсөөр шүүж, өөрийн хуваарьт таарах ээлжийг ол.</p></li>
           <li><span class="step-icon"><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></span><span class="step-index">02</span><h3>Хүсэлтээ илгээ</h3><p>Ажлын дэлгэрэнгүйг уншаад богино хүсэлт бөглөнө. Завтай өдөр, цагаа хамт илгээнэ.</p></li>
           <li><span class="step-icon"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span><span class="step-index">03</span><h3>Явцаа хяна</h3><p>Ажил олгогч хүсэлтийг шалгаж сонгоход “Миний хүсэлтүүд” хэсэгт төлөв нь шууд шинэчлэгдэнэ.</p></li>
         </ol>
@@ -153,14 +153,14 @@
       <section class="landing-split content-width" id="for-employers" aria-label="Хэнд зориулсан бэ">
         <article class="split-card">
           <span class="role-icon"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg></span>
-          <h2>Оюутнуудад</h2>
+          <h2>Ажил горилогчдод</h2>
           <ul><li>Хуваарьт таарах ээлжийг өдөр, цагаар шүүнэ</li><li>Цалин, хоол, нийт орлогоо урьдчилан харна</li><li>Сонирхсон ажлаа хадгалж, дараа нь харьцуулна</li></ul>
-          <button class="button button-dark" data-action="signup" data-id="student">Оюутнаар нэвтрэх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+          <button class="button button-dark" data-action="signup" data-id="student">Ажил горилогчоор нэвтрэх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
         </article>
         <article class="split-card">
           <span class="role-icon"><svg class="icon" aria-hidden="true"><use href="#i-pay"/></svg></span>
           <h2>Ажил олгогчдод</h2>
-          <ul><li>Нэг өдрийн болон олон өдрийн ээлж зарлана</li><li>Завтай оюутнуудыг хайж, шууд урилга илгээнэ</li><li>Ирсэн хүсэлтийг шалгаж, сонгож, орон тоогоо хянана</li></ul>
+          <ul><li>Нэг өдрийн болон олон өдрийн ээлж зарлана</li><li>Завтай ажил горилогчдыг хайж, шууд урилга илгээнэ</li><li>Ирсэн хүсэлтийг шалгаж, сонгож, орон тоогоо хянана</li></ul>
           <button class="button button-outline" data-action="signup" data-id="employer">Ажил олгогчоор нэвтрэх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
         </article>
       </section>
@@ -177,7 +177,7 @@
       <section class="sign-section hero" aria-labelledby="hero-title">
         <div class="hero-grid" aria-hidden="true"></div>
         <h1 id="hero-title">Өдрийн мэнд!<span id="greeting-name" class="greeting-name" hidden></span></h1>
-        <p class="hero-lead">Байршил, цаг, цалингаа нэг дор харьцуулж, хичээлийнхээ завсар ажиллах ээлжээ олоорой.</p>
+        <p class="hero-lead">Байршил, цаг, цалингаа нэг дор харьцуулж, завтай цагтаа ажиллах ээлжээ олоорой.</p>
         <form id="search-form" class="search-form">
             <label class="search-field"><span>Ямар ажил?</span><span class="select-wrap"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><select id="category" name="category" aria-label="Ажлын төрөл"><option value="">Ажил сонгох</option><option value="event">Эвент, арга хэмжээ</option><option value="retail">Дэлгүүр, худалдаа</option><option value="office">Оффис, үйлчилгээ</option><option value="cafe">Кафе, ресторан</option><option value="warehouse">Агуулах, хүргэлт</option></select><svg class="icon chevron" aria-hidden="true"><use href="#i-chevron"/></svg></span></label>
             <label class="search-field"><span>Дүүрэг</span><span class="select-wrap"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><select id="district" name="district" aria-label="Дүүрэг"><option value="">Дүүрэг сонгох</option><option>Сүхбаатар</option><option>Чингэлтэй</option><option>Хан-Уул</option><option>Баянгол</option><option>Баянзүрх</option><option>Сонгинохайрхан</option></select><svg class="icon chevron" aria-hidden="true"><use href="#i-chevron"/></svg></span></label>
@@ -226,7 +226,7 @@
     </section>
 
     <section id="employer-view" class="view workspace content-width" hidden aria-labelledby="employer-title">
-      <div class="workspace-heading"><div><a class="back-link" href="#jobs"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg>Оюутны самбарыг харах</a><h1 id="employer-title">Ажил олгогчийн самбар</h1><p class="muted">Энэ хөтөч дээрх жишээ зар, хүсэлтүүдийг удирдана.</p></div><button class="button button-dark" data-action="new-job">Зар нэмэх<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button></div>
+      <div class="workspace-heading"><div><a class="back-link" href="#jobs"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg>Ажил горилогчийн самбарыг харах</a><h1 id="employer-title">Ажил олгогчийн самбар</h1><p class="muted">Энэ хөтөч дээрх жишээ зар, хүсэлтүүдийг удирдана.</p></div><button class="button button-dark" data-action="new-job">Зар нэмэх<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button></div>
       <div class="employer-notice"><span class="demo-dot" aria-hidden="true"></span><p>Туршилтын горим · Өөрчлөлтүүд зөвхөн энэ хөтөч дээр харагдана.</p></div>
       <div class="workspace-tabs" role="tablist" aria-label="Ажил олгогчийн хэсгүүд"><button id="employer-jobs-tab" role="tab" aria-selected="true" aria-controls="employer-panel" tabindex="0" data-action="employer-tab" data-tab="jobs">Миний зарууд <span id="employer-job-count"></span></button><button id="employer-seekers-tab" role="tab" aria-selected="false" aria-controls="employer-panel" tabindex="-1" data-action="employer-tab" data-tab="seekers">Ажил хайгчид <span id="employer-seekers-count"></span></button><button id="employer-applications-tab" role="tab" aria-selected="false" aria-controls="employer-panel" tabindex="-1" data-action="employer-tab" data-tab="applications">Ирсэн хүсэлтүүд <span id="employer-application-count"></span></button></div>
       <div id="employer-panel" role="tabpanel" aria-labelledby="employer-jobs-tab"></div>
