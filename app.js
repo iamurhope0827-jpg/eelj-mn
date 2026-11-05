@@ -113,17 +113,26 @@
   const inviteStates = { pending: ['Хүлээгдэж байна', 'received'], accepted: ['Зөвшөөрсөн', 'accepted'], declined: ['Татгалзсан', 'declined'] };
   const inviteStatus = (value) => (Object.hasOwn(inviteStates, value) ? value : 'pending');
   const inviteBadge = (value) => `<span class="badge badge-${inviteStates[inviteStatus(value)][1]}">${inviteStates[inviteStatus(value)][0]}</span>`;
-  async function respondInvite(id, status) {
-    const item = inbox.find((value) => value.id === id); if (!item || ui.responding) return;
-    ui.responding = true; openInviteDetail(id);
+  // A reply is final: it is saved in this browser the moment a button is pressed (so it can never be
+  // chosen again), then written to Firestore. If that write fails it is retried on the next inbox load.
+  async function syncReply(id) {
+    const reply = state.inviteReplies[id]; if (!reply || reply.synced) return true;
     try {
       const { fs, db } = await firestore();
-      const respondedAt = Date.now();
-      await fs.updateDoc(fs.doc(db, 'invites', id), { status, respondedAt });
-      Object.assign(item, { status, respondedAt });
-      toast(status === 'accepted' ? 'Урилгыг зөвшөөрлөө. Ажил олгогч таны хариуг харна.' : 'Урилгаас татгалзлаа.');
-    } catch { toast('Хариуг илгээж чадсангүй. Интернэтээ шалгаад дахин оролдоно уу.'); }
-    ui.responding = false; renderApplications(); openInviteDetail(id);
+      await fs.updateDoc(fs.doc(db, 'invites', id), { status: reply.status, respondedAt: reply.respondedAt });
+      reply.synced = true; persist(); return true;
+    } catch { return false; }
+  }
+  async function respondInvite(id, status) {
+    const item = inbox.find((value) => value.id === id);
+    if (!item || inviteStatus(item.status) !== 'pending' || state.inviteReplies[id]) return;
+    const respondedAt = Date.now();
+    state.inviteReplies[id] = { status, respondedAt, synced: false };
+    Object.assign(item, { status, respondedAt });
+    persist(); renderApplications(); renderHeader(); openInviteDetail(id);
+    const sent = await syncReply(id);
+    if ($('#panel').open && document.querySelector(`#panel-content [data-invite="${CSS.escape(id)}"]`)) openInviteDetail(id);
+    toast(sent ? (status === 'accepted' ? 'Урилгыг зөвшөөрлөө. Ажил олгогч таны хариуг харна.' : 'Урилгаас татгалзлаа.') : 'Хариу хадгалагдлаа. Интернэт холбогдоход ажил олгогч руу автоматаар илгээгдэнэ.');
   }
   function openInviteDetail(id) {
     const item = inbox.find((value) => value.id === id); if (!item) return;
@@ -135,7 +144,7 @@
       <div class="detail-pay"><div><span>Цагийн хөлс</span><strong>${money(Number(job.pay) || 0)} <small>/ цаг</small></strong></div>${hrs ? `<div class="total-pay">${hrs} цагийн ээлж<strong>${money(Math.round((Number(job.pay) || 0) * hrs))}</strong></div>` : ''}</div>
       <div class="detail-grid"><div>${icon('calendar')}<div><span>Ажлын өдөр</span><strong>${escape(days)}</strong></div></div><div>${icon('clock')}<div><span>Ажлын цаг</span><strong>${escape(job.start)} – ${escape(job.end)}</strong></div></div><div>${icon('pin')}<div><span>Байршил</span><strong>${escape(job.district)}</strong>${job.address ? `<p>${escape(job.address)}</p>` : ''}</div></div></div>
       <div class="detail-block"><h3>Ажил олгогчийн мессеж</h3><p class="invite-card-message">${escape(item.message)}</p></div>
-      ${status === 'pending' ? `<div class="form-actions"><button class="button button-outline" data-action="invite-decline" data-id="${escape(id)}" ${ui.responding ? 'disabled' : ''}>Татгалзах</button><button class="button button-dark" data-action="invite-accept" data-id="${escape(id)}" ${ui.responding ? 'disabled' : ''}>${ui.responding ? 'Илгээж байна…' : `Зөвшөөрөх${icon('check')}`}</button></div>` : `<p class="invite-answered">${icon(status === 'accepted' ? 'check' : 'close')}Та энэ урилгыг ${status === 'accepted' ? 'зөвшөөрсөн' : 'татгалзсан'} байна. Ажил олгогч таны хариуг харж байна.</p>`}`, '[data-action="invite-accept"]');
+      ${status === 'pending' ? `<div class="form-actions"><button class="button button-outline" data-action="invite-decline" data-id="${escape(id)}">Татгалзах</button><button class="button button-dark" data-action="invite-accept" data-id="${escape(id)}">Зөвшөөрөх${icon('check')}</button></div>` : `<p class="invite-answered" data-invite="${escape(id)}">${icon(status === 'accepted' ? 'check' : 'close')}Та энэ урилгыг ${status === 'accepted' ? 'зөвшөөрсөн' : 'татгалзсан'} байна. ${state.inviteReplies[id]?.synced === false ? 'Хариу ажил олгогч руу илгээгдэхийг хүлээж байна.' : 'Ажил олгогч таны хариуг харж байна.'}</p>`}`, '[data-action="invite-accept"]');
     $('#panel').classList.add('job-detail-dialog');
   }
   let sentStatus = {};
@@ -156,6 +165,12 @@
       const uid = auth.currentUser?.uid; if (!uid) return;
       const snap = await fs.getDocs(fs.query(fs.collection(db, 'invites'), fs.where('seekerId', '==', uid)));
       inbox = snap.docs.map((item) => ({ id: item.id, ...item.data() })).filter((item) => item.job && string(item.message, 800)).sort((a, b) => b.createdAt - a.createdAt);
+      inbox.forEach((item) => {
+        const reply = state.inviteReplies[item.id];
+        if (reply) Object.assign(item, { status: reply.status, respondedAt: reply.respondedAt });
+        else if (inviteStatus(item.status) !== 'pending') state.inviteReplies[item.id] = { status: inviteStatus(item.status), respondedAt: item.respondedAt || Date.now(), synced: true };
+      });
+      persist(); Object.keys(state.inviteReplies).forEach((id) => syncReply(id));
       renderApplications(); renderHeader();
       if (inbox.length && !inboxToasted && state.role === 'student') { inboxToasted = true; toast(`Танд ${inbox.length} ажлын урилга ирсэн байна. “Миний хүсэлтүүд” хэсгээс харна уу.`); }
     } catch { /* Inbox stays empty offline. */ }
@@ -248,7 +263,7 @@
   const invitesFor = (id) => state.invites.filter((item) => item.seekerId === id);
   const invitedIds = () => new Set(state.invites.map((item) => item.seekerId));
   const SEED_LEVEL = 3;
-  function freshState() { return { version: 1, seedLevel: SEED_LEVEL, jobs: seedJobs(), applications: [], saved: [], invites: [], profile: { name: '', contact: '', dates: [], from: '', to: '' }, role: 'student', signedIn: false, roles: {}, userId: '' }; }
+  function freshState() { return { version: 1, seedLevel: SEED_LEVEL, jobs: seedJobs(), applications: [], saved: [], invites: [], inviteReplies: {}, profile: { name: '', contact: '', dates: [], from: '', to: '' }, role: 'student', signedIn: false, roles: {}, userId: '' }; }
   const string = (value, max = 2000) => typeof value === 'string' && value.length <= max;
   const validDate = (value) => /^\d{4}-\d{2}-\d{2}$/.test(value) && Number.isFinite(dateObject(value).getTime()) && dateObject(value).toISOString().slice(0, 10) === value;
   const validTime = (value) => /^([01]\d|2[0-3]):[0-5]\d$/.test(value);
@@ -266,6 +281,7 @@
     return freshState();
   }
   function upgrade(value) {
+    value.inviteReplies = value.inviteReplies && typeof value.inviteReplies === 'object' && !Array.isArray(value.inviteReplies) ? Object.fromEntries(Object.entries(value.inviteReplies).filter(([, reply]) => reply && ['accepted', 'declined'].includes(reply.status) && Number.isFinite(reply.respondedAt))) : {};
     delete value.picked;
     delete value.accounts;
     value.roles = value.roles || {};
@@ -1046,7 +1062,7 @@
     else if (action === 'job-applicants') { ui.employerTab = 'applications'; ui.applicantJob = id; renderEmployer(); $('#employer-applications-tab').focus(); }
     else if (action === 'pause-job') { const job = jobById(id); if (job) { job.status = job.status === 'active' ? 'paused' : 'active'; persist(); renderAll(); toast(job.status === 'paused' ? 'Зарыг түр зогсоолоо.' : 'Зарыг дахин нээлээ.'); } }
     else if (action === 'reset') showPanel(`<h2 id="panel-title" class="panel-heading">Өгөгдлийг шинэчлэх үү?</h2><p class="panel-subtitle">Энэ хөтөч дээрх хадгалсан ажил, хүсэлт болон таны нэмсэн заруудыг арилгаж, анхны жишээ заруудыг сэргээнэ.</p><div class="form-actions"><button class="button button-outline" data-action="close">Болих</button><button class="button button-dark" data-action="confirm-reset">Шинээр эхлэх</button></div>`);
-    else if (action === 'confirm-reset') { const { signedIn, role, roles, userId, profile: { name, contact } } = state; state = freshState(); Object.assign(state, { signedIn, role, roles, userId }); Object.assign(state.profile, { name, contact }); ui.category = ''; ui.district = ''; ui.savedOnly = false; ui.limit = 3; ui.applicantJob = ''; ui.employerTab = 'jobs'; persist(); renderAll(); navigate('jobs'); toast('Туршилтын өгөгдлийг шинэчиллээ.'); }
+    else if (action === 'confirm-reset') { const { signedIn, role, roles, userId, inviteReplies, profile: { name, contact } } = state; state = freshState(); Object.assign(state, { signedIn, role, roles, userId, inviteReplies }); Object.assign(state.profile, { name, contact }); ui.category = ''; ui.district = ''; ui.savedOnly = false; ui.limit = 3; ui.applicantJob = ''; ui.employerTab = 'jobs'; persist(); renderAll(); navigate('jobs'); toast('Туршилтын өгөгдлийг шинэчиллээ.'); }
   });
   document.addEventListener('submit', (event) => {
     if (event.target.id === 'search-form') { event.preventDefault(); const data = new FormData(event.target); ui.category = data.get('category'); ui.district = data.get('district'); ui.limit = 3; renderBrowse(); $('#jobs').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
