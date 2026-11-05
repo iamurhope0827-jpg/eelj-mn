@@ -120,8 +120,8 @@
     try {
       const { fs, db } = await firestore();
       await fs.updateDoc(fs.doc(db, 'invites', id), { status: reply.status, respondedAt: reply.respondedAt });
-      reply.synced = true; persist(); return true;
-    } catch { return false; }
+      reply.synced = true; delete reply.error; persist(); return true;
+    } catch (error) { reply.error = String(error?.code || error?.message || 'unknown').slice(0, 80); persist(); return false; }
   }
   async function respondInvite(id, status) {
     const item = inbox.find((value) => value.id === id);
@@ -144,19 +144,32 @@
       <div class="detail-pay"><div><span>Цагийн хөлс</span><strong>${money(Number(job.pay) || 0)} <small>/ цаг</small></strong></div>${hrs ? `<div class="total-pay">${hrs} цагийн ээлж<strong>${money(Math.round((Number(job.pay) || 0) * hrs))}</strong></div>` : ''}</div>
       <div class="detail-grid"><div>${icon('calendar')}<div><span>Ажлын өдөр</span><strong>${escape(days)}</strong></div></div><div>${icon('clock')}<div><span>Ажлын цаг</span><strong>${escape(job.start)} – ${escape(job.end)}</strong></div></div><div>${icon('pin')}<div><span>Байршил</span><strong>${escape(job.district)}</strong>${job.address ? `<p>${escape(job.address)}</p>` : ''}</div></div></div>
       <div class="detail-block"><h3>Ажил олгогчийн мессеж</h3><p class="invite-card-message">${escape(item.message)}</p></div>
-      ${status === 'pending' ? `<div class="form-actions"><button class="button button-outline" data-action="invite-decline" data-id="${escape(id)}">Татгалзах</button><button class="button button-dark" data-action="invite-accept" data-id="${escape(id)}">Зөвшөөрөх${icon('check')}</button></div>` : `<p class="invite-answered" data-invite="${escape(id)}">${icon(status === 'accepted' ? 'check' : 'close')}Та энэ урилгыг ${status === 'accepted' ? 'зөвшөөрсөн' : 'татгалзсан'} байна. ${state.inviteReplies[id]?.synced === false ? 'Хариу ажил олгогч руу илгээгдэхийг хүлээж байна.' : 'Ажил олгогч таны хариуг харж байна.'}</p>`}`, '[data-action="invite-accept"]');
+      ${status === 'pending' ? `<div class="form-actions"><button class="button button-outline" data-action="invite-decline" data-id="${escape(id)}">Татгалзах</button><button class="button button-dark" data-action="invite-accept" data-id="${escape(id)}">Зөвшөөрөх${icon('check')}</button></div>` : `<p class="invite-answered" data-invite="${escape(id)}">${icon(status === 'accepted' ? 'check' : 'close')}Та энэ урилгыг ${status === 'accepted' ? 'зөвшөөрсөн' : 'татгалзсан'} байна. ${state.inviteReplies[id]?.synced === false ? `Хариу ажил олгогч руу илгээгдэхийг хүлээж байна${state.inviteReplies[id]?.error ? ` (алдаа: ${escape(state.inviteReplies[id].error)})` : ''}.` : 'Ажил олгогч таны хариуг харж байна.'}</p>`}`, '[data-action="invite-accept"]');
     $('#panel').classList.add('job-detail-dialog');
   }
-  let sentStatus = {};
+  let sentStatus = {}, sentOther = [];
   async function loadSentInvites() {
-    if (!state.signedIn || !FIREBASE_CONFIG.apiKey || !state.invites.some((item) => item.remoteId)) return;
+    if (!state.signedIn || !FIREBASE_CONFIG.apiKey) return;
     try {
       const { auth, fs, db } = await firestore();
       const uid = auth.currentUser?.uid; if (!uid) return;
       const snap = await fs.getDocs(fs.query(fs.collection(db, 'invites'), fs.where('employerId', '==', uid)));
-      sentStatus = Object.fromEntries(snap.docs.map((item) => [item.id, { status: inviteStatus(item.data().status), respondedAt: item.data().respondedAt || 0 }]));
-      renderEmployer();
-    } catch { /* Keep the last known statuses offline. */ }
+      const docs = snap.docs.map((item) => ({ remoteId: item.id, ...item.data() }));
+      const used = new Set(); let changed = false;
+      sentStatus = {};
+      state.invites.filter((item) => item.real).forEach((item) => {
+        const doc = docs.find((d) => d.remoteId === item.remoteId) || docs.find((d) => d.localId === item.id) || docs.find((d) => d.seekerId === item.seekerId && d.createdAt === item.createdAt);
+        if (!doc) return;
+        used.add(doc.remoteId);
+        sentStatus[item.id] = { status: inviteStatus(doc.status), respondedAt: doc.respondedAt || 0 };
+        if (item.remoteId !== doc.remoteId) { item.remoteId = doc.remoteId; changed = true; }
+        if (!item.name && string(doc.seekerName, 80) && doc.seekerName) { item.name = doc.seekerName; changed = true; }
+      });
+      sentOther = docs.filter((d) => !used.has(d.remoteId) && d.job);
+      if (changed) persist();
+      ui.sentError = '';
+    } catch (error) { ui.sentError = error?.code || error?.message || 'unknown'; }
+    renderEmployer();
   }
   async function loadInbox() {
     if (!state.signedIn || !FIREBASE_CONFIG.apiKey) return;
@@ -429,10 +442,11 @@
         return `<article class="seeker-row${picked ? ' is-picked' : ''}"><div class="seeker-who"><span class="seeker-avatar" aria-hidden="true">${escape(person.name.slice(0, 1))}</span><div><h3>${escape(person.name)}${person.id === state.userId ? ' <small class="muted">(та)</small>' : ''}</h3><p class="small muted">${seekerSchool(person)}</p>${person.real ? `<p class="seeker-real">${icon('check')}Бүртгэлтэй ажил горилогч</p>` : `<p class="applicant-contact">${escape(person.contact)} · жишээ</p>`}</div></div><div class="seeker-when">${seekerWhen(person)}<strong>${hoursText(person.from, person.to)}</strong>${person.district || person.likes.length ? `<p class="small muted">${person.district ? `${icon('pin')}${escape(person.district)}` : ''}${person.district && person.likes.length ? ' · ' : ''}${person.likes.map((key) => escape(categories[key])).join(', ')}</p>` : ''}</div><div class="seeker-about"><p class="applicant-note">${escape(person.bio || 'Танилцуулга бичээгүй.')}</p><p class="seeker-fit">${fits.length ? `Таны ${fits.length} зарт таарна: ${fits.slice(0, 2).map((item) => escape(item.title)).join(', ')}${fits.length > 2 ? '…' : ''}` : 'Одоогийн заруудын цагт таарахгүй'}</p>${picked ? `<p class="seeker-invited">${icon('check')}Мэдэгдэл илгээсэн: ${sent.map((item) => escape(item.title)).join(', ')}</p>` : ''}</div><div class="seeker-actions"><button class="button ${picked ? 'button-soft' : 'button-dark'}" data-action="pick-seeker" data-id="${escape(person.id)}" aria-haspopup="dialog">${picked ? `${icon('check')}Урьсан` : `Сонгох${icon('plus')}`}</button></div></article>`;
       }).join('') + (list.length > ui.seekLimit ? `<div class="load-more-wrap seek-more"><button class="button button-outline" data-action="seek-more">Бусад ажил хайгчийг харах${icon('down')}</button><p class="small muted">${list.length}-аас ${ui.seekLimit}-ыг харуулж байна</p></div>` : '') : empty('Энэ хуваарьт таарах хүн алга', 'Өдөр, цагаа багасгаж эсвэл өөр зар сонгож үзээрэй.', 'Шүүлт арилгах', 'seek-reset', 'user'));
     } else if (ui.employerTab === 'invites') {
-      const rows = [...state.invites].sort((a, b) => b.createdAt - a.createdAt).map((item) => ({ item, job: jobById(item.jobId), status: item.remoteId ? sentStatus[item.remoteId]?.status || 'pending' : 'pending', at: item.remoteId ? sentStatus[item.remoteId]?.respondedAt : 0 }));
+      const local = [...state.invites].map((item) => { const job = jobById(item.jobId); return { id: item.id, name: item.name || seekerById(item.seekerId)?.name || 'Ажил горилогч', real: item.real, title: job ? job.title : 'Устгасан зар', when: job ? `${dayRange(job)} · ${timeLabel(job)}` : '', createdAt: item.createdAt, status: sentStatus[item.id]?.status || 'pending', at: sentStatus[item.id]?.respondedAt || 0, cancel: true }; });
+      const remote = sentOther.map((d) => ({ id: d.remoteId, name: d.seekerName || seekerById(d.seekerId)?.name || 'Ажил горилогч', real: true, title: d.job.title, when: validDate(d.job.date) ? `${shortDate(d.job.date)} · ${d.job.start} – ${d.job.end}` : '', createdAt: d.createdAt || 0, status: inviteStatus(d.status), at: d.respondedAt || 0, cancel: false }));
+      const rows = [...local, ...remote].sort((a, b) => b.createdAt - a.createdAt);
       const count = (value) => rows.filter((row) => row.status === value).length;
-      const who = (item) => item.name || seekerById(item.seekerId)?.name || 'Ажил горилогч';
-      $('#employer-panel').innerHTML = rows.length ? `<div class="sent-summary">${['pending', 'accepted', 'declined'].map((value) => `<span class="sent-chip is-${value}"><strong>${count(value)}</strong>${inviteStates[value][0]}</span>`).join('')}<button class="button button-quiet" data-action="sent-refresh">${icon('clock')}Шинэчлэх</button></div>` + rows.map(({ item, job, status, at }) => `<article class="sent-invite is-${status}"><div class="seeker-who"><span class="seeker-avatar" aria-hidden="true">${escape(who(item).slice(0, 1))}</span><div><h3>${escape(who(item))}</h3><p class="small muted">${item.real ? 'Бүртгэлтэй ажил горилогч' : 'Жишээ профайл'}</p></div></div><div><p><strong>${escape(job ? job.title : 'Устгасан зар')}</strong></p><p class="small muted">${job ? `${dayRange(job)} · ${timeLabel(job)}` : ''}</p></div><div class="sent-when"><p class="small muted">Илгээсэн ${shortDate(new Date(item.createdAt).toISOString().slice(0, 10))}</p>${at ? `<p class="small muted">Хариулсан ${shortDate(new Date(at).toISOString().slice(0, 10))}</p>` : ''}</div><div class="sent-status">${inviteBadge(status)}${status === 'pending' ? `<button class="text-button" data-action="invite-cancel" data-id="${escape(item.id)}">Цуцлах</button>` : ''}</div></article>`).join('') + (rows.some((row) => !row.item.real) ? '<p class="local-note">Жишээ профайлууд хариу өгөхгүй тул “Хүлээгдэж байна” хэвээр үлдэнэ.</p>' : '') : empty('Урилга илгээгээгүй байна', '“Ажил хайгчид” хэсгээс тохирох хүнээ сонгоод ажилд урина уу.', 'Ажил хайгчид', 'seekers-tab', 'user');
+      $('#employer-panel').innerHTML = rows.length ? `<div class="sent-summary">${['pending', 'accepted', 'declined'].map((value) => `<span class="sent-chip is-${value}"><strong>${count(value)}</strong>${inviteStates[value][0]}</span>`).join('')}<button class="button button-quiet" data-action="sent-refresh">${icon('clock')}Шинэчлэх</button></div>` + (ui.sentError ? `<p class="sent-error">${icon('close')}Хариуг Firebase-ээс уншиж чадсангүй (${escape(ui.sentError)}). Firestore-ийн дүрэм ажил олгогчид өөрийн илгээсэн урилгыг унших эрх өгч байгаа эсэхийг шалгана уу.</p>` : '') + rows.map((row) => `<article class="sent-invite is-${row.status}"><div class="seeker-who"><span class="seeker-avatar" aria-hidden="true">${escape(row.name.slice(0, 1))}</span><div><h3>${escape(row.name)}</h3><p class="small muted">${row.real ? 'Бүртгэлтэй ажил горилогч' : 'Жишээ профайл'}</p></div></div><div><p><strong>${escape(row.title)}</strong></p><p class="small muted">${escape(row.when)}</p></div><div class="sent-when"><p class="small muted">Илгээсэн ${shortDate(new Date(row.createdAt).toISOString().slice(0, 10))}</p>${row.at ? `<p class="small muted">Хариулсан ${shortDate(new Date(row.at).toISOString().slice(0, 10))}</p>` : ''}</div><div class="sent-status">${inviteBadge(row.status)}${row.status === 'pending' && row.cancel ? `<button class="text-button" data-action="invite-cancel" data-id="${escape(row.id)}">Цуцлах</button>` : ''}</div></article>`).join('') + (rows.some((row) => !row.real) ? '<p class="local-note">Жишээ профайлууд хариу өгөхгүй тул “Хүлээгдэж байна” хэвээр үлдэнэ.</p>' : '') : empty('Урилга илгээгээгүй байна', '“Ажил хайгчид” хэсгээс тохирох хүнээ сонгоод ажилд урина уу.', 'Ажил хайгчид', 'seekers-tab', 'user');
     } else {
       const apps = [...state.applications].filter((app) => !ui.applicantJob || app.jobId === ui.applicantJob).sort((a, b) => b.createdAt - a.createdAt);
       $('#employer-panel').innerHTML = `<label class="applicant-filter">Зараар шүүх<select id="applicant-job-filter"><option value="">Бүх зар</option>${state.jobs.map((job) => `<option value="${escape(job.id)}" ${ui.applicantJob === job.id ? 'selected' : ''}>${escape(job.title)}</option>`).join('')}</select></label>` + (apps.length ? apps.map((app) => `<article class="applicant-row"><div><h3>${escape(app.name)}</h3><p class="applicant-contact">${escape(app.contact)}</p><p class="small muted">${new Date(app.createdAt).toLocaleDateString('mn-MN', { timeZone: 'Asia/Ulaanbaatar' })} · Туршилтын хүсэлт</p>${app.availability ? `<div class="avail-line">${availSummary(app.availability)}</div>` : ''}</div><div><strong>${escape(app.snapshot.title)}</strong><p class="small muted">${whenLabel(app.snapshot)} · ${timeLabel(app.snapshot)}</p><p class="applicant-note">${escape(app.note || 'Нэмэлт танилцуулга бичээгүй.')}</p></div><label class="status-control">Хүсэлтийн төлөв<select data-application="${escape(app.id)}" ${app.status === 'withdrawn' ? 'disabled' : ''}>${Object.entries(statusNames).filter(([key]) => key !== 'withdrawn' || app.status === 'withdrawn').map(([key, label]) => `<option value="${key}" ${app.status === key ? 'selected' : ''}>${label}</option>`).join('')}</select><span>Ажил горилогчийн хэсэгт мөн харагдана.</span></label></article>`).join('') : empty('Хүсэлт хараахан ирээгүй', 'Ажил горилогчийн самбараас жишээ ажилд хүсэлт илгээгээд энд буцаж ирээрэй.', 'Ажил горилогчийн самбар руу', 'student', 'user'));
@@ -781,10 +795,10 @@
     persist(); renderAll();
     if (person.real) {
       const snapshot = { title: job.title, company: job.company, district: job.district, address: job.address, date: job.date, endDate: job.endDate || '', start: job.start, end: job.end, pay: job.pay };
-      firestore().then(({ auth, fs, db }) => fs.addDoc(fs.collection(db, 'invites'), { employerId: auth.currentUser.uid, employerName: state.profile.name, seekerId: person.id, status: 'pending', job: snapshot, message: `${invite.message}
+      firestore().then(({ auth, fs, db }) => fs.addDoc(fs.collection(db, 'invites'), { employerId: auth.currentUser.uid, employerName: state.profile.name, seekerId: person.id, seekerName: person.name, localId: invite.id, status: 'pending', job: snapshot, message: `${invite.message}
 
 Холбоо барих: ${state.profile.contact}`.slice(0, 600), createdAt: invite.createdAt }))
-        .then((ref) => { invite.remoteId = ref.id; persist(); })
+        .then((ref) => { invite.remoteId = ref.id; const current = state.invites.find((value) => value.id === invite.id); if (current) current.remoteId = ref.id; persist(); })
         .catch(() => toast('Урилгыг илгээж чадсангүй. Интернэтээ шалгаад дахин оролдоно уу.'));
     }
     showPanel(`<div class="success-icon">${icon('check')}</div><h2 id="panel-title" class="panel-heading">Мэдэгдэл илгээгдлээ</h2><p class="panel-subtitle">${person.real ? `${escape(person.name)} урилгаа өөрийн бүртгэлээс харна.` : `${escape(person.name)} таны урилгыг хүлээн авлаа (жишээ).`}</p><div class="confirmation-details"><strong>${escape(job.title)}</strong><span>${whenLabel(job)}</span><span>${timeLabel(job)} · ${escape(job.district)}</span><span>${money(job.pay)} / цаг</span></div><blockquote class="invite-quote">${escape(invite.message)}</blockquote><div class="form-actions"><button class="button button-outline" data-action="pick-seeker" data-id="${escape(person.id)}">Өөр зарт урих</button><button class="button button-dark" data-action="close">Болсон${icon('check')}</button></div>${person.real ? '' : '<p class="local-note">Жишээ профайл тул бодит мэдэгдэл илгээгдээгүй.</p>'}`);

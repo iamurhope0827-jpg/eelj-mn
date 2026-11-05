@@ -988,3 +988,5 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
 .sent-status{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
 .sent-status .text-button{font-size:12px}
 @media(max-width:760px){.sent-invite{grid-template-columns:1fr auto}.sent-invite>div:nth-child(2),.sent-invite .sent-when{grid-column:1}.sent-status{grid-column:2;grid-row:1}.sent-summary .button{margin-left:0}}
+.sent-error{display:flex;align-items:flex-start;gap:8px;margin:0 0 8px;padding:12px 14px;border-radius:var(--radius);background:var(--b-red);color:var(--b-red-t);font-size:13px;line-height:1.5}
+.sent-error .icon{width:15px;height:15px;flex:none;margin-top:2px}
