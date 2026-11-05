@@ -894,3 +894,31 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
 @keyframes splash-out{0%,40%{opacity:1;visibility:visible}100%{opacity:0;visibility:hidden}}
 @keyframes splash-mark{0%{transform:scale(.92)}40%,100%{transform:scale(1)}}
 @media(prefers-reduced-motion:reduce){.splash-mark{animation:none}}
+
+/* ===== Profile page ===== */
+.menu-item.menu-head{height:auto;padding:10px;gap:12px;margin-bottom:2px;color:var(--ink)}
+.menu-item.menu-head>.icon{margin-left:auto;transform:rotate(-90deg);color:var(--faint)}
+.menu-head-link{font-size:11px;font-weight:500;color:var(--teal-text)}
+.profile-layout{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:20px;align-items:start}
+.profile-card{padding:28px;border-radius:var(--radius-lg);background:var(--surface);box-shadow:var(--shadow)}
+.profile-id{display:flex;align-items:center;gap:18px}
+.avatar-xl{width:72px;height:72px;font-size:32px}
+.profile-id h2{font-size:28px;line-height:1.15;overflow-wrap:anywhere}
+.profile-id p{margin-top:2px;font-size:14px;color:var(--muted);overflow-wrap:anywhere}
+.profile-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.profile-chips .badge .icon{width:12px;height:12px}
+.profile-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:26px 0 0;padding:20px 0;border-block:1px solid var(--line)}
+.profile-stats dt{font-size:12px;color:var(--muted)}
+.profile-stats dd{margin:4px 0 0;font-family:var(--mono);font-size:26px;font-weight:500;color:var(--ink)}
+.profile-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.profile-actions .button{height:38px;font-size:13px}
+.profile-card-head h2{font-size:24px}
+.profile-card-head p{margin:6px 0 20px}
+.profile-avail .avail-cal>*{max-width:none}
+.profile-avail [data-action=avail-open]{pointer-events:none}
+.profile-avail [data-action=avail-open] .icon:last-child{display:none}
+.profile-avail-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.profile-avail-foot p{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);color:var(--ink)}
+.profile-avail-foot .button{height:42px}
+@media(max-width:900px){.profile-layout{grid-template-columns:1fr}}
+@media(max-width:480px){.profile-card{padding:20px}.avatar-xl{width:56px;height:56px;font-size:24px}.profile-id h2{font-size:22px}.profile-avail-foot .button{flex:1 1 100%}}

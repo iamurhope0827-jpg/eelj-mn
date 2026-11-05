@@ -26,8 +26,8 @@
       if (page === 'landing') document.querySelectorAll('meta[name=theme-color]').forEach(function (m) { m.content = '#0B0E11'; });
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=firebase1-picked1">
-  <script src="app.js?v=firebase1-picked1" defer></script>
+  <link rel="stylesheet" href="styles.css?v=profile1">
+  <script src="app.js?v=profile1" defer></script>
 </head>
 <body>
   <div class="reload-splash" aria-hidden="true">
@@ -229,6 +229,18 @@
       <div class="employer-notice"><span class="demo-dot" aria-hidden="true"></span><p>Туршилтын горим · Өөрчлөлтүүд зөвхөн энэ хөтөч дээр харагдана.</p></div>
       <div class="workspace-tabs" role="tablist" aria-label="Ажил олгогчийн хэсгүүд"><button id="employer-jobs-tab" role="tab" aria-selected="true" aria-controls="employer-panel" tabindex="0" data-action="employer-tab" data-tab="jobs">Миний зарууд <span id="employer-job-count"></span></button><button id="employer-seekers-tab" role="tab" aria-selected="false" aria-controls="employer-panel" tabindex="-1" data-action="employer-tab" data-tab="seekers">Ажил хайгчид <span id="employer-seekers-count"></span></button><button id="employer-applications-tab" role="tab" aria-selected="false" aria-controls="employer-panel" tabindex="-1" data-action="employer-tab" data-tab="applications">Ирсэн хүсэлтүүд <span id="employer-application-count"></span></button></div>
       <div id="employer-panel" role="tabpanel" aria-labelledby="employer-jobs-tab"></div>
+    </section>
+
+    <section id="profile-view" class="view workspace content-width" hidden aria-labelledby="profile-title">
+      <div class="workspace-heading"><div><a class="back-link" href="#jobs"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg>Ажлын зарууд руу</a><h1 id="profile-title">Миний профайл</h1><p class="muted">Өөрийн мэдээлэл болон ажиллах боломжтой өдөр, цагаа энд тохируулна.</p></div></div>
+      <div class="profile-layout">
+        <div class="profile-card" id="profile-info"></div>
+        <div class="profile-card profile-avail" id="profile-avail-card">
+          <div class="profile-card-head"><h2>Завтай өдрүүд</h2><p class="muted small">Ажиллах боломжтой өдрүүдээ календараас сонгож, цагаа тохируул. Ажлын зарууд үүнд тааруулж шүүгдэнэ.</p></div>
+          <div id="profile-avail"></div>
+          <div class="profile-avail-foot" id="profile-avail-foot"></div>
+        </div>
+      </div>
     </section>
   </main>
 

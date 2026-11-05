@@ -245,7 +245,7 @@
   }
   function refocus(selector) { if (selector) document.querySelector(selector)?.focus({ preventScroll: true }); }
   function setAvail(scope, a, focus) {
-    if (scope === 'me') { delete state.profile.days; Object.assign(state.profile, a); ui.limit = 3; persist(); renderBrowse(); }
+    if (scope === 'me') { delete state.profile.days; Object.assign(state.profile, a); ui.limit = 3; persist(); renderBrowse(); renderProfile(); }
     else { ui.seekDates = a.dates; ui.seekFrom = a.from; ui.seekTo = a.to; ui.seekLimit = 10; renderEmployer(); }
     refocus(focus);
   }
@@ -265,7 +265,7 @@
     $('#district').value = ui.district;
     $('#sort').value = ui.sort;
     const mine = myAvail();
-    $('#my-avail').innerHTML = availPicker('me', ['Завтай өдөр', 'Завтай цаг']);
+    $('#my-avail').innerHTML = ui.view === 'profile' ? '' : availPicker('me', ['Завтай өдөр', 'Завтай цаг']);
     $('#active-filters').hidden = !ui.category && !ui.district && !hasAvail(mine);
     $('#active-filters').innerHTML = `${ui.category ? `<span class="filter-chip">${escape(categories[ui.category])}</span>` : ''}${ui.district ? `<span class="filter-chip">${escape(ui.district)}</span>` : ''}${hasAvail(mine) ? `<span class="filter-chip">${icon('clock')}${mine.dates.length ? rangesText(mine.dates) : 'Өдөр хамаагүй'} · ${hoursText(mine.from, mine.to)}</span>` : ''}<button class="text-button" data-action="clear-filters">Шүүлт арилгах</button>`;
     $('#job-list').innerHTML = jobs.length ? jobs.slice(0, ui.limit).map(jobRow).join('') : empty(ui.savedOnly ? 'Хадгалсан ажил алга' : 'Энэ шүүлтээр зар олдсонгүй', ui.savedOnly ? 'Сонирхсон ажлынхаа “Хадгалах” товчийг дараарай. Шүүлт сонгосон бол арилгаж үзээрэй.' : (hasAvail(myAvail()) ? 'Таны завтай өдөр, цагт багтах зар алга. Өөр өдөр, цаг нэмж үзээрэй.' : 'Ажлын төрөл эсвэл дүүргээ өөрчилж үзээрэй. Бүх зар нь туршилтын жишээ мэдээлэл.'), ui.savedOnly ? 'Бүх зарыг харах' : 'Шүүлт арилгах', 'reset-filters', 'bookmark');
@@ -314,8 +314,25 @@
   }
 
   const employerTabs = ['jobs', 'seekers', 'applications'];
-  function renderAll() { renderBrowse(); renderApplications(); renderEmployer(); renderHeader(); renderLanding(); showStorageMessage(); }
+  function renderAll() { renderBrowse(); renderApplications(); renderEmployer(); renderHeader(); renderLanding(); renderProfile(); showStorageMessage(); }
   const roleNames = { student: 'Оюутан', employer: 'Ажил олгогч' };
+  // Profile page: own details plus the same "me" availability the job search uses.
+  // The "me" picker renders in one place at a time (here or the jobs hero) so ids never clash.
+  function renderProfile() {
+    if (ui.view !== 'profile' || !state.signedIn) { $('#profile-avail').innerHTML = ''; return; }
+    const name = state.profile.name || 'Зочин', employer = state.role === 'employer', mine = myAvail();
+    const sent = state.applications.filter((app) => app.status !== 'withdrawn').length;
+    const saved = state.saved.filter((id) => jobById(id)).length;
+    $('#profile-info').innerHTML = `<div class="profile-id"><span class="avatar avatar-xl" aria-hidden="true">${escape(name.trim().charAt(0).toUpperCase())}</span><div><h2>${escape(name)}</h2><p>${escape(state.profile.contact)}</p><div class="profile-chips"><span class="role-chip" data-role="${state.role}">${roleNames[state.role]}</span>${ui.verified ? `<span class="badge badge-accepted">${icon('check')}И-мэйл баталгаажсан</span>` : '<span class="badge badge-received">И-мэйл баталгаажаагүй</span>'}</div></div></div>
+      <dl class="profile-stats"><div><dt>Илгээсэн хүсэлт</dt><dd>${sent}</dd></div><div><dt>Хадгалсан ажил</dt><dd>${saved}</dd></div><div><dt>Завтай өдөр</dt><dd>${mine.dates.length}</dd></div></dl>
+      <div class="profile-actions">${ui.verified ? '' : `<button class="button button-outline" data-action="verify-email">${icon('check')}И-мэйл баталгаажуулах</button>`}${ui.hasPassword ? `<button class="button button-outline" data-action="change-password">${icon('edit')}Нууц үг солих</button>` : ''}<button class="button button-outline" data-action="${employer ? 'student' : 'employer'}">${icon('swap')}${employer ? 'Оюутан болох' : 'Ажил олгогч болох'}</button></div>`;
+    $('#profile-avail-card').hidden = employer;
+    if (employer) { $('#profile-avail').innerHTML = ''; return; }
+    const open = ui.availOpen.me; ui.availOpen.me = true;
+    $('#profile-avail').innerHTML = availPicker('me', ['Сонгосон өдрүүд', 'Завтай цаг']);
+    ui.availOpen.me = open;
+    $('#profile-avail-foot').innerHTML = `<p class="small">${hasAvail(mine) ? `${icon('clock')}${mine.dates.length ? rangesText(mine.dates) : 'Өдөр хамаагүй'} · ${hoursText(mine.from, mine.to)}` : 'Одоогоор завтай өдөр сонгоогүй байна.'}</p><button class="button button-dark" data-action="browse">Тохирох ажлуудыг харах${icon('arrow')}</button>`;
+  }
   function renderHeader() {
     const signedIn = state.signedIn;
     $('#public-header').hidden = signedIn;
@@ -336,7 +353,7 @@
     $('#user-name').textContent = name;
     $('#user-role').textContent = roleNames[state.role];
     $('#user-button').setAttribute('aria-label', `${name} · ${roleNames[state.role]} — профайл цэс`);
-    $('#user-dropdown').innerHTML = `<div class="menu-head"><span class="avatar avatar-lg" aria-hidden="true">${escape(name.trim().charAt(0).toUpperCase())}</span><div><strong>${escape(name)}</strong><small>${escape(state.profile.contact || roleNames[state.role])}</small></div></div>
+    $('#user-dropdown').innerHTML = `<a class="menu-item menu-head" href="#profile" title="Миний профайл"><span class="avatar avatar-lg" aria-hidden="true">${escape(name.trim().charAt(0).toUpperCase())}</span><div><strong>${escape(name)}</strong><small>${escape(state.profile.contact || roleNames[state.role])}</small><span class="menu-head-link">Профайл харах</span></div>${icon('chevron')}</a>
       <div class="menu-group">${employer ? `<a class="menu-item" href="#employer">${icon('pay')}Ажил олгогчийн самбар</a>` : `<a class="menu-item" href="#applications">${icon('clock')}Миний хүсэлтүүд${sent ? `<span class="nav-count">${sent}</span>` : ''}</a><button class="menu-item" data-action="saved-menu">${icon('bookmark')}Хадгалсан ажлууд</button>`}
       <button class="menu-item" data-action="${employer ? 'student' : 'employer'}">${icon('swap')}${employer ? 'Оюутан болох' : 'Ажил олгогч болох'}</button></div>
       <div class="menu-group">${ui.verified ? '' : `<button class="menu-item menu-warn" data-action="verify-email">${icon('check')}И-мэйл баталгаажуулах</button>`}${ui.hasPassword ? `<button class="menu-item" data-action="change-password">${icon('edit')}Нууц үг солих</button>` : ''}</div>
@@ -385,7 +402,7 @@
     if (!state.signedIn) {
       ui.view = 'landing';
       $('#landing-view').hidden = false;
-      ['#browse-view', '#applications-view', '#employer-view'].forEach((id) => { $(id).hidden = true; });
+      ['#browse-view', '#applications-view', '#employer-view', '#profile-view'].forEach((id) => { $(id).hidden = true; });
       renderHeader();
       document.title = 'Ээлж — Оюутны хуваарьт таарах ажлууд';
       const target = hash && document.getElementById(hash);
@@ -393,14 +410,17 @@
       else window.scrollTo({ top: 0, behavior: 'instant' });
       return;
     }
-    const view = hash === 'applications' ? 'applications' : hash === 'employer' ? 'employer' : 'jobs';
+    const view = ['applications', 'employer', 'profile'].includes(hash) ? hash : 'jobs';
+    const moved = ui.view !== view;
     ui.view = view;
     $('#landing-view').hidden = true;
     $('#browse-view').hidden = view !== 'jobs';
     $('#applications-view').hidden = view !== 'applications';
     $('#employer-view').hidden = view !== 'employer';
+    $('#profile-view').hidden = view !== 'profile';
+    if (moved) { renderBrowse(); renderProfile(); }
     renderHeader();
-    document.title = `${view === 'applications' ? 'Миний хүсэлтүүд' : view === 'employer' ? 'Ажил олгогчийн самбар' : 'Оюутны хуваарьт таарах ажлууд'} — Ээлж`;
+    document.title = `${view === 'applications' ? 'Миний хүсэлтүүд' : view === 'employer' ? 'Ажил олгогчийн самбар' : view === 'profile' ? 'Миний профайл' : 'Оюутны хуваарьт таарах ажлууд'} — Ээлж`;
     const scrollTarget = hash === 'guide' || hash === 'faq' ? hash : ui.scrollTo;
     ui.scrollTo = '';
     if (scrollTarget) requestAnimationFrame(() => document.getElementById(scrollTarget)?.scrollIntoView());
@@ -834,9 +854,9 @@
     else if (action === 'cal-clear') { ui.calRanges = []; ui.calPending = ''; writeRanges(button.closest('form')); }
     else if (action === 'cal-break') { const form = button.closest('form'); ui.calBreak = !ui.calBreak; if (!ui.calBreak) { const days = calDays(); ui.calRanges = days.length ? [[days[0], days[days.length - 1]]] : []; } ui.calPending = ''; writeRanges(form); }
     else if (action === 'avail-clear') { ui.availMonth[id] = ''; setAvail(id, { dates: [], from: '', to: '' }, `[data-action="avail-open"][data-id="${id}"]`); }
-    else if (action === 'avail-open') { ui.availOpen[id] = !ui.availOpen[id]; if (id === 'me') renderBrowse(); else renderEmployer(); refocus(`[data-action="avail-open"][data-id="${id}"]`); }
+    else if (action === 'avail-open') { ui.availOpen[id] = !ui.availOpen[id]; if (id === 'me') { renderBrowse(); renderProfile(); } else renderEmployer(); refocus(`[data-action="avail-open"][data-id="${id}"]`); }
     else if (action === 'avail-day') { const [scope, date] = id.split(':'); const a = availOf(scope); a.dates = a.dates.includes(date) ? a.dates.filter((d) => d !== date) : [...a.dates, date].sort(); setAvail(scope, a, `[data-action="avail-day"][data-id="${id}"]`); }
-    else if (action === 'avail-month') { const [scope, step] = id.split(':'); const [y, m] = ui.availMonth[scope].split('-').map(Number); ui.availMonth[scope] = new Date(Date.UTC(y, m - 1 + Number(step), 1)).toISOString().slice(0, 7); if (scope === 'me') renderBrowse(); else renderEmployer(); refocus(`[data-action="avail-month"][data-id="${id}"]:not(:disabled)`) ; }
+    else if (action === 'avail-month') { const [scope, step] = id.split(':'); const [y, m] = ui.availMonth[scope].split('-').map(Number); ui.availMonth[scope] = new Date(Date.UTC(y, m - 1 + Number(step), 1)).toISOString().slice(0, 7); if (scope === 'me') { renderBrowse(); renderProfile(); } else renderEmployer(); refocus(`[data-action="avail-month"][data-id="${id}"]:not(:disabled)`) ; }
     else if (action === 'seek-more') { ui.seekLimit += 10; renderEmployer(); }
     else if (action === 'pick-seeker') openInvite(id);
     else if (action === 'invite-cancel') { const item = state.invites.find((value) => value.id === id); if (item) { state.invites = state.invites.filter((value) => value.id !== id); persist(); renderAll(); openInvite(item.seekerId); toast('Урилгыг цуцаллаа.'); } }
