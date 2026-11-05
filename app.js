@@ -712,13 +712,17 @@
   }
   try { const savedPalette = localStorage.getItem(paletteKey); if (palettes.some((item) => item.id === savedPalette)) chosenPalette = savedPalette; } catch { /* Use the original palette. */ }
 
-  // The logo opens home once; a double-click reloads and plays the dot animation.
+  // Wait briefly so a double-click can cancel home navigation before reloading.
+  let logoClickTimer;
   document.addEventListener('click', (event) => {
     const logo = event.target.closest('a.wordmark');
     if (!logo || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
+    clearTimeout(logoClickTimer);
     if (event.detail >= 2) { location.reload(); return; }
-    navigate(logo.hash.slice(1) || 'top');
+    const home = logo.hash.slice(1) || 'top';
+    if (event.detail === 0) { navigate(home); return; }
+    logoClickTimer = setTimeout(() => navigate(home), 250);
   });
 
   document.addEventListener('click', (event) => {
@@ -818,7 +822,14 @@
   $('#panel').addEventListener('click', (event) => { if (event.target === $('#panel')) { const rect = $('#panel').getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) closePanel(); } });
   window.addEventListener('hashchange', route);
   window.addEventListener('storage', (event) => { if (event.key === KEY) { state = loadState(); renderAll(); route(); } });
+  const isPageReload = performance.getEntriesByType('navigation')[0]?.type === 'reload';
+  if (isPageReload) history.scrollRestoration = 'manual';
   state = loadState();
   renderAll(); route(); setupShowcase();
+  if (isPageReload) {
+    const showHeader = () => requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+    if (document.readyState === 'complete') showHeader();
+    else window.addEventListener('load', showHeader, { once: true });
+  }
   setTimeout(() => document.documentElement.classList.remove('is-reloading'), 1800);
 })();
