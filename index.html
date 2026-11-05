@@ -12,8 +12,22 @@
   <link rel="preload" href="assets/fonts/GeistMono-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/oswald/oswald-cyrillic-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <script>if (performance.getEntriesByType('navigation')[0]?.type === 'reload') document.documentElement.classList.add('is-reloading');</script>
-  <link rel="stylesheet" href="styles.css?v=logo-ink1">
-  <script src="app.js?v=logo-ink1" defer></script>
+  <script>
+    // Pick the page mode before the first paint so a reload never flashes the wrong theme or view.
+    (function () {
+      var root = document.documentElement, page = 'landing';
+      try {
+        var s = JSON.parse(localStorage.getItem('eelj.prototype.v1') || 'null');
+        if (s && s.signedIn === true && s.userId && Array.isArray(s.accounts) && s.accounts.some(function (a) { return a && a.id === s.userId; })) page = 'app';
+        var palette = localStorage.getItem('eelj.palette.v1');
+        if (page === 'app' && /^(ocean|sand|mono|classic|pastel)$/.test(palette || '')) root.dataset.palette = palette;
+      } catch (e) { /* Storage unavailable: show the homepage. */ }
+      root.dataset.page = page;
+      if (page === 'landing') document.querySelectorAll('meta[name=theme-color]').forEach(function (m) { m.content = '#0B0E11'; });
+    })();
+  </script>
+  <link rel="stylesheet" href="styles.css?v=noflash1">
+  <script src="app.js?v=noflash1" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Үндсэн хэсэгт очих</a>
@@ -32,7 +46,7 @@
     </div>
   </header>
 
-  <header class="site-header topbar topbar-app" id="app-header" hidden>
+  <header class="site-header topbar topbar-app" id="app-header">
     <div class="topbar-inner">
       <a class="wordmark" href="#jobs" aria-label="Ээлж — ажлын зарууд"><svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z"/><g class="logo-dots"><circle cx="32" cy="16" r="3.2" style="--dot-delay:192ms"/><circle cx="40" cy="16" r="3.2" style="--dot-delay:96ms"/><circle cx="48" cy="16" r="3.2" style="--dot-delay:0ms"/><circle cx="40" cy="24" r="3.2" style="--dot-delay:192ms"/><circle cx="48" cy="24" r="3.2" style="--dot-delay:96ms"/><circle cx="32" cy="32" r="3.2" style="--dot-delay:384ms"/><circle cx="48" cy="32" r="3.2" style="--dot-delay:192ms"/><circle cx="24" cy="40" r="3.2" style="--dot-delay:576ms"/><circle cx="16" cy="48" r="3.2" style="--dot-delay:768ms"/></g></svg><span>Ээлж</span></a>
       <span class="role-chip" id="role-chip"></span>
@@ -51,7 +65,7 @@
   <div id="storage-warning" class="storage-warning" role="status" hidden>Энэ хөтөч мэдээлэл хадгалах боломжгүй байна. Өөрчлөлтүүд хуудас нээлттэй байх хугацаанд ажиллана.</div>
 
   <main id="main" tabindex="-1">
-    <div id="landing-view" class="view" hidden>
+    <div id="landing-view" class="view">
       <section class="landing-hero" aria-labelledby="landing-title">
         <div class="hero-grid" aria-hidden="true"></div>
         <div class="landing-hero-inner content-width">
@@ -155,7 +169,7 @@
       </section>
     </div>
 
-    <div id="browse-view" class="view" hidden>
+    <div id="browse-view" class="view">
       <section class="sign-section hero" aria-labelledby="hero-title">
         <div class="hero-grid" aria-hidden="true"></div>
         <h1 id="hero-title">Өдрийн мэнд!<span id="greeting-name" class="greeting-name" hidden></span></h1>

@@ -864,3 +864,13 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
   .reveal-on .showcase-card{opacity:1;transform:none;transition:none}
   .scroll-cue .icon{animation:none}
 }
+
+/* First paint, before app.js runs: the inline <head> script sets data-page (and a saved palette),
+   so the right header, view and colors show immediately on reload. app.js keeps them in sync after. */
+.landing-hero .landing-stats{min-height:78px}
+:root[data-page=landing] #app-header,:root[data-page=landing] #browse-view,:root[data-page=app] #public-header,:root[data-page=app] #landing-view{display:none!important}
+:root[data-page=app][data-palette=ocean]{--bg:#CAF0F8;--surface:#FFFFFF;--ink:#03045E;color-scheme:light}
+:root[data-page=app][data-palette=sand]{--bg:#F5EBE0;--surface:#EDEDE9;--ink:#352B26;color-scheme:light}
+:root[data-page=app][data-palette=mono]{--bg:#FFFFFF;--surface:#FFFFFF;--ink:#000000;color-scheme:light}
+:root[data-page=app][data-palette=classic]{--bg:#FDF0D5;--surface:#FFFAEF;--ink:#003049;color-scheme:light}
+:root[data-page=app][data-palette=pastel]{--bg:#FFF5FA;--surface:#FFFFFF;--ink:#352C45;color-scheme:light}
