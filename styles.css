@@ -918,7 +918,22 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
 .profile-avail [data-action=avail-open]{pointer-events:none}
 .profile-avail [data-action=avail-open] .icon:last-child{display:none}
 .profile-avail-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
-.profile-avail-foot p{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);color:var(--ink)}
-.profile-avail-foot .button{height:42px}
 @media(max-width:900px){.profile-layout{grid-template-columns:1fr}}
-@media(max-width:480px){.profile-card{padding:20px}.avatar-xl{width:56px;height:56px;font-size:24px}.profile-id h2{font-size:22px}.profile-avail-foot .button{flex:1 1 100%}}
+@media(max-width:480px){.profile-card{padding:20px}.avatar-xl{width:56px;height:56px;font-size:24px}.profile-id h2{font-size:22px}}
+
+/* Profile: live availability preview (replaces the "matching jobs" button) */
+.profile-avail-foot{display:block}
+.avail-preview{display:grid;gap:12px}
+.avail-preview-label{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--muted)}
+.avail-preview-label .icon{width:14px;height:14px}
+.preview-row{grid-template-columns:minmax(0,1fr) auto;padding:14px 16px;border:0;border-radius:var(--radius-lg);background:var(--bg-2);box-shadow:inset 0 0 0 1px var(--line)}
+.preview-row .seeker-when{justify-items:end}
+.preview-row .seeker-when>strong{display:inline-flex;align-items:center;gap:5px}
+.preview-row .seeker-when .icon{width:13px;height:13px}
+.preview-dates{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.preview-dates li{display:inline-flex;align-items:baseline;gap:5px;height:28px;align-items:center;padding:0 10px;border-radius:999px;background:var(--accent);color:var(--accent-t);font-size:12px}
+.preview-dates b{font-family:var(--mono);font-weight:600}
+.preview-fit{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--teal-text)}
+.preview-fit .icon{width:14px;height:14px}
+.preview-empty{padding:16px;border-radius:var(--radius-lg);background:var(--bg-2);font-size:13px;color:var(--muted);text-align:center}
+@media(max-width:480px){.preview-row{grid-template-columns:1fr}.preview-row .seeker-when{justify-items:start}}

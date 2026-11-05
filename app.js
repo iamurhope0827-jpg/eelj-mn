@@ -331,7 +331,10 @@
     const open = ui.availOpen.me; ui.availOpen.me = true;
     $('#profile-avail').innerHTML = availPicker('me', ['Сонгосон өдрүүд', 'Завтай цаг']);
     ui.availOpen.me = open;
-    $('#profile-avail-foot').innerHTML = `<p class="small">${hasAvail(mine) ? `${icon('clock')}${mine.dates.length ? rangesText(mine.dates) : 'Өдөр хамаагүй'} · ${hoursText(mine.from, mine.to)}` : 'Одоогоор завтай өдөр сонгоогүй байна.'}</p><button class="button button-dark" data-action="browse">Тохирох ажлуудыг харах${icon('arrow')}</button>`;
+    // Live preview: how employers see this availability in their "Ажил хайгчид" list.
+    const fitting = state.jobs.filter((job) => availability(job) === 'active' && fitsSome(job, mine)).length;
+    const weekdaysPicked = [...new Set(mine.dates.map(wdOf))];
+    $('#profile-avail-foot').innerHTML = `<div class="avail-preview" aria-live="polite"><p class="avail-preview-label">${icon('user')}Урьдчилан харах · ажил олгогчид таныг ингэж харна</p>${hasAvail(mine) ? `<article class="seeker-row preview-row"><div class="seeker-who"><span class="seeker-avatar" aria-hidden="true">${escape(name.trim().charAt(0).toUpperCase())}</span><div><h3>${escape(name)}</h3><p class="small muted">${escape(state.profile.contact)}</p></div></div><div class="seeker-when">${weekdaysPicked.length ? weekStrip(weekdaysPicked) : '<span class="small muted">Өдөр хамаагүй</span>'}<strong>${icon('clock')}${hoursText(mine.from, mine.to)}</strong></div></article>${mine.dates.length ? `<ul class="preview-dates" aria-label="Сонгосон өдрүүд">${mine.dates.map((date) => `<li><b>${shortDate(date)}</b>${weekday(date)}</li>`).join('')}</ul>` : ''}<p class="preview-fit">${fitting ? `${icon('check')}Таны хуваарьт ${fitting} зар таарч байна` : 'Одоогоор таны хуваарьт таарах зар алга'}</p>` : '<p class="preview-empty">Календараас өдрөө сонгоход энд шууд харагдана.</p>'}</div>`;
   }
   function renderHeader() {
     const signedIn = state.signedIn;
@@ -816,7 +819,7 @@
     const css = getComputedStyle(document.documentElement);
     const square = css.getPropertyValue('--ink').trim() || '#1C1F1F';
     const mark = css.getPropertyValue('--bg').trim() || '#FFFFFF';
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="${square}"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z" fill="${mark}"/></svg>`;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="${mark}"/><rect x="4" y="4" width="56" height="56" rx="11" fill="${square}"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z" fill="${mark}"/></svg>`;
     favicon.href = 'data:image/svg+xml,' + encodeURIComponent(svg);
   }
   matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => syncFavicon());
