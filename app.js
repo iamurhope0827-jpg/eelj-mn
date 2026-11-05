@@ -900,6 +900,20 @@
     const inside = event.target.closest('.user-menu');
     if (!inside || event.target.closest('.user-dropdown a, .user-dropdown button')) setMenu(false);
   });
+  document.addEventListener('keydown', (event) => {
+    const input = event.target;
+    if (event.key !== 'ArrowDown' || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.isComposing) return;
+    if (input.form?.id !== 'job-form' || !input.matches('input') || !['text', 'number', 'email', 'tel', 'url', 'search'].includes(input.type)) return;
+    const fields = [...input.form.querySelectorAll('input, select, textarea, button')].filter((field) =>
+      !field.matches(':disabled') && field.type !== 'hidden' && field.tabIndex >= 0 && field.getClientRects().length &&
+      (field.type !== 'radio' || field.checked)
+    );
+    const next = fields[fields.indexOf(input) + 1];
+    if (!next) return;
+    event.preventDefault();
+    next.focus();
+  });
+
   $('.user-menu').addEventListener('keydown', (event) => {
     if (!ui.menuOpen) return;
     const items = [...document.querySelectorAll('#user-dropdown .menu-item')];
