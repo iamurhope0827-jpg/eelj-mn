@@ -899,8 +899,10 @@
     const favicon = document.querySelector('link[rel="icon"]');
     if (!favicon) return;
     const css = getComputedStyle(document.documentElement);
-    const square = css.getPropertyValue('--ink').trim() || '#1C1F1F';
-    const mark = css.getPropertyValue('--bg').trim() || '#FFFFFF';
+    // Signed in: the tab icon takes the chosen palette's swatch color (as shown in “Өнгө сонгох”).
+    const swatch = state.signedIn && palettes.find((item) => item.id === selectedPalette);
+    const square = swatch ? swatch.button || '#05AD98' : css.getPropertyValue('--ink').trim() || '#1C1F1F';
+    const mark = swatch ? swatch.buttonText || '#062A25' : css.getPropertyValue('--bg').trim() || '#FFFFFF';
     const tile = !state.signedIn
       ? `<rect width="64" height="64" rx="16" fill="${mark}"/><rect x="4" y="4" width="56" height="56" rx="11" fill="${square}"/>`
       : `<rect width="64" height="64" rx="14" fill="${square}"/>`;
