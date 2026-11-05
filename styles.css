@@ -782,7 +782,6 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
 @media(max-width:480px){
   .topbar-signup .icon{display:none}
   .topbar-signin{padding:0 10px}
-  .dot-button{display:none}
   .landing-ctas .button{flex:1 1 100%}
   .landing-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
   .preview-card{grid-template-columns:1fr}

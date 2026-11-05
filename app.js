@@ -321,8 +321,7 @@
     $('#user-button').setAttribute('aria-label', `${name} · ${roleNames[state.role]} — профайл цэс`);
     $('#user-dropdown').innerHTML = `<div class="menu-head"><span class="avatar avatar-lg" aria-hidden="true">${escape(name.trim().charAt(0).toUpperCase())}</span><div><strong>${escape(name)}</strong><small>${escape(state.profile.contact || roleNames[state.role])}</small></div></div>
       <div class="menu-group">${employer ? `<a class="menu-item" href="#employer">${icon('pay')}Ажил олгогчийн самбар</a>` : `<a class="menu-item" href="#applications">${icon('clock')}Миний хүсэлтүүд${sent ? `<span class="nav-count">${sent}</span>` : ''}</a><button class="menu-item" data-action="saved-menu">${icon('bookmark')}Хадгалсан ажлууд</button>`}
-      <button class="menu-item" data-action="${employer ? 'student' : 'employer'}">${icon('swap')}${employer ? 'Оюутан болох' : 'Ажил олгогч болох'}</button>
-      <button class="menu-item" data-action="colors">${icon('palette')}Өнгө солих</button></div>
+      <button class="menu-item" data-action="${employer ? 'student' : 'employer'}">${icon('swap')}${employer ? 'Оюутан болох' : 'Ажил олгогч болох'}</button></div>
       <div class="menu-group"><button class="menu-item menu-danger" data-action="signout">${icon('logout')}Гарах</button></div>`;
   }
   function setMenu(open, focusButton = false) {
@@ -344,6 +343,7 @@
   function route() {
     const hash = location.hash.slice(1);
     setMenu(false);
+    syncPalette();
     if (!state.signedIn) {
       ui.view = 'landing';
       $('#landing-view').hidden = false;
@@ -607,8 +607,9 @@
   ];
   const paletteKey = 'eelj.palette.v1';
   let selectedPalette = 'original';
+  let chosenPalette = 'original';
   let paletteProperties = [];
-  function applyPalette(id) {
+  function applyPalette(id, remember = true) {
     const palette = palettes.find((item) => item.id === id);
     if (!palette) return;
     const root = document.documentElement;
@@ -639,14 +640,21 @@
       Object.entries(values).forEach(([key, value]) => root.style.setProperty(key, value));
     }
     document.querySelectorAll('[data-action="palette"]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.id === id)));
+    if (!remember) return;
+    chosenPalette = id;
     try { localStorage.setItem(paletteKey, id); } catch { /* Keep the selection for this page session. */ }
+  }
+  // Colors are a signed-in preference; the public landing page always uses the original look.
+  function syncPalette() {
+    const want = state.signedIn ? chosenPalette : 'original';
+    if (want !== selectedPalette || !document.documentElement.dataset.palette) applyPalette(want, false);
   }
   function openColors() {
     ui.panelJob = null;
-    showPanel(`<h2 id="panel-title" class="panel-heading">Өнгө сонгох</h2><p class="panel-subtitle">Таалагдсан өнгөө сонгоорой. Сонголт энэ хөтөч дээр хадгалагдана.</p><div class="palette-options">${palettes.map((palette) => `<button class="palette-option" data-action="palette" data-id="${palette.id}" aria-label="${palette.name}" aria-pressed="${selectedPalette === palette.id}"><span class="palette-button-preview" style="background:${palette.button || '#05AD98'};color:${palette.buttonText || '#062A25'}" aria-hidden="true"></span></button>`).join('')}</div>`);
+    showPanel(`<h2 id="panel-title" class="panel-heading">Өнгө сонгох</h2><p class="panel-subtitle">Таалагдсан өнгөө сонгоорой. Сонголт энэ хөтөч дээр хадгалагдана.</p><div class="palette-options">${palettes.map((palette) => `<button class="palette-option" data-action="palette" data-id="${palette.id}" aria-label="${palette.name}" aria-pressed="${chosenPalette === palette.id}"><span class="palette-button-preview" style="background:${palette.button || '#05AD98'};color:${palette.buttonText || '#062A25'}" aria-hidden="true"></span></button>`).join('')}</div>`);
     $('#panel').classList.add('job-detail-dialog');
   }
-  try { const savedPalette = localStorage.getItem(paletteKey); if (savedPalette) applyPalette(savedPalette); } catch { /* Use the original palette. */ }
+  try { const savedPalette = localStorage.getItem(paletteKey); if (palettes.some((item) => item.id === savedPalette)) chosenPalette = savedPalette; } catch { /* Use the original palette. */ }
 
   document.addEventListener('click', (event) => {
     const button = event.target.closest('[data-action]'); if (!button || button.disabled) return;
@@ -665,8 +673,8 @@
     else if (action === 'invite-cancel') { const item = state.invites.find((value) => value.id === id); if (item) { state.invites = state.invites.filter((value) => value.id !== id); persist(); renderAll(); openInvite(item.seekerId); toast('Урилгыг цуцаллаа.'); } }
     else if (action === 'picked-only') { ui.pickedOnly = !ui.pickedOnly; renderEmployer(); $('[data-action="picked-only"]')?.focus(); }
     else if (action === 'seek-reset') { ui.seekDates = []; ui.seekLimit = 10; ui.seekFrom = ''; ui.seekTo = ''; ui.seekDistrict = ''; ui.seekJob = ''; ui.pickedOnly = false; renderEmployer(); }
-    else if (action === 'colors') openColors();
-    else if (action === 'palette') applyPalette(id);
+    else if (action === 'colors') { if (state.signedIn) openColors(); }
+    else if (action === 'palette') { if (state.signedIn) applyPalette(id); }
     else if (action === 'account') openAccount();
     else if (action === 'signin' || action === 'signup') openSignIn(action, id);
     else if (action === 'signout') signOut();

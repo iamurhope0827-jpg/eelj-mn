@@ -12,8 +12,8 @@
   <link rel="preload" href="assets/fonts/GeistMono-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/oswald/oswald-cyrillic-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <script>if (performance.getEntriesByType('navigation')[0]?.type === 'reload') document.documentElement.classList.add('is-reloading');</script>
-  <link rel="stylesheet" href="styles.css?v=auth1">
-  <script src="app.js?v=auth1" defer></script>
+  <link rel="stylesheet" href="styles.css?v=colors1">
+  <script src="app.js?v=colors1" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Үндсэн хэсэгт очих</a>
@@ -26,7 +26,6 @@
         <a href="#for-employers">Ажил олгогчдод</a>
       </nav>
       <div class="topbar-actions">
-        <button class="dot-button" data-action="colors" aria-haspopup="dialog" aria-label="Өнгө солих" title="Өнгө солих"><span class="palette-dot" aria-hidden="true"></span></button>
         <button class="button button-quiet topbar-signin" data-action="signin">Нэвтрэх</button>
         <button class="button button-dark topbar-signup" data-action="signup">Бүртгүүлэх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
       </div>
@@ -40,6 +39,7 @@
       <nav class="app-nav" id="app-nav" aria-label="Үндсэн цэс"></nav>
       <div class="topbar-actions">
         <span class="demo-chip" title="Туршилтын хувилбар · Жишээ зарууд"><span class="demo-dot" aria-hidden="true"></span>ТУРШИЛТ</span>
+        <button class="dot-button" data-action="colors" aria-haspopup="dialog" aria-label="Өнгө солих" title="Өнгө солих"><span class="palette-dot" aria-hidden="true"></span></button>
         <div class="user-menu">
           <button class="user-button" id="user-button" data-action="user-menu" aria-expanded="false" aria-controls="user-dropdown"><span class="avatar" id="user-avatar" aria-hidden="true"></span><span class="user-text"><strong id="user-name"></strong><small id="user-role"></small></span><svg class="icon chevron" aria-hidden="true"><use href="#i-chevron"/></svg></button>
           <div class="user-dropdown" id="user-dropdown" hidden></div>
