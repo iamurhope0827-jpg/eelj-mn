@@ -93,7 +93,8 @@
       const { auth, fs, db } = await firestore();
       const uid = auth.currentUser?.uid; if (!uid) throw new Error('Signed out');
       const ref = fs.doc(db, 'seekers', uid);
-      if (publish) await fs.setDoc(ref, data); else await fs.deleteDoc(ref);
+      if (publish) await fs.setDoc(ref, data, { merge: true });
+      else { await fs.deleteDoc(ref); if (Object.keys(state.inviteReplies).length) await fs.setDoc(ref, { replies: replyMap() }, { merge: true }).catch(() => {}); }
       Object.assign(state.profile, { listed: publish, sharedAt: publish ? data.updatedAt : 0, sharedKey: publish ? shareKey() : '' });
       persist();
       toast(publish ? 'Илгээлээ. Ажил олгогчид таныг “Ажил хайгчид” хэсгээс харж, урилга илгээх боломжтой.' : 'Ажил олгогчдын жагсаалтаас хаслаа.');
@@ -115,13 +116,21 @@
   const inviteBadge = (value) => `<span class="badge badge-${inviteStates[inviteStatus(value)][1]}">${inviteStates[inviteStatus(value)][0]}</span>`;
   // A reply is final: it is saved in this browser the moment a button is pressed (so it can never be
   // chosen again), then written to Firestore. If that write fails it is retried on the next inbox load.
+  const replyMap = () => Object.fromEntries(Object.entries(state.inviteReplies).map(([id, reply]) => [id, { status: reply.status, respondedAt: reply.respondedAt }]));
   async function syncReply(id) {
     const reply = state.inviteReplies[id]; if (!reply || reply.synced) return true;
+    const errors = [];
     try {
-      const { fs, db } = await firestore();
-      await fs.updateDoc(fs.doc(db, 'invites', id), { status: reply.status, respondedAt: reply.respondedAt });
-      reply.synced = true; delete reply.error; persist(); return true;
-    } catch (error) { reply.error = String(error?.code || error?.message || 'unknown').slice(0, 80); persist(); return false; }
+      const { auth, fs, db } = await firestore();
+      const uid = auth.currentUser?.uid; if (!uid) throw new Error('Signed out');
+      const results = await Promise.allSettled([
+        fs.updateDoc(fs.doc(db, 'invites', id), { status: reply.status, respondedAt: reply.respondedAt }),
+        fs.setDoc(fs.doc(db, 'seekers', uid), { replies: { [id]: { status: reply.status, respondedAt: reply.respondedAt } } }, { merge: true })
+      ]);
+      results.forEach((result) => { if (result.status === 'rejected') errors.push(String(result.reason?.code || result.reason?.message || 'unknown')); });
+      if (results.some((result) => result.status === 'fulfilled')) { reply.synced = true; delete reply.error; persist(); return true; }
+    } catch (error) { errors.push(String(error?.code || error?.message || 'unknown')); }
+    reply.error = [...new Set(errors)].join(', ').slice(0, 80); persist(); return false;
   }
   async function respondInvite(id, status) {
     const item = inbox.find((value) => value.id === id);
@@ -154,7 +163,12 @@
       const { auth, fs, db } = await firestore();
       const uid = auth.currentUser?.uid; if (!uid) return;
       const snap = await fs.getDocs(fs.query(fs.collection(db, 'invites'), fs.where('employerId', '==', uid)));
-      const docs = snap.docs.map((item) => ({ remoteId: item.id, ...item.data() }));
+      const replies = {};
+      try {
+        const seekerSnap = await fs.getDocs(fs.query(fs.collection(db, 'seekers'), fs.limit(500)));
+        seekerSnap.docs.forEach((item) => { const map = item.data().replies; if (map && typeof map === 'object') Object.entries(map).forEach(([inviteId, reply]) => { if (reply && ['accepted', 'declined'].includes(reply.status)) replies[`${item.id}|${inviteId}`] = reply; }); });
+      } catch { /* Invite docs alone are used when seekers cannot be read. */ }
+      const docs = snap.docs.map((item) => { const d = { remoteId: item.id, ...item.data() }; const reply = replies[`${d.seekerId}|${item.id}`]; if (inviteStatus(d.status) === 'pending' && reply) Object.assign(d, { status: reply.status, respondedAt: reply.respondedAt }); return d; });
       const used = new Set(); let changed = false;
       sentStatus = {};
       state.invites.filter((item) => item.real).forEach((item) => {
