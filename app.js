@@ -340,15 +340,34 @@
     const open = state.jobs.filter((job) => availability(job) === 'active').sort((a, b) => b.createdAt - a.createdAt);
     const avg = open.length ? Math.round(open.reduce((sum, job) => sum + job.pay, 0) / open.length / 100) * 100 : 0;
     $('#landing-stats').innerHTML = `<div><dt>Нээлттэй ээлж</dt><dd>${open.length}</dd></div><div><dt>Дундаж цагийн хөлс</dt><dd>${money(avg)}</dd></div><div><dt>Дүүрэг</dt><dd>${districts.length}</dd></div>`;
-    $('#landing-preview').innerHTML = open.slice(0, 3).map((job) => `<button class="preview-card" data-action="signin" data-id="student" aria-label="${escape(job.title)} — дэлгэрэнгүйг харахын тулд нэвтрэх"><span class="preview-cat">${escape(categories[job.category])}</span><strong>${escape(job.title)}</strong><span class="preview-company">${escape(job.company)}</span><span class="preview-meta"><span>${icon('pin')}${escape(job.district)}</span><span>${icon('calendar')}${dayRange(job)}</span><span>${icon('clock')}${timeLabel(job)}</span></span><span class="preview-pay">${money(job.pay)}<small>/ цаг</small></span></button>`).join('') || '<p class="muted small">Одоогоор нээлттэй зар алга.</p>';
-    $('#landing-more').innerHTML = `Бүх ${open.length} зарыг харах${icon('arrow')}`;
-    $('#landing-more').hidden = !open.length;
+  }
+  // Homepage showcase: three static cards that slide in left → right → left, exactly once per page load.
+  // A card only ever gains `is-in`; nothing removes it, and the cards are static markup that no render touches.
+  function setupShowcase() {
+    const cards = [...document.querySelectorAll('.showcase-card')];
+    if (!cards.length || matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+    document.documentElement.classList.add('reveal-on');
+    let next = 0; let target = -1; let timer = 0;
+    const step = () => {
+      timer = 0;
+      if (next > target) return;
+      cards[next].classList.add('is-in');
+      next += 1;
+      if (next <= target) timer = setTimeout(step, 240);
+      else if (next >= cards.length) observer.disconnect();
+    };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => { if (entry.isIntersecting) { target = Math.max(target, cards.indexOf(entry.target)); observer.unobserve(entry.target); } });
+      if (!timer && next <= target) step();
+    }, { threshold: 0.25, rootMargin: '0px 0px -8% 0px' });
+    cards.forEach((card) => observer.observe(card));
   }
   function navigate(view) { closePanel(); setMenu(false); if (location.hash === '#' + view) route(); else location.hash = view; }
   function route() {
     const hash = location.hash.slice(1);
     setMenu(false);
     syncPalette();
+    document.documentElement.dataset.page = state.signedIn ? 'app' : 'landing';
     if (!state.signedIn) {
       ui.view = 'landing';
       $('#landing-view').hidden = false;
@@ -785,6 +804,6 @@
   window.addEventListener('hashchange', route);
   window.addEventListener('storage', (event) => { if (event.key === KEY) { state = loadState(); renderAll(); route(); } });
   state = loadState();
-  renderAll(); route();
+  renderAll(); route(); setupShowcase();
   setTimeout(() => document.documentElement.classList.remove('is-reloading'), 1800);
 })();

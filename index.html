@@ -12,8 +12,8 @@
   <link rel="preload" href="assets/fonts/GeistMono-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/oswald/oswald-cyrillic-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <script>if (performance.getEntriesByType('navigation')[0]?.type === 'reload') document.documentElement.classList.add('is-reloading');</script>
-  <link rel="stylesheet" href="styles.css?v=auth2">
-  <script src="app.js?v=auth2" defer></script>
+  <link rel="stylesheet" href="styles.css?v=dark-home1">
+  <script src="app.js?v=dark-home1" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Үндсэн хэсэгт очих</a>
@@ -55,21 +55,71 @@
       <section class="landing-hero" aria-labelledby="landing-title">
         <div class="hero-grid" aria-hidden="true"></div>
         <div class="landing-hero-inner content-width">
-          <div class="landing-copy">
-            <p class="eyebrow"><span class="demo-dot" aria-hidden="true"></span>Туршилтын хувилбар · Жишээ зарууд</p>
-            <h1 id="landing-title">Хичээлийнхээ завсар <span>ээлжээ ол.</span></h1>
-            <p class="landing-lead">Ээлж оюутнуудыг хуваарьт нь таарсан цагийн ажилтай холбоно. Байршил, цаг, цалингаа нэг дор харьцуулж, хүсэлтээ хэдхэн товшилтоор илгээ.</p>
-            <div class="landing-ctas">
-              <button class="button button-dark button-lg" data-action="signup" data-id="student">Ажил хайж эхлэх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
-              <button class="button button-outline button-lg" data-action="signup" data-id="employer">Ажилтан хайх</button>
-            </div>
-            <dl class="landing-stats" id="landing-stats"></dl>
+          <p class="eyebrow"><span class="demo-dot" aria-hidden="true"></span>Туршилтын хувилбар · Жишээ зарууд</p>
+          <h1 id="landing-title">Хичээлийнхээ завсар <span>ээлжээ ол.</span></h1>
+          <p class="landing-lead">Ээлж оюутнуудыг хуваарьт нь таарсан цагийн ажилтай холбоно. Байршил, цаг, цалингаа нэг дор харьцуулж, хүсэлтээ хэдхэн товшилтоор илгээ.</p>
+          <div class="landing-ctas">
+            <button class="button button-dark button-lg" data-action="signup" data-id="student">Ажил хайж эхлэх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+            <button class="button button-outline button-lg" data-action="signup" data-id="employer">Ажилтан хайх</button>
           </div>
-          <div class="landing-preview" id="landing-jobs">
-            <div class="preview-head"><span>Шинэ зарууд</span><span class="preview-live"><span aria-hidden="true"></span>Нээлттэй</span></div>
-            <div id="landing-preview" class="preview-list"></div>
-            <button class="preview-more" data-action="signin" data-id="student" id="landing-more"></button>
+          <dl class="landing-stats" id="landing-stats"></dl>
+        </div>
+        <a class="scroll-cue" href="#landing-jobs"><span>Шинэ зарууд</span><svg class="icon" aria-hidden="true"><use href="#i-down"/></svg></a>
+      </section>
+
+      <!-- Fixed homepage showcase: exactly three example listings. Static on purpose — not a live feed. -->
+      <section class="showcase" id="landing-jobs" aria-labelledby="showcase-title">
+        <div class="showcase-inner content-width">
+          <div class="showcase-head">
+            <p class="eyebrow">Жишээ зарууд</p>
+            <h2 id="showcase-title">Шинэ зарууд</h2>
+            <p>Хичээлийнхээ хуваарьт тааруулан сонгох боломжтой ээлжүүдээс.</p>
           </div>
+          <ol class="showcase-list">
+            <li class="showcase-card from-left">
+              <article class="sc-card" aria-labelledby="sc-1">
+                <div class="sc-top"><span class="sc-cat">Агуулах, хүргэлт</span><span class="sc-tag"><svg class="icon" aria-hidden="true"><use href="#i-meal"/></svg>Хоолтой</span></div>
+                <h3 id="sc-1">Хүргэлтийн туслах</h3>
+                <p class="sc-company">Шуурхай хүргэлт <span>· Жишээ байгууллага</span></p>
+                <p class="sc-desc">Захиалгыг ангилж, хүргэлтийн жолоочтой хамт хаягаар хүргэх үдээс хойшхи ээлж.</p>
+                <dl class="sc-meta">
+                  <div><dt><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Дүүрэг</dt><dd>Баянгол</dd><dd class="sc-sub">10-р хороолол</dd></div>
+                  <div><dt><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Ажлын өдөр</dt><dd>11/6</dd><dd class="sc-sub">Баасан</dd></div>
+                  <div><dt><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>Ажлын цаг</dt><dd>14:00 – 18:00</dd><dd class="sc-sub">4 цагийн ээлж</dd></div>
+                </dl>
+                <div class="sc-foot"><p class="sc-pay"><strong>15,000₮</strong><span>/ цаг</span></p><button class="button button-dark" data-action="signin" data-id="student">Дэлгэрэнгүй<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button></div>
+              </article>
+            </li>
+            <li class="showcase-card from-right">
+              <article class="sc-card" aria-labelledby="sc-2">
+                <div class="sc-top"><span class="sc-cat">Оффис, үйлчилгээ</span></div>
+                <h3 id="sc-2">Номын сангийн туслах</h3>
+                <p class="sc-company">Мэдлэг номын сан <span>· Жишээ байгууллага</span></p>
+                <p class="sc-desc">Буцаж ирсэн номыг байранд нь тавих, уншигчдад туслах амралтын өдрийн ээлж.</p>
+                <dl class="sc-meta">
+                  <div><dt><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Дүүрэг</dt><dd>Сүхбаатар</dd><dd class="sc-sub">Бага тойруу</dd></div>
+                  <div><dt><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Ажлын өдөр</dt><dd>11/7</dd><dd class="sc-sub">Бямба</dd></div>
+                  <div><dt><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>Ажлын цаг</dt><dd>10:00 – 14:00</dd><dd class="sc-sub">4 цагийн ээлж</dd></div>
+                </dl>
+                <div class="sc-foot"><p class="sc-pay"><strong>13,000₮</strong><span>/ цаг</span></p><button class="button button-dark" data-action="signin" data-id="student">Дэлгэрэнгүй<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button></div>
+              </article>
+            </li>
+            <li class="showcase-card from-left">
+              <article class="sc-card" aria-labelledby="sc-3">
+                <div class="sc-top"><span class="sc-cat">Эвент, арга хэмжээ</span><span class="sc-tag">+7,000₮ хоолны мөнгө</span></div>
+                <h3 id="sc-3">Тоглолтын тасалбар шалгагч</h3>
+                <p class="sc-company">Тайз продакшн <span>· Жишээ байгууллага</span></p>
+                <p class="sc-desc">Үзэгчдийн тасалбар шалгаж, суудал руу нь чиглүүлэх оройн ээлж.</p>
+                <dl class="sc-meta">
+                  <div><dt><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Дүүрэг</dt><dd>Хан-Уул</dd><dd class="sc-sub">Зайсангийн гудамж</dd></div>
+                  <div><dt><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Ажлын өдөр</dt><dd>11/8</dd><dd class="sc-sub">Ням</dd></div>
+                  <div><dt><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>Ажлын цаг</dt><dd>18:00 – 22:00</dd><dd class="sc-sub">4 цагийн ээлж</dd></div>
+                </dl>
+                <div class="sc-foot"><p class="sc-pay"><strong>16,000₮</strong><span>/ цаг</span></p><button class="button button-dark" data-action="signin" data-id="student">Дэлгэрэнгүй<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button></div>
+              </article>
+            </li>
+          </ol>
+          <div class="showcase-more"><button class="button button-outline button-lg" data-action="signin" data-id="student">Бүх зарыг харах<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button></div>
         </div>
       </section>
 
