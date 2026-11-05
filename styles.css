@@ -54,7 +54,7 @@ button:disabled{cursor:not-allowed;opacity:.5}
 a{color:inherit;text-decoration:none;text-underline-offset:4px}
 button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:none;box-shadow:var(--focus)}
 input,textarea{caret-color:var(--ink)}
-::selection{background:var(--teal,#05AD98);color:#062A25}
+::selection{background:var(--dark-bg);color:var(--dark-fg)}
 input::placeholder,textarea::placeholder{color:var(--faint);opacity:1}
 [hidden]{display:none!important}
 h1,h2,h3,h4,p{margin:0}
@@ -306,9 +306,9 @@ svg.icon{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-w
 .cal-day:hover:not(:disabled):not(.is-edge){background:var(--hover)}
 .cal-day:disabled{color:var(--line-2);opacity:1;cursor:not-allowed}
 .cal-day.in-range,.cal-day.in-range:hover:not(:disabled){background:var(--accent);color:var(--accent-t);border-radius:0}
-.cal-day.is-edge{background:radial-gradient(circle closest-side,var(--teal,#05AD98) 96%,transparent 100%);color:#062A25;font-weight:600}
-.cal-day.is-start{background:radial-gradient(circle closest-side,var(--teal,#05AD98) 96%,transparent 100%),linear-gradient(90deg,transparent 50%,var(--accent) 50%);border-radius:0}
-.cal-day.is-end{background:radial-gradient(circle closest-side,var(--teal,#05AD98) 96%,transparent 100%),linear-gradient(90deg,var(--accent) 50%,transparent 50%);border-radius:0}
+.cal-day.is-edge{background:radial-gradient(circle closest-side,var(--dark-bg) 96%,transparent 100%);color:var(--dark-fg);font-weight:600}
+.cal-day.is-start{background:radial-gradient(circle closest-side,var(--dark-bg) 96%,transparent 100%),linear-gradient(90deg,transparent 50%,var(--accent) 50%);border-radius:0}
+.cal-day.is-end{background:radial-gradient(circle closest-side,var(--dark-bg) 96%,transparent 100%),linear-gradient(90deg,var(--accent) 50%,transparent 50%);border-radius:0}
 .cal-day.is-today:not(.is-edge)::after{content:'';position:absolute;left:50%;bottom:5px;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--teal-text)}
 .cal-day:focus-visible{box-shadow:inset 0 0 0 2px var(--blue)}
 .cal-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:20px;font-size:12px;color:var(--muted)}
@@ -567,8 +567,9 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
 .ac-day.has-items small{color:var(--teal-text)}
 .ac-day:hover:not(:disabled){box-shadow:inset 0 0 0 1px var(--teal-text)}
 .ac-day.is-today{box-shadow:inset 0 0 0 1px var(--line-2)}
-.ac-day.is-picked,.ac-day.is-picked:hover:not(:disabled){background:var(--teal,#05AD98);box-shadow:none}
-.ac-day.is-picked b,.ac-day.is-picked small{color:#062A25}
+.ac-day.is-picked,.ac-day.is-picked:hover:not(:disabled){background:var(--dark-bg);box-shadow:0 0 0 2px var(--surface),0 0 0 3px var(--dark-bg)}
+.ac-day.is-picked b,.ac-day.is-picked small{color:var(--dark-fg)}
+.ac-day.is-picked small{opacity:.85}
 .ac-day:disabled{cursor:not-allowed;opacity:1}
 .ac-day:disabled b{color:var(--line-2)}
 .ac-day:focus-visible{box-shadow:var(--focus)}
