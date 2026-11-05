@@ -752,6 +752,11 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
 .signin-role input:checked+span .icon,.signin-role input:checked+span strong{color:var(--accent-t)}
 .signin-role input:focus-visible+span{box-shadow:inset 0 0 0 1px var(--line-2),var(--focus)}
 .signin-switch{margin-top:16px;font-size:13px;color:var(--muted);text-align:center}
+.password-field{position:relative;display:block}
+.field .password-field input{padding-right:64px}
+.password-toggle{position:absolute;top:4px;right:4px;height:32px;padding:0 10px;border-radius:calc(var(--radius) - 2px);background:none;font-size:12px;font-weight:500;color:var(--muted);transition:color .15s,background-color .15s}
+.password-toggle:hover{color:var(--ink);background:var(--hover)}
+.password-toggle:focus-visible{box-shadow:var(--focus)}
 
 /* ===== Responsive ===== */
 @media(max-width:1100px){
