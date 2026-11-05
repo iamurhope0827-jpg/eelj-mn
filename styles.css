@@ -964,3 +964,8 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
 .share-status.is-changed{background:var(--b-amber);color:var(--b-amber-t)}
 .share-status.is-on{background:var(--b-green);color:var(--b-green-t)}
 @media(max-width:480px){.listing-actions{flex:1 1 100%}.listing-actions .button{flex:1 1 100%}}
+
+/* Send row under the availability preview */
+.share-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-top:6px;padding-top:16px;border-top:1px solid var(--line)}
+.share-row .button{height:42px}
+@media(max-width:480px){.share-row .listing-actions,.share-row .listing-actions .button{flex:1 1 100%}}

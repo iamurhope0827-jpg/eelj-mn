@@ -391,22 +391,19 @@
       <dl class="profile-stats"><div><dt>Илгээсэн хүсэлт</dt><dd>${sent}</dd></div><div><dt>Хадгалсан ажил</dt><dd>${saved}</dd></div><div><dt>Завтай өдөр</dt><dd>${mine.dates.length}</dd></div></dl>
       <div class="profile-actions">${ui.verified ? '' : `<button class="button button-outline" data-action="verify-email">${icon('check')}И-мэйл баталгаажуулах</button>`}${ui.hasPassword ? `<button class="button button-outline" data-action="change-password">${icon('edit')}Нууц үг солих</button>` : ''}<button class="button button-outline" data-action="${employer ? 'student' : 'employer'}">${icon('swap')}${employer ? 'Ажил горилогч болох' : 'Ажил олгогч болох'}</button></div>`;
     $('#profile-avail-card').hidden = employer;
-    $('#profile-listing').hidden = employer;
     if (employer) { $('#profile-avail').innerHTML = ''; return; }
     const upcoming = mine.dates.filter((date) => date >= today()).length;
     const shared = Boolean(state.profile.sharedAt), changed = shared && state.profile.sharedKey !== shareKey();
     const sentAt = shared ? (([date, time]) => `${shortDate(date)} ${time}`)(new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ulaanbaatar', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(state.profile.sharedAt).split(', ')) : '';
     const status = !shared ? '<span class="share-status is-off">Ажил олгогчдод илгээгээгүй байна</span>' : changed ? `<span class="share-status is-changed">Өөрчлөлт илгээгдээгүй · сүүлд ${sentAt}</span>` : `<span class="share-status is-on">${icon('check')}Илгээсэн · ${sentAt} · ажил олгогчид харж байна</span>`;
-    $('#profile-listing').innerHTML = `<div class="profile-card-head"><h2>Ажил олгогчид харагдах</h2><p class="muted small">“Ажил олгогчдод илгээх” товчийг дарсны дараа таны нэр, завтай өдөр, цаг, дүүрэг, сургууль, танилцуулга бүртгэлтэй ажил олгогчдод харагдаж, тэд танд ажлын урилга илгээх боломжтой. И-мэйл, утас харагдахгүй.</p></div>
-      <form id="listing-form"><div class="form-grid"><label class="field">Дүүрэг<select name="district"><option value="">Сонгоогүй</option>${districts.map((name) => `<option ${state.profile.district === name ? 'selected' : ''}>${escape(name)}</option>`).join('')}</select></label><label class="field">Сургууль, мэргэжил<input name="school" maxlength="80" autocomplete="organization" placeholder="Жишээ: МУИС эсвэл тогооч" value="${escape(state.profile.school || '')}"></label><label class="field field-full">Товч танилцуулга<textarea name="bio" maxlength="300" rows="3" placeholder="Ямар ажил сонирхдог, ямар туршлагатай вэ?">${escape(state.profile.bio || '')}</textarea></label></div>
-      <div class="listing-foot"><p class="small">${status}</p><div class="listing-actions">${shared ? `<button class="button button-outline" type="button" data-action="unshare" ${ui.sharing ? 'disabled' : ''}>Жагсаалтаас хасах</button>` : ''}<button class="button button-dark" type="submit" ${ui.sharing || !upcoming ? 'disabled' : ''}>${ui.sharing ? 'Илгээж байна…' : shared ? 'Дахин илгээх' : 'Ажил олгогчдод илгээх'}${ui.sharing ? '' : icon('arrow')}</button></div>${upcoming ? '' : '<p class="small muted listing-hint">Илгээхийн тулд эхлээд завтай өдрөө сонгоно уу.</p>'}</div></form>`;
+    const sendRow = `<div class="share-row"><p class="small">${status}</p><div class="listing-actions">${shared ? `<button class="button button-outline" type="button" data-action="unshare" ${ui.sharing ? 'disabled' : ''}>Жагсаалтаас хасах</button>` : ''}<button class="button button-dark" type="button" data-action="share" ${ui.sharing || !upcoming ? 'disabled' : ''}>${ui.sharing ? 'Илгээж байна…' : shared ? 'Дахин илгээх' : 'Ажил олгогчдод илгээх'}${ui.sharing ? '' : icon('arrow')}</button></div></div>`;
     const open = ui.availOpen.me; ui.availOpen.me = true;
     $('#profile-avail').innerHTML = availPicker('me', ['Сонгосон өдрүүд', 'Завтай цаг']);
     ui.availOpen.me = open;
     // Live preview: how employers see this availability in their "Ажил хайгчид" list.
     const fitting = state.jobs.filter((job) => availability(job) === 'active' && fitsSome(job, mine)).length;
     const weekdaysPicked = [...new Set(mine.dates.map(wdOf))];
-    $('#profile-avail-foot').innerHTML = `<div class="avail-preview" aria-live="polite"><p class="avail-preview-label">${icon('user')}Урьдчилан харах · ажил олгогчид таныг ингэж харна</p>${hasAvail(mine) ? `<article class="seeker-row preview-row"><div class="seeker-who"><span class="seeker-avatar" aria-hidden="true">${escape(name.trim().charAt(0).toUpperCase())}</span><div><h3>${escape(name)}</h3><p class="small muted">${escape(state.profile.school || 'Ажил горилогч')}${state.profile.district ? ` · ${escape(state.profile.district)}` : ''}</p></div></div><div class="seeker-when">${weekdaysPicked.length ? weekStrip(weekdaysPicked) : '<span class="small muted">Өдөр хамаагүй</span>'}<strong>${icon('clock')}${hoursText(mine.from, mine.to)}</strong></div></article>${mine.dates.length ? `<ul class="preview-dates" aria-label="Сонгосон өдрүүд">${mine.dates.map((date) => `<li><b>${shortDate(date)}</b>${weekday(date)}</li>`).join('')}</ul>` : ''}<p class="preview-fit">${fitting ? `${icon('check')}Таны хуваарьт ${fitting} зар таарч байна` : 'Одоогоор таны хуваарьт таарах зар алга'}</p>` : '<p class="preview-empty">Календараас өдрөө сонгоход энд шууд харагдана.</p>'}</div>`;
+    $('#profile-avail-foot').innerHTML = `<div class="avail-preview" aria-live="polite"><p class="avail-preview-label">${icon('user')}Урьдчилан харах · ажил олгогчид таныг ингэж харна</p>${hasAvail(mine) ? `<article class="seeker-row preview-row"><div class="seeker-who"><span class="seeker-avatar" aria-hidden="true">${escape(name.trim().charAt(0).toUpperCase())}</span><div><h3>${escape(name)}</h3><p class="small muted">${escape(state.profile.school || 'Ажил горилогч')}${state.profile.district ? ` · ${escape(state.profile.district)}` : ''}</p></div></div><div class="seeker-when">${weekdaysPicked.length ? weekStrip(weekdaysPicked) : '<span class="small muted">Өдөр хамаагүй</span>'}<strong>${icon('clock')}${hoursText(mine.from, mine.to)}</strong></div></article>${mine.dates.length ? `<ul class="preview-dates" aria-label="Сонгосон өдрүүд">${mine.dates.map((date) => `<li><b>${shortDate(date)}</b>${weekday(date)}</li>`).join('')}</ul>` : ''}<p class="preview-fit">${fitting ? `${icon('check')}Таны хуваарьт ${fitting} зар таарч байна` : 'Одоогоор таны хуваарьт таарах зар алга'}</p>` : '<p class="preview-empty">Календараас өдрөө сонгоход энд шууд харагдана.</p>'}${sendRow}</div>`;
   }
   function renderHeader() {
     const signedIn = state.signedIn;
@@ -958,6 +955,7 @@
     else if (action === 'signin' || action === 'signup') openSignIn(action, id, button.dataset.email || '');
     else if (action === 'signout') signOut();
     else if (action === 'unshare') shareAvailability(false);
+    else if (action === 'share') shareAvailability(true);
     else if (action === 'user-menu') setMenu(!ui.menuOpen);
     else if (action === 'saved-menu') { ui.savedOnly = true; ui.limit = 3; ui.scrollTo = 'jobs'; renderBrowse(); navigate('jobs'); }
     else if (action === 'close') closePanel();
@@ -1005,12 +1003,6 @@
     else if (event.target.id === 'invite-form') { event.preventDefault(); submitInvite(event.target); }
     else if (event.target.id === 'signin-form') { event.preventDefault(); submitSignIn(event.target); }
     else if (event.target.id === 'reset-form') { event.preventDefault(); submitReset(event.target); }
-    else if (event.target.id === 'listing-form') {
-      event.preventDefault();
-      const data = new FormData(event.target), district = String(data.get('district'));
-      Object.assign(state.profile, { district: districts.includes(district) ? district : '', school: String(data.get('school')).trim().slice(0, 80), bio: String(data.get('bio')).trim().slice(0, 300) });
-      persist(); shareAvailability(true);
-    }
   });
   document.addEventListener('click', (event) => {
     if (!ui.menuOpen) return;
