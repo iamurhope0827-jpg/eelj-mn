@@ -892,10 +892,7 @@
     const css = getComputedStyle(document.documentElement);
     const square = css.getPropertyValue('--ink').trim() || '#1C1F1F';
     const mark = css.getPropertyValue('--bg').trim() || '#FFFFFF';
-    const tile = !state.signedIn
-      ? `<rect width="64" height="64" rx="16" fill="${mark}"/><rect x="4" y="4" width="56" height="56" rx="11" fill="${square}"/>`
-      : `<rect width="64" height="64" rx="14" fill="${square}"/>`;
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">${tile}<path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z" fill="${mark}"/></svg>`;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="${mark}"/><rect x="4" y="4" width="56" height="56" rx="11" fill="${square}"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z" fill="${mark}"/></svg>`;
     favicon.href = 'data:image/svg+xml,' + encodeURIComponent(svg);
   }
   matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => syncFavicon());
