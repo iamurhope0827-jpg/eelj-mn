@@ -76,7 +76,16 @@ svg.icon{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-w
 .wordmark{display:inline-flex;align-items:center;gap:9px;font-weight:600;font-size:19px;letter-spacing:-.04em;line-height:1}
 .logo-mark{width:26px;height:26px;flex:none}
 .logo-mark rect{fill:#05AD98}
-.logo-mark path{fill:#062A25}
+.logo-mark path,.logo-mark circle{fill:#062A25}
+.logo-dots{opacity:0}
+.logo-mark circle{transform-box:fill-box;transform-origin:center}
+.is-reloading .logo-mark path{animation:logo-solid-return 1800ms ease both}
+.is-reloading .logo-dots{animation:logo-dots-reload 1800ms ease both}
+.is-reloading .logo-mark circle{animation:dot-reload 700ms ease-in-out 2;animation-delay:calc(var(--dot-delay) * .4)}
+@keyframes logo-solid-return{0%,80%{opacity:0}100%{opacity:1}}
+@keyframes logo-dots-reload{0%,75%{opacity:1}100%{opacity:0}}
+@keyframes dot-reload{0%,100%{opacity:1;transform:scale(1)}40%{opacity:.2;transform:scale(.45)}70%{opacity:1;transform:scale(1.12)}}
+@media(prefers-reduced-motion:reduce){.is-reloading .logo-mark path{opacity:1;animation:none}.is-reloading .logo-dots{opacity:0;animation:none}.is-reloading .logo-mark circle{animation:none}}
 .header-slash{color:var(--line-2);font-size:22px;font-weight:300}
 .demo-note{display:inline-flex;align-items:center;gap:8px;height:24px;padding:0 10px;border-radius:999px;background:var(--b-red);color:var(--b-red-t);font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.02em;white-space:nowrap}
 .demo-note .demo-dot{width:6px;height:6px}
@@ -495,7 +504,7 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
 .palette-option[aria-pressed=true]{box-shadow:inset 0 0 0 2px var(--ink)}
 .palette-button-preview{display:block;width:100%;height:72px;border-radius:inherit}
 :root[data-palette]:not([data-palette=original]) .logo-mark rect{fill:var(--dark-bg)}
-:root[data-palette]:not([data-palette=original]) .logo-mark path{fill:var(--dark-fg)}
+:root[data-palette]:not([data-palette=original]) .logo-mark :is(path,circle){fill:var(--dark-fg)}
 @media(max-width:600px){.palette-toggle{font-size:11px;padding:0 8px}.site-header .account-button{margin-left:auto}}
 @media(max-width:370px){.palette-options{grid-template-columns:1fr}}
 

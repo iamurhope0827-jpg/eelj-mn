@@ -640,4 +640,5 @@
   window.addEventListener('storage', (event) => { if (event.key === KEY) { state = loadState(); renderAll(); } });
   state = loadState();
   renderAll(); route();
+  setTimeout(() => document.documentElement.classList.remove('is-reloading'), 1800);
 })();

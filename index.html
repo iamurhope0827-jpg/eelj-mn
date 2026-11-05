@@ -11,13 +11,14 @@
   <link rel="preload" href="assets/fonts/roboto/roboto-cyrillic-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/GeistMono-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/oswald/oswald-cyrillic-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=invite1">
-  <script src="app.js?v=invite1" defer></script>
+  <script>if (performance.getEntriesByType('navigation')[0]?.type === 'reload') document.documentElement.classList.add('is-reloading');</script>
+  <link rel="stylesheet" href="styles.css?v=dots-reload2">
+  <script src="app.js?v=dots-reload2" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Үндсэн хэсэгт очих</a>
   <header class="site-header">
-    <a class="wordmark" href="#jobs" aria-label="Ээлж — нүүр хуудас"><svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z"/></svg><span>Ээлж</span></a>
+    <a class="wordmark" href="#jobs" aria-label="Ээлж — нүүр хуудас"><svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z"/><g class="logo-dots"><circle cx="32" cy="16" r="3.2" style="--dot-delay:192ms"/><circle cx="40" cy="16" r="3.2" style="--dot-delay:96ms"/><circle cx="48" cy="16" r="3.2" style="--dot-delay:0ms"/><circle cx="40" cy="24" r="3.2" style="--dot-delay:192ms"/><circle cx="48" cy="24" r="3.2" style="--dot-delay:96ms"/><circle cx="32" cy="32" r="3.2" style="--dot-delay:384ms"/><circle cx="48" cy="32" r="3.2" style="--dot-delay:192ms"/><circle cx="24" cy="40" r="3.2" style="--dot-delay:576ms"/><circle cx="16" cy="48" r="3.2" style="--dot-delay:768ms"/></g></svg><span>Ээлж</span></a>
     <span class="header-slash" aria-hidden="true">/</span>
     <p class="demo-note"><span class="demo-dot" aria-hidden="true"></span><span>ТУРШИЛТЫН ХУВИЛБАР <span class="demo-note-extra">· ЖИШЭЭ ЗАРУУД</span></span></p>
     <button class="button button-outline palette-toggle" data-action="colors" aria-haspopup="dialog"><span class="palette-dot" aria-hidden="true"></span>Өнгө солих</button>
@@ -91,7 +92,7 @@
     </section>
   </main>
 
-  <footer class="site-footer content-width"><div><a class="wordmark" href="#jobs"><svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z"/></svg><span>Ээлж</span></a><p>Чиний цаг. Чиний ээлж.</p></div><div class="footer-links"><a href="#faq">Түгээмэл асуулт</a><button class="text-button" data-action="reset">Туршилтын өгөгдөл шинэчлэх</button><span class="small muted">Улаанбаатар · Туршилтын хувилбар</span></div></footer>
+  <footer class="site-footer content-width"><div><a class="wordmark" href="#jobs"><svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z"/><g class="logo-dots"><circle cx="32" cy="16" r="3.2" style="--dot-delay:192ms"/><circle cx="40" cy="16" r="3.2" style="--dot-delay:96ms"/><circle cx="48" cy="16" r="3.2" style="--dot-delay:0ms"/><circle cx="40" cy="24" r="3.2" style="--dot-delay:192ms"/><circle cx="48" cy="24" r="3.2" style="--dot-delay:96ms"/><circle cx="32" cy="32" r="3.2" style="--dot-delay:384ms"/><circle cx="48" cy="32" r="3.2" style="--dot-delay:192ms"/><circle cx="24" cy="40" r="3.2" style="--dot-delay:576ms"/><circle cx="16" cy="48" r="3.2" style="--dot-delay:768ms"/></g></svg><span>Ээлж</span></a><p>Чиний цаг. Чиний ээлж.</p></div><div class="footer-links"><a href="#faq">Түгээмэл асуулт</a><button class="text-button" data-action="reset">Туршилтын өгөгдөл шинэчлэх</button><span class="small muted">Улаанбаатар · Туршилтын хувилбар</span></div></footer>
 
   <dialog id="panel" class="panel-dialog" aria-labelledby="panel-title"><div class="panel-shell"><div class="panel-top"><span class="panel-demo"><span class="demo-dot" aria-hidden="true"></span>ТУРШИЛТЫН ГОРИМ</span><button class="icon-button" data-action="close" aria-label="Цонх хаах"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div><div id="panel-content"></div></div></dialog>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
