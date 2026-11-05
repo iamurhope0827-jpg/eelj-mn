@@ -26,8 +26,8 @@
       if (page === 'landing') document.querySelectorAll('meta[name=theme-color]').forEach(function (m) { m.content = '#0B0E11'; });
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=profile2">
-  <script src="app.js?v=profile2" defer></script>
+  <link rel="stylesheet" href="styles.css?v=seekers2">
+  <script src="app.js?v=seekers2" defer></script>
 </head>
 <body>
   <div class="reload-splash" aria-hidden="true">
@@ -220,6 +220,7 @@
 
     <section id="applications-view" class="view workspace content-width" hidden aria-labelledby="applications-title">
       <div class="workspace-heading"><div><a class="back-link" href="#jobs"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg>Ажлын зарууд руу</a><h1 id="applications-title">Миний хүсэлтүүд</h1><p class="muted">Энэ хөтөч дээр илгээсэн туршилтын хүсэлтүүд.</p></div><button class="button button-outline" data-action="account">Горим солих<svg class="icon" aria-hidden="true"><use href="#i-user"/></svg></button></div>
+      <div id="invite-inbox" class="invite-inbox" hidden></div>
       <div id="applications-summary" class="summary-strip"></div>
       <div id="applications-list" class="application-list"></div>
     </section>
@@ -240,6 +241,7 @@
           <div id="profile-avail"></div>
           <div class="profile-avail-foot" id="profile-avail-foot"></div>
         </div>
+        <div class="profile-card profile-listing" id="profile-listing" hidden></div>
       </div>
     </section>
   </main>

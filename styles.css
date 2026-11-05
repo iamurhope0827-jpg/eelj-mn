@@ -937,3 +937,20 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
 .preview-fit .icon{width:14px;height:14px}
 .preview-empty{padding:16px;border-radius:var(--radius-lg);background:var(--bg-2);font-size:13px;color:var(--muted);text-align:center}
 @media(max-width:480px){.preview-row{grid-template-columns:1fr}.preview-row .seeker-when{justify-items:start}}
+.profile-listing{grid-column:1/-1}
+#listing-form .check-field{display:flex;align-items:center;gap:10px;margin-bottom:18px;font-size:14px;font-weight:500}
+.seeker-real{display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-size:12px;font-weight:500;color:var(--b-green-t)}
+.seeker-real .icon{width:14px;height:14px}
+.invite-inbox{display:grid;gap:12px;margin-bottom:28px}
+.inbox-title{display:flex;align-items:center;gap:8px;font-size:20px}
+.invite-card{display:grid;gap:10px;padding:20px;border-radius:var(--radius-lg);background:var(--surface);box-shadow:var(--shadow)}
+.invite-card-head{display:grid;gap:2px}
+.invite-card-head strong{font-size:16px}
+.invite-card-meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted)}
+.invite-card-meta span{display:inline-flex;align-items:center;gap:5px}
+.invite-card-meta .icon{width:14px;height:14px}
+.invite-card-message{white-space:pre-line;font-size:14px;line-height:1.6;padding:12px 14px;border-radius:var(--radius);background:var(--hover);overflow-wrap:anywhere}
+.listing-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.listing-foot p{display:inline-flex;align-items:center;gap:6px;color:var(--ink)}
+.listing-foot .button{height:42px}
+@media(max-width:480px){.listing-foot .button{flex:1 1 100%}}
