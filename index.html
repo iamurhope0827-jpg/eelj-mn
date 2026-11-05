@@ -26,8 +26,8 @@
       if (page === 'landing') document.querySelectorAll('meta[name=theme-color]').forEach(function (m) { m.content = '#0B0E11'; });
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=share-row1">
-  <script src="app.js?v=share-row1" defer></script>
+  <link rel="stylesheet" href="styles.css?v=invite-reply1">
+  <script src="app.js?v=invite-reply1" defer></script>
 </head>
 <body>
   <div class="reload-splash" aria-hidden="true">
@@ -228,7 +228,7 @@
     <section id="employer-view" class="view workspace content-width" hidden aria-labelledby="employer-title">
       <div class="workspace-heading"><div><a class="back-link" href="#jobs"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg>Ажил горилогчийн самбарыг харах</a><h1 id="employer-title">Ажил олгогчийн самбар</h1><p class="muted">Энэ хөтөч дээрх жишээ зар, хүсэлтүүдийг удирдана.</p></div><button class="button button-dark" data-action="new-job">Зар нэмэх<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button></div>
       <div class="employer-notice"><span class="demo-dot" aria-hidden="true"></span><p>Туршилтын горим · Өөрчлөлтүүд зөвхөн энэ хөтөч дээр харагдана.</p></div>
-      <div class="workspace-tabs" role="tablist" aria-label="Ажил олгогчийн хэсгүүд"><button id="employer-jobs-tab" role="tab" aria-selected="true" aria-controls="employer-panel" tabindex="0" data-action="employer-tab" data-tab="jobs">Миний зарууд <span id="employer-job-count"></span></button><button id="employer-seekers-tab" role="tab" aria-selected="false" aria-controls="employer-panel" tabindex="-1" data-action="employer-tab" data-tab="seekers">Ажил хайгчид <span id="employer-seekers-count"></span></button><button id="employer-applications-tab" role="tab" aria-selected="false" aria-controls="employer-panel" tabindex="-1" data-action="employer-tab" data-tab="applications">Ирсэн хүсэлтүүд <span id="employer-application-count"></span></button></div>
+      <div class="workspace-tabs" role="tablist" aria-label="Ажил олгогчийн хэсгүүд"><button id="employer-jobs-tab" role="tab" aria-selected="true" aria-controls="employer-panel" tabindex="0" data-action="employer-tab" data-tab="jobs">Миний зарууд <span id="employer-job-count"></span></button><button id="employer-seekers-tab" role="tab" aria-selected="false" aria-controls="employer-panel" tabindex="-1" data-action="employer-tab" data-tab="seekers">Ажил хайгчид <span id="employer-seekers-count"></span></button><button id="employer-applications-tab" role="tab" aria-selected="false" aria-controls="employer-panel" tabindex="-1" data-action="employer-tab" data-tab="applications">Ирсэн хүсэлтүүд <span id="employer-application-count"></span></button><button id="employer-invites-tab" role="tab" aria-selected="false" aria-controls="employer-panel" tabindex="-1" data-action="employer-tab" data-tab="invites">Илгээсэн урилга <span id="employer-invites-count"></span></button></div>
       <div id="employer-panel" role="tabpanel" aria-labelledby="employer-jobs-tab"></div>
     </section>
 
