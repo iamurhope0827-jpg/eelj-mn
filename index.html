@@ -5,9 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#121414" media="(prefers-color-scheme: dark)">
-  <meta name="description" content="Ээлж — таны хуваарьт таарах цагийн ажлын туршилтын платформ. Жишээ ажлуудыг харьцуулж, хүсэлт илгээх үйл явцыг туршаарай.">
+  <meta name="description" content="Улаанбаатарт өөрийн завтай өдөр, цагт таарах цагийн ажил олоорой. Ажил олгогчид завтай ажил горилогчдыг хайж, шууд урилга илгээнэ.">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ээлж">
+  <meta property="og:locale" content="mn_MN">
+  <meta property="og:url" content="https://eelj-mn.onrender.com/">
+  <meta property="og:title" content="Ээлж — Хуваарьт тань таарах цагийн ажлууд">
+  <meta property="og:description" content="Улаанбаатарт өөрийн завтай өдөр, цагт таарах цагийн ажил олоорой. Ажил олгогчид завтай ажил горилогчдыг хайж, шууд урилга илгээнэ.">
+  <meta property="og:image" content="https://eelj-mn.onrender.com/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://eelj-mn.onrender.com/">
   <title>Ээлж — Хуваарьт тань таарах цагийн ажлууд</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="manifest" href="assets/site.webmanifest">
   <link rel="preload" href="assets/fonts/roboto/roboto-cyrillic-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/GeistMono-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/oswald/oswald-cyrillic-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -26,10 +40,10 @@
       if (page === 'landing') document.querySelectorAll('meta[name=theme-color]').forEach(function (m) { m.content = '#0B0E11'; });
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=reply-dual1">
-  <script src="app.js?v=reply-dual1" defer></script>
+  <link rel="stylesheet" href="styles.css?v=polish1">
+  <script src="app.js?v=polish1" defer></script>
 </head>
-<body>
+<body id="top">
   <div class="reload-splash" aria-hidden="true">
     <svg class="splash-mark" viewBox="0 0 64 64"><rect width="64" height="64" rx="14"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z"/></svg>
     <span class="splash-domain">eelj.mn</span>
@@ -74,7 +88,7 @@
         <div class="hero-grid" aria-hidden="true"></div>
         <div class="landing-hero-inner content-width">
           <p class="eyebrow"><span class="demo-dot" aria-hidden="true"></span>Туршилтын хувилбар · Жишээ зарууд</p>
-          <h1 id="landing-title">Хичээлийнхээ завсар <span>ээлжээ ол.</span></h1>
+          <h1 id="landing-title">Завтай цагтаа <span>ээлжээ ол.</span></h1>
           <p class="landing-lead">Ээлж ажил горилогчдыг хуваарьт нь таарсан цагийн ажилтай холбоно. Байршил, цаг, цалингаа нэг дор харьцуулж, хүсэлтээ хэдхэн товшилтоор илгээ.</p>
           <div class="landing-ctas">
             <button class="button button-dark button-lg" data-action="signup" data-id="student">Ажил хайж эхлэх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
@@ -91,7 +105,7 @@
           <div class="showcase-head">
             <p class="eyebrow">Жишээ зарууд</p>
             <h2 id="showcase-title">Шинэ зарууд</h2>
-            <p>Хичээлийнхээ хуваарьт тааруулан сонгох боломжтой ээлжүүдээс.</p>
+            <p>Өдөр, цаг, байршлаараа өөрт таарсан ээлжээ сонго.</p>
           </div>
           <ol class="showcase-list">
             <li class="showcase-card from-left">
@@ -168,7 +182,7 @@
       <section class="landing-cta content-width" aria-labelledby="cta-title">
         <div class="hero-grid" aria-hidden="true"></div>
         <h2 id="cta-title">Чиний цаг. <span>Чиний ээлж.</span></h2>
-        <p>Бүртгүүлэхэд нууц үг хэрэггүй. Туршилтын хувилбарыг одоо ашиглаад үзээрэй.</p>
+        <p>Google эсвэл и-мэйлээр нэг минутад бүртгүүлээд, завтай өдрөө сонго.</p>
         <button class="button button-dark button-lg" data-action="signup">Бүртгүүлэх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
       </section>
     </div>
@@ -245,9 +259,9 @@
     </section>
   </main>
 
-  <footer class="site-footer content-width"><div><a class="wordmark" href="#top"><svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z"/><g class="logo-dots"><circle cx="32" cy="16" r="3.2" style="--dot-delay:192ms"/><circle cx="40" cy="16" r="3.2" style="--dot-delay:96ms"/><circle cx="48" cy="16" r="3.2" style="--dot-delay:0ms"/><circle cx="40" cy="24" r="3.2" style="--dot-delay:192ms"/><circle cx="48" cy="24" r="3.2" style="--dot-delay:96ms"/><circle cx="32" cy="32" r="3.2" style="--dot-delay:384ms"/><circle cx="48" cy="32" r="3.2" style="--dot-delay:192ms"/><circle cx="24" cy="40" r="3.2" style="--dot-delay:576ms"/><circle cx="16" cy="48" r="3.2" style="--dot-delay:768ms"/></g></svg><span>Ээлж</span></a><p>Чиний цаг. Чиний ээлж.</p></div><div class="footer-links"><a href="#faq" id="footer-faq">Түгээмэл асуулт</a><button class="text-button" data-action="reset">Туршилтын өгөгдөл шинэчлэх</button><span class="small muted">Улаанбаатар · Туршилтын хувилбар</span></div></footer>
+  <footer class="site-footer content-width"><div><a class="wordmark" href="#top"><svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z"/><g class="logo-dots"><circle cx="32" cy="16" r="3.2" style="--dot-delay:192ms"/><circle cx="40" cy="16" r="3.2" style="--dot-delay:96ms"/><circle cx="48" cy="16" r="3.2" style="--dot-delay:0ms"/><circle cx="40" cy="24" r="3.2" style="--dot-delay:192ms"/><circle cx="48" cy="24" r="3.2" style="--dot-delay:96ms"/><circle cx="32" cy="32" r="3.2" style="--dot-delay:384ms"/><circle cx="48" cy="32" r="3.2" style="--dot-delay:192ms"/><circle cx="24" cy="40" r="3.2" style="--dot-delay:576ms"/><circle cx="16" cy="48" r="3.2" style="--dot-delay:768ms"/></g></svg><span>Ээлж</span></a><p>Чиний цаг. Чиний ээлж.</p></div><div class="footer-links"><a href="#faq" id="footer-faq">Түгээмэл асуулт</a><button class="text-button" data-action="reset" id="footer-reset">Туршилтын өгөгдөл шинэчлэх</button><span class="small muted">© <span id="footer-year">2026</span> Ээлж · Улаанбаатар</span></div></footer>
 
-  <dialog id="panel" class="panel-dialog" aria-labelledby="panel-title"><div class="panel-shell"><div class="panel-top"><span class="panel-demo"><span class="demo-dot" aria-hidden="true"></span>ТУРШИЛТЫН ГОРИМ</span><button class="icon-button" data-action="close" aria-label="Цонх хаах"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div><div id="panel-content"></div></div></dialog>
+  <dialog id="panel" class="panel-dialog" aria-labelledby="panel-title"><div class="panel-shell"><div class="panel-top"><span aria-hidden="true"></span><button class="icon-button" data-action="close" aria-label="Цонх хаах"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div><div id="panel-content"></div></div></dialog>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
   <svg class="svg-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>

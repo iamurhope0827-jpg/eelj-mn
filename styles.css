@@ -9,8 +9,8 @@
 @font-face{font-family:Oswald;src:url('assets/fonts/oswald/oswald-latin-ext-wght-normal.woff2') format('woff2-variations');font-weight:200 700;font-display:swap;unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
 @font-face{font-family:Oswald;src:url('assets/fonts/oswald/oswald-latin-wght-normal.woff2') format('woff2-variations');font-weight:200 700;font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 /* Geist has no ₮ glyph; borrow it from Fira Sans only for that code point. */
-@font-face{font-family:'Tugrik';src:url('assets/fonts/FiraSans-Regular.ttf') format('truetype');font-weight:100 450;unicode-range:U+20AE;font-display:swap}
-@font-face{font-family:'Tugrik';src:url('assets/fonts/FiraSans-Bold.ttf') format('truetype');font-weight:451 900;unicode-range:U+20AE;font-display:swap}
+@font-face{font-family:'Tugrik';src:url('assets/fonts/tugrik-Regular.woff2') format('woff2');font-weight:100 450;unicode-range:U+20AE;font-display:swap}
+@font-face{font-family:'Tugrik';src:url('assets/fonts/tugrik-Bold.woff2') format('woff2');font-weight:451 900;unicode-range:U+20AE;font-display:swap}
 
 :root{
   /* Palette: #FFFFFF white · #BBBFBF mist · #878787 grey · #05AD98 teal */
@@ -231,8 +231,8 @@ svg.icon{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-w
 .badge-withdrawn,.badge-full{background:var(--b-gray);color:var(--b-gray-t)}
 .employer-notice{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:var(--radius);background:var(--bg-2);box-shadow:inset 0 0 0 1px var(--line);margin-bottom:24px;font-size:13px;color:var(--muted)}
 .employer-notice .demo-dot{width:6px;height:6px}
-.workspace-tabs{display:flex;border-bottom:1px solid var(--line);gap:4px;margin-bottom:8px}
-.workspace-tabs button{height:44px;padding:0 10px;background:none;position:relative;font-size:14px;color:var(--muted);display:flex;gap:8px;align-items:center;border-radius:var(--radius) var(--radius) 0 0}
+.workspace-tabs{display:flex;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line);gap:4px;margin-bottom:8px}
+.workspace-tabs button{flex:none;white-space:nowrap;height:44px;padding:0 10px;background:none;position:relative;font-size:14px;color:var(--muted);display:flex;gap:8px;align-items:center;border-radius:var(--radius) var(--radius) 0 0}
 .workspace-tabs button:hover{color:var(--ink)}
 .workspace-tabs button[aria-selected=true]{color:var(--ink);font-weight:500}
 .workspace-tabs button[aria-selected=true]::after{content:'';height:2px;position:absolute;bottom:-1px;left:10px;right:10px;background:var(--ink)}
@@ -774,24 +774,24 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
 
 /* ===== Homepage (signed out): premium dark theme =====
    Scoped to :root[data-page=landing], which app.js sets only while signed out.
-   The purple accent is the pastel palette's #CDB4DB. */
+   The accent is the brand teal, matching the signed-in app. */
 :root[data-page=landing]{
   color-scheme:dark;
   --bg:#0B0E11;--surface:#171B21;--bg-2:#1E2329;--hover:#252B33;
   --ink:#F5F5F5;--muted:#9CA3AF;--faint:#7D8590;
   --line:rgb(255 255 255 / 7%);--line-2:rgb(255 255 255 / 15%);
-  --blue:#CDB4DB;--teal:#CDB4DB;--teal-text:#CDB4DB;--red:#F0787D;--grad-end:#9CA3AF;
-  --accent:rgb(205 180 219 / 12%);--accent-t:#DCCBE8;
-  --dark-bg:#CDB4DB;--dark-fg:#17121F;--dark-hover:#DCCBE8;
+  --blue:#2CC7B3;--teal:#2CC7B3;--teal-text:#5FD8C8;--red:#F0787D;--grad-end:#9CA3AF;
+  --accent:rgb(5 173 152 / 14%);--accent-t:#7FE0D2;
+  --dark-bg:#05AD98;--dark-fg:#04201C;--dark-hover:#0BC0A9;
   --glow-1:rgb(185 163 214 / 10%);--glow-2:rgb(255 255 255 / 3%);--grid:rgb(255 255 255 / 3%);
   --shadow:0 0 0 1px rgb(255 255 255 / 7%),0 1px 2px rgb(0 0 0 / 40%);
   --shadow-lg:0 0 0 1px rgb(255 255 255 / 8%),0 24px 48px -16px rgb(0 0 0 / 70%);
   --b-red:rgb(240 120 125 / 12%);--b-red-t:#F2A5A9;--b-gray:#1E2329;--b-gray-t:#C9CED6;
   --b-amber:rgb(240 190 106 / 12%);--b-amber-t:#F0BE6A;
-  --focus:0 0 0 2px var(--bg),0 0 0 4px #CDB4DB;
+  --focus:0 0 0 2px var(--bg),0 0 0 4px #2CC7B3;
 }
 :root[data-page=landing] body{background:var(--bg);color:var(--ink)}
-:root[data-page=landing] ::selection{background:#CDB4DB;color:#17121F}
+:root[data-page=landing] ::selection{background:#05AD98;color:#04201C}
 :root[data-page=landing] .topbar-inner{background:rgb(23 27 33 / 70%);box-shadow:0 0 0 1px rgb(255 255 255 / 7%),0 16px 32px -20px rgb(0 0 0 / 80%)}
 
 /* Section 1: hero, one full viewport */
@@ -799,7 +799,7 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
 .landing-hero .hero-grid{mask-image:radial-gradient(ellipse 60% 55% at 50% 35%,#000 15%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse 60% 55% at 50% 35%,#000 15%,transparent 70%)}
 .landing-hero-inner{display:flex;flex-direction:column;align-items:center;text-align:center}
 .landing-hero h1{max-width:16ch;margin-top:28px;font-size:clamp(46px,min(7.2vw,10.5vh),108px);line-height:.98;letter-spacing:-.005em;color:var(--ink);text-wrap:balance}
-.landing-hero h1 span{color:#CDB4DB;background:linear-gradient(90deg,#EDE3F4,#B9A3D6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.landing-hero h1 span{color:#5FD8C8}
 .landing-hero .landing-lead{max-width:52ch;margin:28px auto 0;font-size:clamp(16px,1.35vw,19px);text-wrap:balance}
 .landing-hero .landing-ctas{justify-content:center;margin-top:clamp(28px,4.5vh,40px)}
 .landing-hero .landing-stats{grid-template-columns:repeat(3,minmax(0,auto));justify-content:center;gap:12px 64px;margin-top:clamp(36px,6vh,64px);padding:22px 8px 0;text-align:center}
@@ -990,3 +990,8 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
 @media(max-width:760px){.sent-invite{grid-template-columns:1fr auto}.sent-invite>div:nth-child(2),.sent-invite .sent-when{grid-column:1}.sent-status{grid-column:2;grid-row:1}.sent-summary .button{margin-left:0}}
 .sent-error{display:flex;align-items:flex-start;gap:8px;margin:0 0 8px;padding:12px 14px;border-radius:var(--radius);background:var(--b-red);color:var(--b-red-t);font-size:13px;line-height:1.5}
 .sent-error .icon{width:15px;height:15px;flex:none;margin-top:2px}
+.workspace-tabs::-webkit-scrollbar{display:none}
+.button[aria-busy]::before{content:"";width:14px;height:14px;flex:none;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:button-spin .7s linear infinite}
+.button[aria-busy] .icon,.button[aria-busy] .google-logo{display:none}
+@keyframes button-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.button[aria-busy]::before{animation-duration:2s}}

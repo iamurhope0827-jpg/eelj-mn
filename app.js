@@ -500,6 +500,7 @@
     $('#public-header').hidden = signedIn;
     $('#app-header').hidden = !signedIn;
     $('#footer-faq').hidden = !signedIn;
+    $('#footer-reset').hidden = !signedIn;
     if (!signedIn) { setMenu(false); return; }
     const employer = state.role === 'employer';
     const name = state.profile.name || 'Зочин';
@@ -625,6 +626,8 @@
     'auth/account-exists-with-different-credential': 'Энэ и-мэйл өөр аргаар бүртгэгдсэн байна. И-мэйл, нууц үгээрээ нэвтэрнэ үү.',
     'eelj/not-configured': 'Нэвтрэх систем одоогоор тохируулагдаагүй байна.'
   };
+  // Disables a button and shows a spinner on it while a network request runs.
+  const busy = (button, on) => { button.disabled = on; button.toggleAttribute('aria-busy', on); };
   const authMessage = (error) => authMessages[error?.code] || 'Алдаа гарлаа. Дахин оролдоно уу.';
   // Called by Firebase on load and whenever the session changes, including in other tabs.
   function syncUser(user) {
@@ -651,7 +654,7 @@
       if (name.length < 2) return formError('signin-error', 'Нэрээ 2-оос доошгүй тэмдэгтээр бичээрэй.');
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return formError('signin-error', 'Зөв и-мэйл хаяг бичээрэй.');
       if (password.length < 8) return formError('signin-error', 'Нууц үг 8-аас доошгүй тэмдэгттэй байна.');
-      button.disabled = true;
+      busy(button, true);
       try {
         const { auth, fb } = await firebaseAuth();
         ui.pendingRole = data.get('role') === 'employer' ? 'employer' : 'student';
@@ -660,22 +663,22 @@
         syncUser(user);
         fb.sendEmailVerification(user).catch(() => {});
         toast(`Бүртгэл үүслээ. ${user.email} руу баталгаажуулах холбоос илгээлээ.`);
-      } catch (error) { ui.pendingRole = ''; button.disabled = false; formError('signin-error', authMessage(error)); }
+      } catch (error) { ui.pendingRole = ''; busy(button, false); formError('signin-error', authMessage(error)); }
       return;
     }
     if (!email || !password) return formError('signin-error', 'И-мэйл, нууц үгээ бичээрэй.');
-    button.disabled = true;
+    busy(button, true);
     try {
       const { auth, fb } = await firebaseAuth();
       const { user } = await fb.signInWithEmailAndPassword(auth, email, password);
       syncUser(user);
       toast(`Тавтай морил, ${state.profile.name}!`);
-    } catch (error) { button.disabled = false; formError('signin-error', authMessage(error)); }
+    } catch (error) { busy(button, false); formError('signin-error', authMessage(error)); }
   }
   async function googleSignIn(button) {
     const form = button.closest('form');
     $('#signin-error').hidden = true;
-    button.disabled = true;
+    busy(button, true);
     try {
       const { auth, fb } = await firebaseAuth();
       // The role cards only exist on the sign-up form; returning users keep their saved role.
@@ -685,7 +688,7 @@
       syncUser(user);
       toast(`Тавтай морил, ${state.profile.name}!`);
     } catch (error) {
-      ui.pendingRole = ''; button.disabled = false;
+      ui.pendingRole = ''; busy(button, false);
       if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') formError('signin-error', authMessage(error));
     }
   }
@@ -701,13 +704,13 @@
     const button = form.querySelector('[type=submit]');
     $('#reset-error').hidden = true;
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return formError('reset-error', 'Зөв и-мэйл хаяг бичээрэй.');
-    button.disabled = true;
+    busy(button, true);
     try {
       const { auth, fb } = await firebaseAuth();
       await fb.sendPasswordResetEmail(auth, email);
       // Same message whether or not the account exists, so the form does not reveal registered emails.
       showPanel(`<h2 class="panel-heading" id="panel-title">И-мэйлээ шалгана уу</h2><p class="panel-subtitle">Хэрэв <strong>${escape(email)}</strong> хаягаар бүртгэл байгаа бол нууц үг шинэчлэх холбоос илгээлээ. Spam хавтсаа ч шалгаарай.</p><div class="form-actions"><button class="button button-dark" data-action="signin" data-email="${escape(email)}">Нэвтрэх${icon('arrow')}</button></div>`);
-    } catch (error) { button.disabled = false; formError('reset-error', authMessage(error)); }
+    } catch (error) { busy(button, false); formError('reset-error', authMessage(error)); }
   }
   async function accountEmail(kind) {
     try {
@@ -1155,6 +1158,7 @@
   const isPageReload = performance.getEntriesByType('navigation')[0]?.type === 'reload';
   if (isPageReload) history.scrollRestoration = 'manual';
   state = loadState();
+  $('#footer-year').textContent = new Date().getFullYear();
   if (!FIREBASE_CONFIG.apiKey && state.signedIn) { state.signedIn = false; state.userId = ''; persist(); }
   renderAll(); route(); setupShowcase();
   if (FIREBASE_CONFIG.apiKey) firebaseAuth().then(({ auth, fb }) => fb.onAuthStateChanged(auth, syncUser)).catch(() => {});
