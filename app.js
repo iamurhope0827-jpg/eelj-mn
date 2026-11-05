@@ -51,7 +51,7 @@
   const fitsSome = (job, a) => fitDays(job, a).length > 0;
   const weekStrip = (days) => `<span class="week-strip" aria-label="Боломжтой өдөр: ${daysText(days)}">${weekOrder.map((d) => `<span class="${days.includes(d) ? 'on' : ''}" aria-hidden="true">${weekShort[d]}</span>`).join('')}</span>`;
   const availSummary = (raw) => { const a = cleanAvail(raw); const legacy = !a.dates.length && Array.isArray(raw?.days) && raw.days.length; return `${legacy ? weekStrip(raw.days.filter((d) => Number.isInteger(d) && d >= 0 && d <= 6)) : `<span class="avail-dates">${icon('calendar')}${datesText(a.dates)}</span>`}<strong class="avail-hours-text">${hoursText(a.from, a.to)}</strong>`; };
-  const ui = { category: '', district: '', sort: 'newest', seekDates: [], seekLimit: 10, availOpen: { me: false, seek: true }, availMonth: {}, seekFrom: '', seekTo: '', seekDistrict: '', seekJob: '', pickedOnly: false, savedOnly: false, limit: 3, employerTab: 'jobs', applicantJob: '', view: 'jobs', panelJob: null };
+  const ui = { category: '', district: '', sort: 'newest', seekDates: [], seekLimit: 10, availOpen: { me: false, seek: true }, availMonth: {}, seekFrom: '', seekTo: '', seekDistrict: '', seekJob: '', pickedOnly: false, savedOnly: false, limit: 3, employerTab: 'jobs', applicantJob: '', view: 'jobs', panelJob: null, menuOpen: false };
   let storageMessage = '';
   let toastTimer;
   let state;
@@ -138,7 +138,7 @@
   const invitesFor = (id) => state.invites.filter((item) => item.seekerId === id);
   const invitedIds = () => new Set(state.invites.map((item) => item.seekerId));
   const SEED_LEVEL = 3;
-  function freshState() { return { version: 1, seedLevel: SEED_LEVEL, jobs: seedJobs(), applications: [], saved: [], invites: [], profile: { name: '', contact: '', dates: [], from: '', to: '' }, role: 'student' }; }
+  function freshState() { return { version: 1, seedLevel: SEED_LEVEL, jobs: seedJobs(), applications: [], saved: [], invites: [], profile: { name: '', contact: '', dates: [], from: '', to: '' }, role: 'student', signedIn: false }; }
   const string = (value, max = 2000) => typeof value === 'string' && value.length <= max;
   const validDate = (value) => /^\d{4}-\d{2}-\d{2}$/.test(value) && Number.isFinite(dateObject(value).getTime()) && dateObject(value).toISOString().slice(0, 10) === value;
   const validTime = (value) => /^([01]\d|2[0-3]):[0-5]\d$/.test(value);
@@ -147,7 +147,7 @@
   }
   function validState(value) {
     if (!value || value.version !== 1 || !Array.isArray(value.jobs) || value.jobs.length > 500 || !value.jobs.every(validJob) || new Set(value.jobs.map((j) => j.id)).size !== value.jobs.length || !Array.isArray(value.applications) || value.applications.length > 2000 || !Array.isArray(value.saved)) return false;
-    return value.applications.every((app) => app && string(app.id, 100) && value.jobs.some((job) => job.id === app.jobId) && string(app.name, 80) && string(app.contact, 100) && string(app.note, 600) && Object.hasOwn(statusNames, app.status) && Number.isFinite(app.createdAt) && validJob(app.snapshot)) && value.saved.every((id) => string(id, 100)) && (value.picked === undefined || Array.isArray(value.picked)) && (value.invites === undefined || (Array.isArray(value.invites) && value.invites.length <= 2000 && value.invites.every((item) => item && string(item.id, 100) && string(item.seekerId, 100) && string(item.jobId, 100) && string(item.message, 600) && Number.isFinite(item.createdAt)))) && value.profile && string(value.profile.name, 80) && string(value.profile.contact, 100) && ['student', 'employer'].includes(value.role);
+    return value.applications.every((app) => app && string(app.id, 100) && value.jobs.some((job) => job.id === app.jobId) && string(app.name, 80) && string(app.contact, 100) && string(app.note, 600) && Object.hasOwn(statusNames, app.status) && Number.isFinite(app.createdAt) && validJob(app.snapshot)) && value.saved.every((id) => string(id, 100)) && (value.picked === undefined || Array.isArray(value.picked)) && (value.invites === undefined || (Array.isArray(value.invites) && value.invites.length <= 2000 && value.invites.every((item) => item && string(item.id, 100) && string(item.seekerId, 100) && string(item.jobId, 100) && string(item.message, 600) && Number.isFinite(item.createdAt)))) && value.profile && string(value.profile.name, 80) && string(value.profile.contact, 100) && ['student', 'employer'].includes(value.role) && (value.signedIn === undefined || typeof value.signedIn === 'boolean');
   }
   function loadState() {
     try { const raw = localStorage.getItem(KEY); if (!raw) return freshState(); const parsed = JSON.parse(raw); if (validState(parsed)) return upgrade(parsed); storageMessage = 'Хадгалсан өгөгдлийг уншиж чадсангүй. Жишээ мэдээллийг шинээр ачааллаа.'; }
@@ -156,6 +156,7 @@
   }
   function upgrade(value) {
     delete value.picked;
+    value.signedIn = value.signedIn === true;
     value.invites = (value.invites || []).filter((item) => seekerById(item.seekerId) && value.jobs.some((job) => job.id === item.jobId));
     delete value.profile.days; Object.assign(value.profile, cleanAvail(value.profile));
     if ((value.seedLevel || 1) < SEED_LEVEL) {
@@ -254,9 +255,6 @@
     $('#load-more-wrap').hidden = !jobs.length;
     $('#load-more').hidden = ui.limit >= jobs.length;
     $('#visible-count').textContent = `${jobs.length} жишээ зараас ${Math.min(ui.limit, jobs.length)}-ыг харуулж байна`;
-    $('#application-count').textContent = state.applications.filter((app) => app.status !== 'withdrawn').length;
-    $('#application-count').hidden = !Number($('#application-count').textContent);
-    $('#account-label').textContent = state.role === 'employer' ? 'Ажил олгогч' : 'Нэвтрэх';
     $('#greeting-name').textContent = state.profile.name ? ' ' + state.profile.name : '';
     $('#greeting-name').hidden = !state.profile.name;
   }
@@ -299,19 +297,108 @@
   }
 
   const employerTabs = ['jobs', 'seekers', 'applications'];
-  function renderAll() { renderBrowse(); renderApplications(); renderEmployer(); showStorageMessage(); }
-  function navigate(view) { closePanel(); if (location.hash === '#' + view) route(); else location.hash = view; }
+  function renderAll() { renderBrowse(); renderApplications(); renderEmployer(); renderHeader(); renderLanding(); showStorageMessage(); }
+  const roleNames = { student: 'Оюутан', employer: 'Ажил олгогч' };
+  function renderHeader() {
+    const signedIn = state.signedIn;
+    $('#public-header').hidden = signedIn;
+    $('#app-header').hidden = !signedIn;
+    $('#footer-faq').hidden = !signedIn;
+    if (!signedIn) { setMenu(false); return; }
+    const employer = state.role === 'employer';
+    const name = state.profile.name || 'Зочин';
+    const sent = state.applications.filter((app) => app.status !== 'withdrawn').length;
+    const waiting = state.applications.filter((app) => app.status === 'received').length;
+    const links = employer
+      ? [['employer', 'Самбар', waiting], ['jobs', 'Зарууд харах', 0]]
+      : [['jobs', 'Ажлын зарууд', 0], ['applications', 'Миний хүсэлтүүд', sent], ['guide', 'Зөвлөмж', 0]];
+    $('#app-nav').innerHTML = links.map(([view, label, count]) => `<a href="#${view}" data-nav="${view}"${ui.view === view ? ' aria-current="page"' : ''}>${label}${count ? `<span class="nav-count">${count}</span>` : ''}</a>`).join('');
+    $('#role-chip').textContent = roleNames[state.role];
+    $('#role-chip').dataset.role = state.role;
+    $('#user-avatar').textContent = name.trim().charAt(0).toUpperCase();
+    $('#user-name').textContent = name;
+    $('#user-role').textContent = roleNames[state.role];
+    $('#user-button').setAttribute('aria-label', `${name} · ${roleNames[state.role]} — профайл цэс`);
+    $('#user-dropdown').innerHTML = `<div class="menu-head"><span class="avatar avatar-lg" aria-hidden="true">${escape(name.trim().charAt(0).toUpperCase())}</span><div><strong>${escape(name)}</strong><small>${escape(state.profile.contact || roleNames[state.role])}</small></div></div>
+      <div class="menu-group">${employer ? `<a class="menu-item" href="#employer">${icon('pay')}Ажил олгогчийн самбар</a>` : `<a class="menu-item" href="#applications">${icon('clock')}Миний хүсэлтүүд${sent ? `<span class="nav-count">${sent}</span>` : ''}</a><button class="menu-item" data-action="saved-menu">${icon('bookmark')}Хадгалсан ажлууд</button>`}
+      <button class="menu-item" data-action="${employer ? 'student' : 'employer'}">${icon('swap')}${employer ? 'Оюутан болох' : 'Ажил олгогч болох'}</button>
+      <button class="menu-item" data-action="colors">${icon('palette')}Өнгө солих</button></div>
+      <div class="menu-group"><button class="menu-item menu-danger" data-action="signout">${icon('logout')}Гарах</button></div>`;
+  }
+  function setMenu(open, focusButton = false) {
+    ui.menuOpen = open;
+    $('#user-dropdown').hidden = !open;
+    $('#user-button').setAttribute('aria-expanded', String(open));
+    if (open) $('#user-dropdown .menu-item')?.focus();
+    else if (focusButton) $('#user-button').focus();
+  }
+  function renderLanding() {
+    const open = state.jobs.filter((job) => availability(job) === 'active').sort((a, b) => b.createdAt - a.createdAt);
+    const avg = open.length ? Math.round(open.reduce((sum, job) => sum + job.pay, 0) / open.length / 100) * 100 : 0;
+    $('#landing-stats').innerHTML = `<div><dt>Нээлттэй ээлж</dt><dd>${open.length}</dd></div><div><dt>Дундаж цагийн хөлс</dt><dd>${money(avg)}</dd></div><div><dt>Дүүрэг</dt><dd>${districts.length}</dd></div>`;
+    $('#landing-preview').innerHTML = open.slice(0, 3).map((job) => `<button class="preview-card" data-action="signin" data-id="student" aria-label="${escape(job.title)} — дэлгэрэнгүйг харахын тулд нэвтрэх"><span class="preview-cat">${escape(categories[job.category])}</span><strong>${escape(job.title)}</strong><span class="preview-company">${escape(job.company)}</span><span class="preview-meta"><span>${icon('pin')}${escape(job.district)}</span><span>${icon('calendar')}${dayRange(job)}</span><span>${icon('clock')}${timeLabel(job)}</span></span><span class="preview-pay">${money(job.pay)}<small>/ цаг</small></span></button>`).join('') || '<p class="muted small">Одоогоор нээлттэй зар алга.</p>';
+    $('#landing-more').innerHTML = `Бүх ${open.length} зарыг харах${icon('arrow')}`;
+    $('#landing-more').hidden = !open.length;
+  }
+  function navigate(view) { closePanel(); setMenu(false); if (location.hash === '#' + view) route(); else location.hash = view; }
   function route() {
     const hash = location.hash.slice(1);
+    setMenu(false);
+    if (!state.signedIn) {
+      ui.view = 'landing';
+      $('#landing-view').hidden = false;
+      ['#browse-view', '#applications-view', '#employer-view'].forEach((id) => { $(id).hidden = true; });
+      renderHeader();
+      document.title = 'Ээлж — Оюутны хуваарьт таарах ажлууд';
+      const target = hash && document.getElementById(hash);
+      if (target && $('#landing-view').contains(target)) requestAnimationFrame(() => target.scrollIntoView());
+      else window.scrollTo({ top: 0, behavior: 'instant' });
+      return;
+    }
     const view = hash === 'applications' ? 'applications' : hash === 'employer' ? 'employer' : 'jobs';
     ui.view = view;
+    $('#landing-view').hidden = true;
     $('#browse-view').hidden = view !== 'jobs';
     $('#applications-view').hidden = view !== 'applications';
     $('#employer-view').hidden = view !== 'employer';
-    document.querySelectorAll('[data-nav]').forEach((link) => { if (link.dataset.nav === view) link.setAttribute('aria-current', 'page'); else link.removeAttribute('aria-current'); });
+    renderHeader();
     document.title = `${view === 'applications' ? 'Миний хүсэлтүүд' : view === 'employer' ? 'Ажил олгогчийн самбар' : 'Оюутны хуваарьт таарах ажлууд'} — Ээлж`;
-    if (hash === 'guide' || hash === 'faq') requestAnimationFrame(() => document.getElementById(hash).scrollIntoView());
+    const scrollTarget = hash === 'guide' || hash === 'faq' ? hash : ui.scrollTo;
+    ui.scrollTo = '';
+    if (scrollTarget) requestAnimationFrame(() => document.getElementById(scrollTarget)?.scrollIntoView());
     else window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+  function openSignIn(mode = 'signin', role = '') {
+    ui.panelJob = null;
+    const signup = mode === 'signup';
+    const pick = role || state.role;
+    const roleCard = (value, symbol, title, text) => `<label class="signin-role"><input type="radio" name="role" value="${value}" ${pick === value ? 'checked' : ''}><span>${icon(symbol)}<strong>${title}</strong><small>${text}</small></span></label>`;
+    showPanel(`<h2 class="panel-heading" id="panel-title">${signup ? 'Ээлжид бүртгүүлэх' : 'Тавтай морил'}</h2><p class="panel-subtitle">${signup ? 'Хэдхэн секундэд эхлээрэй. Нууц үг шаардахгүй.' : 'Үргэлжлүүлэхийн тулд нэвтэрнэ үү.'}</p>
+      <form id="signin-form" novalidate><fieldset class="signin-roles"><legend>Та хэн бэ?</legend>${roleCard('student', 'user', 'Оюутан', 'Ажил хайх, хүсэлт илгээх')}${roleCard('employer', 'pay', 'Ажил олгогч', 'Зар нэмэх, ажилтан сонгох')}</fieldset>
+      <div class="form-grid"><label class="field field-full">Нэр<input name="name" required minlength="2" maxlength="80" autocomplete="off" placeholder="Жишээ: Бат" value="${escape(state.profile.name)}"></label><label class="field field-full">Утас эсвэл и-мэйл<input name="contact" required maxlength="100" autocomplete="off" placeholder="Жишээ: student@example.com" value="${escape(state.profile.contact)}"><span class="field-hint">Туршилт тул жишээ мэдээлэл ашиглаарай.</span></label></div>
+      <p id="signin-error" class="form-error" role="alert" hidden></p>
+      <div class="form-actions"><button type="submit" class="button button-dark">${signup ? 'Бүртгүүлэх' : 'Нэвтрэх'}${icon('arrow')}</button></div>
+      <p class="signin-switch">${signup ? `Бүртгэлтэй юу? <button type="button" class="text-button" data-action="signin" data-id="${pick}">Нэвтрэх</button>` : `Шинэ хэрэглэгч үү? <button type="button" class="text-button" data-action="signup" data-id="${pick}">Бүртгүүлэх</button>`}</p>
+      <p class="local-note">Туршилтын нэвтрэлт: бодит бүртгэл, нууц үг байхгүй. Мэдээлэл зөвхөн энэ хөтөч дээр хадгалагдана.</p></form>`, state.profile.name ? '#signin-form [type=submit]' : '#signin-form [name=name]');
+  }
+  function submitSignIn(form) {
+    const data = new FormData(form);
+    const name = String(data.get('name')).trim();
+    const contact = String(data.get('contact')).trim();
+    const role = data.get('role') === 'employer' ? 'employer' : 'student';
+    if (name.length < 2) return formError('signin-error', 'Нэрээ 2-оос доошгүй тэмдэгтээр бичээрэй.');
+    if (!/^\d{8}$/.test(contact.replace(/[\s-]/g, '')) && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact)) return formError('signin-error', '8 оронтой утас эсвэл зөв и-мэйл хаяг бичээрэй.');
+    Object.assign(state.profile, { name, contact });
+    state.role = role; state.signedIn = true;
+    persist(); renderAll(); navigate(role === 'employer' ? 'employer' : 'jobs');
+    toast(`Тавтай морил, ${name}!`);
+  }
+  function signOut() {
+    state.signedIn = false; ui.savedOnly = false;
+    persist(); closePanel();
+    history.pushState(null, '', location.pathname + location.search);
+    renderAll(); route();
+    toast('Системээс гарлаа.');
   }
   function showPanel(content, focus) {
     $('#toast').hidden = true;
@@ -581,6 +668,10 @@
     else if (action === 'colors') openColors();
     else if (action === 'palette') applyPalette(id);
     else if (action === 'account') openAccount();
+    else if (action === 'signin' || action === 'signup') openSignIn(action, id);
+    else if (action === 'signout') signOut();
+    else if (action === 'user-menu') setMenu(!ui.menuOpen);
+    else if (action === 'saved-menu') { ui.savedOnly = true; ui.limit = 3; ui.scrollTo = 'jobs'; renderBrowse(); navigate('jobs'); }
     else if (action === 'close') closePanel();
     else if (action === 'detail') openJob(id);
     else if (action === 'apply') openApply(id);
@@ -592,7 +683,7 @@
     }
     else if (action === 'my-applications') navigate('applications');
     else if (action === 'browse') navigate('jobs');
-    else if (action === 'student' || action === 'employer') { state.role = action; persist(); renderAll(); navigate(action === 'employer' ? 'employer' : 'jobs'); }
+    else if (action === 'student' || action === 'employer') { const changed = state.role !== action; state.role = action; state.signedIn = true; persist(); renderAll(); navigate(action === 'employer' ? 'employer' : 'jobs'); if (changed) toast(`${roleNames[action]} горимд шилжлээ.`); }
     else if (action === 'save') {
       if (!jobById(id)) return;
       const saved = state.saved.includes(id);
@@ -611,13 +702,27 @@
     else if (action === 'job-applicants') { ui.employerTab = 'applications'; ui.applicantJob = id; renderEmployer(); $('#employer-applications-tab').focus(); }
     else if (action === 'pause-job') { const job = jobById(id); if (job) { job.status = job.status === 'active' ? 'paused' : 'active'; persist(); renderAll(); toast(job.status === 'paused' ? 'Зарыг түр зогсоолоо.' : 'Зарыг дахин нээлээ.'); } }
     else if (action === 'reset') showPanel(`<h2 id="panel-title" class="panel-heading">Өгөгдлийг шинэчлэх үү?</h2><p class="panel-subtitle">Энэ хөтөч дээрх хадгалсан ажил, хүсэлт болон таны нэмсэн заруудыг арилгаж, анхны жишээ заруудыг сэргээнэ.</p><div class="form-actions"><button class="button button-outline" data-action="close">Болих</button><button class="button button-dark" data-action="confirm-reset">Шинээр эхлэх</button></div>`);
-    else if (action === 'confirm-reset') { state = freshState(); ui.category = ''; ui.district = ''; ui.savedOnly = false; ui.limit = 3; ui.applicantJob = ''; ui.employerTab = 'jobs'; persist(); renderAll(); navigate('jobs'); toast('Туршилтын өгөгдлийг шинэчиллээ.'); }
+    else if (action === 'confirm-reset') { const { signedIn, role, profile: { name, contact } } = state; state = freshState(); Object.assign(state, { signedIn, role }); Object.assign(state.profile, { name, contact }); ui.category = ''; ui.district = ''; ui.savedOnly = false; ui.limit = 3; ui.applicantJob = ''; ui.employerTab = 'jobs'; persist(); renderAll(); navigate('jobs'); toast('Туршилтын өгөгдлийг шинэчиллээ.'); }
   });
   document.addEventListener('submit', (event) => {
     if (event.target.id === 'search-form') { event.preventDefault(); const data = new FormData(event.target); ui.category = data.get('category'); ui.district = data.get('district'); ui.limit = 3; renderBrowse(); $('#jobs').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
     else if (event.target.id === 'application-form') { event.preventDefault(); submitApplication(event.target); }
     else if (event.target.id === 'job-form') { event.preventDefault(); submitJob(event.target); }
     else if (event.target.id === 'invite-form') { event.preventDefault(); submitInvite(event.target); }
+    else if (event.target.id === 'signin-form') { event.preventDefault(); submitSignIn(event.target); }
+  });
+  document.addEventListener('click', (event) => {
+    if (!ui.menuOpen) return;
+    const inside = event.target.closest('.user-menu');
+    if (!inside || event.target.closest('.user-dropdown a, .user-dropdown button')) setMenu(false);
+  });
+  $('.user-menu').addEventListener('keydown', (event) => {
+    if (!ui.menuOpen) return;
+    const items = [...document.querySelectorAll('#user-dropdown .menu-item')];
+    const at = items.indexOf(document.activeElement);
+    if (event.key === 'Escape') { event.preventDefault(); setMenu(false, true); }
+    else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); items[(at + (event.key === 'ArrowDown' ? 1 : items.length - 1)) % items.length]?.focus(); }
+    else if (event.key === 'Tab' && at !== -1 && (event.shiftKey ? at === 0 : at === items.length - 1)) setMenu(false);
   });
   document.addEventListener('change', (event) => {
     const picker = event.target.closest('.avail-picker');
@@ -637,7 +742,7 @@
   $('.workspace-tabs').addEventListener('keydown', (event) => { if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) { event.preventDefault(); const at = employerTabs.indexOf(ui.employerTab); ui.employerTab = event.key === 'Home' ? employerTabs[0] : event.key === 'End' ? employerTabs[employerTabs.length - 1] : employerTabs[(at + (event.key === 'ArrowRight' ? 1 : employerTabs.length - 1)) % employerTabs.length]; renderEmployer(); $(`#employer-${ui.employerTab}-tab`).focus(); } });
   $('#panel').addEventListener('click', (event) => { if (event.target === $('#panel')) { const rect = $('#panel').getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) closePanel(); } });
   window.addEventListener('hashchange', route);
-  window.addEventListener('storage', (event) => { if (event.key === KEY) { state = loadState(); renderAll(); } });
+  window.addEventListener('storage', (event) => { if (event.key === KEY) { state = loadState(); renderAll(); route(); } });
   state = loadState();
   renderAll(); route();
   setTimeout(() => document.documentElement.classList.remove('is-reloading'), 1800);

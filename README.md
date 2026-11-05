@@ -25,12 +25,12 @@ Repository: https://github.com/iamurhope0827-jpg/eelj-mn
 
 ## Try the connected workflow
 
-1. Filter shifts by role and district, sort, save a job, or open its details.
-2. Apply using a sample name and contact such as `student@example.com`.
-3. Open “Миний хүсэлтүүд” to see the received application.
-4. Choose “Нэвтрэх” → “Ажил олгогч” → “Ирсэн хүсэлтүүд”. Change the application to reviewing, selected, or declined.
-5. Return to “Миний хүсэлтүүд” to see the same status. Withdraw a selected request to release its place.
-6. In employer mode, create, edit, pause, or reopen a sample shift.
+1. On the landing page, choose “Нэвтрэх” or “Бүртгүүлэх”, pick “Оюутан”, and enter a sample name and contact such as `student@example.com`. No password is needed.
+2. Filter shifts by role and district, sort, save a job, or open its details.
+3. Apply to a shift, then open “Миний хүсэлтүүд” to see the received application.
+4. Open the profile menu (top right) → “Ажил олгогч болох” → “Ирсэн хүсэлтүүд”. Change the application to reviewing, selected, or declined.
+5. Switch back with “Оюутан болох” and check “Миний хүсэлтүүд” for the same status. Withdraw a selected request to release its place.
+6. In employer mode, create, edit, pause, or reopen a sample shift. “Гарах” in the profile menu returns to the landing page.
 
 The footer has a reset action with confirmation. Seed shifts use upcoming dates calculated in the Asia/Ulaanbaatar timezone.
 

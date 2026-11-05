@@ -12,28 +12,100 @@
   <link rel="preload" href="assets/fonts/GeistMono-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/oswald/oswald-cyrillic-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <script>if (performance.getEntriesByType('navigation')[0]?.type === 'reload') document.documentElement.classList.add('is-reloading');</script>
-  <link rel="stylesheet" href="styles.css?v=dots-reload2">
-  <script src="app.js?v=dots-reload2" defer></script>
+  <link rel="stylesheet" href="styles.css?v=auth1">
+  <script src="app.js?v=auth1" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Үндсэн хэсэгт очих</a>
-  <header class="site-header">
-    <a class="wordmark" href="#jobs" aria-label="Ээлж — нүүр хуудас"><svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z"/><g class="logo-dots"><circle cx="32" cy="16" r="3.2" style="--dot-delay:192ms"/><circle cx="40" cy="16" r="3.2" style="--dot-delay:96ms"/><circle cx="48" cy="16" r="3.2" style="--dot-delay:0ms"/><circle cx="40" cy="24" r="3.2" style="--dot-delay:192ms"/><circle cx="48" cy="24" r="3.2" style="--dot-delay:96ms"/><circle cx="32" cy="32" r="3.2" style="--dot-delay:384ms"/><circle cx="48" cy="32" r="3.2" style="--dot-delay:192ms"/><circle cx="24" cy="40" r="3.2" style="--dot-delay:576ms"/><circle cx="16" cy="48" r="3.2" style="--dot-delay:768ms"/></g></svg><span>Ээлж</span></a>
-    <span class="header-slash" aria-hidden="true">/</span>
-    <p class="demo-note"><span class="demo-dot" aria-hidden="true"></span><span>ТУРШИЛТЫН ХУВИЛБАР <span class="demo-note-extra">· ЖИШЭЭ ЗАРУУД</span></span></p>
-    <button class="button button-outline palette-toggle" data-action="colors" aria-haspopup="dialog"><span class="palette-dot" aria-hidden="true"></span>Өнгө солих</button>
-    <nav class="main-nav" aria-label="Үндсэн цэс">
-      <a href="#jobs" data-nav="jobs">Ажлын зарууд</a>
-      <a href="#applications" data-nav="applications">Миний хүсэлтүүд <span id="application-count" class="nav-count" hidden>0</span></a>
-      <a href="#guide" class="guide-link">Зөвлөмж</a>
-    </nav>
-    <button class="button button-outline account-button" data-action="account"><span id="account-label">Нэвтрэх</span><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg></button>
+  <header class="site-header topbar topbar-public" id="public-header">
+    <div class="topbar-inner">
+      <a class="wordmark" href="#top" aria-label="Ээлж — нүүр хуудас"><svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z"/><g class="logo-dots"><circle cx="32" cy="16" r="3.2" style="--dot-delay:192ms"/><circle cx="40" cy="16" r="3.2" style="--dot-delay:96ms"/><circle cx="48" cy="16" r="3.2" style="--dot-delay:0ms"/><circle cx="40" cy="24" r="3.2" style="--dot-delay:192ms"/><circle cx="48" cy="24" r="3.2" style="--dot-delay:96ms"/><circle cx="32" cy="32" r="3.2" style="--dot-delay:384ms"/><circle cx="48" cy="32" r="3.2" style="--dot-delay:192ms"/><circle cx="24" cy="40" r="3.2" style="--dot-delay:576ms"/><circle cx="16" cy="48" r="3.2" style="--dot-delay:768ms"/></g></svg><span>Ээлж</span></a>
+      <nav class="public-nav" aria-label="Нүүр хуудасны цэс">
+        <a href="#landing-jobs">Шинэ зарууд</a>
+        <a href="#how">Хэрхэн ажилладаг</a>
+        <a href="#for-employers">Ажил олгогчдод</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="dot-button" data-action="colors" aria-haspopup="dialog" aria-label="Өнгө солих" title="Өнгө солих"><span class="palette-dot" aria-hidden="true"></span></button>
+        <button class="button button-quiet topbar-signin" data-action="signin">Нэвтрэх</button>
+        <button class="button button-dark topbar-signup" data-action="signup">Бүртгүүлэх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+      </div>
+    </div>
+  </header>
+
+  <header class="site-header topbar topbar-app" id="app-header" hidden>
+    <div class="topbar-inner">
+      <a class="wordmark" href="#jobs" aria-label="Ээлж — ажлын зарууд"><svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z"/><g class="logo-dots"><circle cx="32" cy="16" r="3.2" style="--dot-delay:192ms"/><circle cx="40" cy="16" r="3.2" style="--dot-delay:96ms"/><circle cx="48" cy="16" r="3.2" style="--dot-delay:0ms"/><circle cx="40" cy="24" r="3.2" style="--dot-delay:192ms"/><circle cx="48" cy="24" r="3.2" style="--dot-delay:96ms"/><circle cx="32" cy="32" r="3.2" style="--dot-delay:384ms"/><circle cx="48" cy="32" r="3.2" style="--dot-delay:192ms"/><circle cx="24" cy="40" r="3.2" style="--dot-delay:576ms"/><circle cx="16" cy="48" r="3.2" style="--dot-delay:768ms"/></g></svg><span>Ээлж</span></a>
+      <span class="role-chip" id="role-chip"></span>
+      <nav class="app-nav" id="app-nav" aria-label="Үндсэн цэс"></nav>
+      <div class="topbar-actions">
+        <span class="demo-chip" title="Туршилтын хувилбар · Жишээ зарууд"><span class="demo-dot" aria-hidden="true"></span>ТУРШИЛТ</span>
+        <div class="user-menu">
+          <button class="user-button" id="user-button" data-action="user-menu" aria-expanded="false" aria-controls="user-dropdown"><span class="avatar" id="user-avatar" aria-hidden="true"></span><span class="user-text"><strong id="user-name"></strong><small id="user-role"></small></span><svg class="icon chevron" aria-hidden="true"><use href="#i-chevron"/></svg></button>
+          <div class="user-dropdown" id="user-dropdown" hidden></div>
+        </div>
+      </div>
+    </div>
   </header>
 
   <div id="storage-warning" class="storage-warning" role="status" hidden>Энэ хөтөч мэдээлэл хадгалах боломжгүй байна. Өөрчлөлтүүд хуудас нээлттэй байх хугацаанд ажиллана.</div>
 
   <main id="main" tabindex="-1">
-    <div id="browse-view" class="view">
+    <div id="landing-view" class="view" hidden>
+      <section class="landing-hero" aria-labelledby="landing-title">
+        <div class="hero-grid" aria-hidden="true"></div>
+        <div class="landing-hero-inner content-width">
+          <div class="landing-copy">
+            <p class="eyebrow"><span class="demo-dot" aria-hidden="true"></span>Туршилтын хувилбар · Жишээ зарууд</p>
+            <h1 id="landing-title">Хичээлийнхээ завсар <span>ээлжээ ол.</span></h1>
+            <p class="landing-lead">Ээлж оюутнуудыг хуваарьт нь таарсан цагийн ажилтай холбоно. Байршил, цаг, цалингаа нэг дор харьцуулж, хүсэлтээ хэдхэн товшилтоор илгээ.</p>
+            <div class="landing-ctas">
+              <button class="button button-dark button-lg" data-action="signup" data-id="student">Ажил хайж эхлэх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+              <button class="button button-outline button-lg" data-action="signup" data-id="employer">Ажилтан хайх</button>
+            </div>
+            <dl class="landing-stats" id="landing-stats"></dl>
+          </div>
+          <div class="landing-preview" id="landing-jobs">
+            <div class="preview-head"><span>Шинэ зарууд</span><span class="preview-live"><span aria-hidden="true"></span>Нээлттэй</span></div>
+            <div id="landing-preview" class="preview-list"></div>
+            <button class="preview-more" data-action="signin" data-id="student" id="landing-more"></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="landing-section content-width" id="how" aria-labelledby="how-title">
+        <div class="landing-section-head"><p class="eyebrow">Хэрхэн ажилладаг</p><h2 id="how-title">Гурван алхам. Нэг ээлж.</h2></div>
+        <ol class="landing-steps">
+          <li><span class="step-icon"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg></span><span class="step-index">01</span><h3>Зараа харьцуул</h3><p>Дүүрэг, ажлын өдөр, цагийн хөлсөөр шүүж, хичээлийнхээ хуваарьт таарах ээлжийг ол.</p></li>
+          <li><span class="step-icon"><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></span><span class="step-index">02</span><h3>Хүсэлтээ илгээ</h3><p>Ажлын дэлгэрэнгүйг уншаад богино хүсэлт бөглөнө. Завтай өдөр, цагаа хамт илгээнэ.</p></li>
+          <li><span class="step-icon"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span><span class="step-index">03</span><h3>Явцаа хяна</h3><p>Ажил олгогч хүсэлтийг шалгаж сонгоход “Миний хүсэлтүүд” хэсэгт төлөв нь шууд шинэчлэгдэнэ.</p></li>
+        </ol>
+      </section>
+
+      <section class="landing-split content-width" id="for-employers" aria-label="Хэнд зориулсан бэ">
+        <article class="split-card">
+          <span class="role-icon"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg></span>
+          <h2>Оюутнуудад</h2>
+          <ul><li>Хуваарьт таарах ээлжийг өдөр, цагаар шүүнэ</li><li>Цалин, хоол, нийт орлогоо урьдчилан харна</li><li>Сонирхсон ажлаа хадгалж, дараа нь харьцуулна</li></ul>
+          <button class="button button-dark" data-action="signup" data-id="student">Оюутнаар нэвтрэх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+        </article>
+        <article class="split-card">
+          <span class="role-icon"><svg class="icon" aria-hidden="true"><use href="#i-pay"/></svg></span>
+          <h2>Ажил олгогчдод</h2>
+          <ul><li>Нэг өдрийн болон олон өдрийн ээлж зарлана</li><li>Завтай оюутнуудыг хайж, шууд урилга илгээнэ</li><li>Ирсэн хүсэлтийг шалгаж, сонгож, орон тоогоо хянана</li></ul>
+          <button class="button button-outline" data-action="signup" data-id="employer">Ажил олгогчоор нэвтрэх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+        </article>
+      </section>
+
+      <section class="landing-cta content-width" aria-labelledby="cta-title">
+        <div class="hero-grid" aria-hidden="true"></div>
+        <h2 id="cta-title">Чиний цаг. <span>Чиний ээлж.</span></h2>
+        <p>Бүртгүүлэхэд нууц үг хэрэггүй. Туршилтын хувилбарыг одоо ашиглаад үзээрэй.</p>
+        <button class="button button-dark button-lg" data-action="signup">Бүртгүүлэх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+      </section>
+    </div>
+
+    <div id="browse-view" class="view" hidden>
       <section class="sign-section hero" aria-labelledby="hero-title">
         <div class="hero-grid" aria-hidden="true"></div>
         <h1 id="hero-title">Өдрийн мэнд!<span id="greeting-name" class="greeting-name" hidden></span></h1>
@@ -73,7 +145,7 @@
         <div class="faq-list">
           <details><summary>Эдгээр нь бодит ажлын зар уу?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Бүх зар, байгууллага, цалин нь жишээ мэдээлэл. Энэ хувилбар нь ажил хайх, хүсэлт илгээх, хүсэлтийг удирдах үйл явцыг харуулна. Бодит ажилд зуучлахгүй.</p></details>
           <details><summary>Миний хүсэлт хаашаа очих вэ?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Хүсэлт зөвхөн таны ашиглаж буй хөтөч дээр хадгалагдана. Байгууллага руу илгээгдэхгүй. Иймд хувийн мэдээллийн оронд жишээ нэр, утас ашиглаарай.</p></details>
-          <details><summary>Ажил олгогчийн горимыг яаж турших вэ?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Дээд талын “Нэвтрэх” товчоор орж “Ажил олгогч” горимыг сонгоно. Шинэ зар үүсгэх, зарыг түр зогсоох, энэ хөтөч дээр илгээсэн хүсэлтүүдийн төлөвийг өөрчлөх боломжтой.</p></details>
+          <details><summary>Ажил олгогчийн горимыг яаж турших вэ?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Дээд талын профайл цэснээс “Ажил олгогч болох”-ыг сонгоно. Шинэ зар үүсгэх, зарыг түр зогсоох, энэ хөтөч дээр илгээсэн хүсэлтүүдийн төлөвийг өөрчлөх боломжтой.</p></details>
         </div>
       </section>
     </div>
@@ -92,7 +164,7 @@
     </section>
   </main>
 
-  <footer class="site-footer content-width"><div><a class="wordmark" href="#jobs"><svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z"/><g class="logo-dots"><circle cx="32" cy="16" r="3.2" style="--dot-delay:192ms"/><circle cx="40" cy="16" r="3.2" style="--dot-delay:96ms"/><circle cx="48" cy="16" r="3.2" style="--dot-delay:0ms"/><circle cx="40" cy="24" r="3.2" style="--dot-delay:192ms"/><circle cx="48" cy="24" r="3.2" style="--dot-delay:96ms"/><circle cx="32" cy="32" r="3.2" style="--dot-delay:384ms"/><circle cx="48" cy="32" r="3.2" style="--dot-delay:192ms"/><circle cx="24" cy="40" r="3.2" style="--dot-delay:576ms"/><circle cx="16" cy="48" r="3.2" style="--dot-delay:768ms"/></g></svg><span>Ээлж</span></a><p>Чиний цаг. Чиний ээлж.</p></div><div class="footer-links"><a href="#faq">Түгээмэл асуулт</a><button class="text-button" data-action="reset">Туршилтын өгөгдөл шинэчлэх</button><span class="small muted">Улаанбаатар · Туршилтын хувилбар</span></div></footer>
+  <footer class="site-footer content-width"><div><a class="wordmark" href="#top"><svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z"/><g class="logo-dots"><circle cx="32" cy="16" r="3.2" style="--dot-delay:192ms"/><circle cx="40" cy="16" r="3.2" style="--dot-delay:96ms"/><circle cx="48" cy="16" r="3.2" style="--dot-delay:0ms"/><circle cx="40" cy="24" r="3.2" style="--dot-delay:192ms"/><circle cx="48" cy="24" r="3.2" style="--dot-delay:96ms"/><circle cx="32" cy="32" r="3.2" style="--dot-delay:384ms"/><circle cx="48" cy="32" r="3.2" style="--dot-delay:192ms"/><circle cx="24" cy="40" r="3.2" style="--dot-delay:576ms"/><circle cx="16" cy="48" r="3.2" style="--dot-delay:768ms"/></g></svg><span>Ээлж</span></a><p>Чиний цаг. Чиний ээлж.</p></div><div class="footer-links"><a href="#faq" id="footer-faq">Түгээмэл асуулт</a><button class="text-button" data-action="reset">Туршилтын өгөгдөл шинэчлэх</button><span class="small muted">Улаанбаатар · Туршилтын хувилбар</span></div></footer>
 
   <dialog id="panel" class="panel-dialog" aria-labelledby="panel-title"><div class="panel-shell"><div class="panel-top"><span class="panel-demo"><span class="demo-dot" aria-hidden="true"></span>ТУРШИЛТЫН ГОРИМ</span><button class="icon-button" data-action="close" aria-label="Цонх хаах"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div><div id="panel-content"></div></div></dialog>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
@@ -115,6 +187,9 @@
     <symbol id="i-edit" viewBox="0 0 24 24"><path d="m15 4 5 5M4 20l5-1L21 7a2 2 0 0 0-5-5L4 14Z"/></symbol>
     <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
     <symbol id="i-meal" viewBox="0 0 24 24"><path d="M3 12h18a9 9 0 0 1-18 0Z"/><path d="M7 8c0-1.5 1-1.5 1-3M12 8c0-1.5 1-1.5 1-3M17 8c0-1.5 1-1.5 1-3"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 8l-4 4 4 4M6 12h10"/></symbol>
+    <symbol id="i-swap" viewBox="0 0 24 24"><path d="M4 8h15m-4-4 4 4-4 4M20 16H5m4-4-4 4 4 4"/></symbol>
+    <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 2-2s-1-2 0-3 2-1 3-1h1a3 3 0 0 0 3-3c0-5-4-9-9-9Z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/></symbol>
   </defs></svg>
 </body>
 </html>
