@@ -80,18 +80,25 @@
     const a = myAvail();
     return { name: state.profile.name, district: state.profile.district || '', school: state.profile.school || '', major: '', dates: a.dates.filter((date) => date >= today()).slice(0, 62), from: a.from, to: a.to, likes: [], bio: state.profile.bio || '', updatedAt: Date.now() };
   }
-  // Students are listed for employers while they have upcoming free days and have not opted out.
-  function publishAvailability() {
-    if (!state.signedIn || state.role !== 'student' || !FIREBASE_CONFIG.apiKey) return;
-    clearTimeout(publishTimer);
-    publishTimer = setTimeout(async () => {
-      try {
-        const { auth, fs, db } = await firestore();
-        const uid = auth.currentUser?.uid; if (!uid) return;
-        const data = listingData(), ref = fs.doc(db, 'seekers', uid);
-        if (state.profile.listed === false || !data.dates.length) await fs.deleteDoc(ref); else await fs.setDoc(ref, data);
-      } catch { toast('Завтай өдрөө ажил олгогчдод хүргэж чадсангүй. Интернэтээ шалгаад дахин оролдоно уу.'); }
-    }, 700);
+  // Students appear in the employers' "Ажил хайгчид" list only after pressing "Ажил олгогчдод илгээх".
+  // sharedKey remembers what was sent, so the profile can say when there are unsent changes.
+  const shareKey = () => { const d = listingData(); return JSON.stringify([d.name, d.district, d.school, d.bio, d.dates, d.from, d.to]); };
+  async function shareAvailability(publish) {
+    if (!state.signedIn || state.role !== 'student' || ui.sharing) return;
+    if (!FIREBASE_CONFIG.apiKey) return toast('Нэвтрэх систем одоогоор тохируулагдаагүй байна.');
+    const data = listingData();
+    if (publish && !data.dates.length) return toast('Эхлээд календараас завтай өдрөө сонгоно уу.');
+    ui.sharing = true; renderProfile();
+    try {
+      const { auth, fs, db } = await firestore();
+      const uid = auth.currentUser?.uid; if (!uid) throw new Error('Signed out');
+      const ref = fs.doc(db, 'seekers', uid);
+      if (publish) await fs.setDoc(ref, data); else await fs.deleteDoc(ref);
+      Object.assign(state.profile, { listed: publish, sharedAt: publish ? data.updatedAt : 0, sharedKey: publish ? shareKey() : '' });
+      persist();
+      toast(publish ? 'Илгээлээ. Ажил олгогчид таныг “Ажил хайгчид” хэсгээс харж, урилга илгээх боломжтой.' : 'Ажил олгогчдын жагсаалтаас хаслаа.');
+    } catch { toast('Илгээж чадсангүй. Интернэтээ шалгаад дахин оролдоно уу.'); }
+    ui.sharing = false; renderProfile();
   }
   async function loadSeekers() {
     if (!state.signedIn || !FIREBASE_CONFIG.apiKey) return;
@@ -297,7 +304,7 @@
   }
   function refocus(selector) { if (selector) document.querySelector(selector)?.focus({ preventScroll: true }); }
   function setAvail(scope, a, focus) {
-    if (scope === 'me') { delete state.profile.days; Object.assign(state.profile, a); ui.limit = 3; persist(); renderBrowse(); renderProfile(); publishAvailability(); }
+    if (scope === 'me') { delete state.profile.days; Object.assign(state.profile, a); ui.limit = 3; persist(); renderBrowse(); renderProfile(); }
     else { ui.seekDates = a.dates; ui.seekFrom = a.from; ui.seekTo = a.to; ui.seekLimit = 10; renderEmployer(); }
     refocus(focus);
   }
@@ -386,11 +393,13 @@
     $('#profile-avail-card').hidden = employer;
     $('#profile-listing').hidden = employer;
     if (employer) { $('#profile-avail').innerHTML = ''; return; }
-    const listed = state.profile.listed !== false, upcoming = mine.dates.filter((date) => date >= today()).length;
-    $('#profile-listing').innerHTML = `<div class="profile-card-head"><h2>Ажил олгогчид харагдах</h2><p class="muted small">Завтай өдөр сонгосон үед таны нэр, өдөр, цаг, дүүрэг, сургууль, танилцуулга бүртгэлтэй ажил олгогчдод харагдаж, тэд танд ажлын урилга илгээх боломжтой. И-мэйл, утас харагдахгүй.</p></div>
-      <form id="listing-form"><label class="check-field"><input type="checkbox" name="listed" ${listed ? 'checked' : ''}>Ажил олгогчдод харагдах</label>
-      <div class="form-grid"><label class="field">Дүүрэг<select name="district"><option value="">Сонгоогүй</option>${districts.map((name) => `<option ${state.profile.district === name ? 'selected' : ''}>${escape(name)}</option>`).join('')}</select></label><label class="field">Сургууль, мэргэжил<input name="school" maxlength="80" autocomplete="organization" placeholder="Жишээ: МУИС эсвэл тогооч" value="${escape(state.profile.school || '')}"></label><label class="field field-full">Товч танилцуулга<textarea name="bio" maxlength="300" rows="3" placeholder="Ямар ажил сонирхдог, ямар туршлагатай вэ?">${escape(state.profile.bio || '')}</textarea></label></div>
-      <div class="listing-foot"><p class="small">${!listed ? 'Ажил олгогчдод харагдахгүй байна.' : upcoming ? `${icon('check')}Ажил олгогчдод харагдаж байна · ${upcoming} өдөр` : 'Завтай өдөр сонгоход ажил олгогчдод харагдана.'}</p><button class="button button-dark" type="submit">Хадгалах</button></div></form>`;
+    const upcoming = mine.dates.filter((date) => date >= today()).length;
+    const shared = Boolean(state.profile.sharedAt), changed = shared && state.profile.sharedKey !== shareKey();
+    const sentAt = shared ? (([date, time]) => `${shortDate(date)} ${time}`)(new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ulaanbaatar', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(state.profile.sharedAt).split(', ')) : '';
+    const status = !shared ? '<span class="share-status is-off">Ажил олгогчдод илгээгээгүй байна</span>' : changed ? `<span class="share-status is-changed">Өөрчлөлт илгээгдээгүй · сүүлд ${sentAt}</span>` : `<span class="share-status is-on">${icon('check')}Илгээсэн · ${sentAt} · ажил олгогчид харж байна</span>`;
+    $('#profile-listing').innerHTML = `<div class="profile-card-head"><h2>Ажил олгогчид харагдах</h2><p class="muted small">“Ажил олгогчдод илгээх” товчийг дарсны дараа таны нэр, завтай өдөр, цаг, дүүрэг, сургууль, танилцуулга бүртгэлтэй ажил олгогчдод харагдаж, тэд танд ажлын урилга илгээх боломжтой. И-мэйл, утас харагдахгүй.</p></div>
+      <form id="listing-form"><div class="form-grid"><label class="field">Дүүрэг<select name="district"><option value="">Сонгоогүй</option>${districts.map((name) => `<option ${state.profile.district === name ? 'selected' : ''}>${escape(name)}</option>`).join('')}</select></label><label class="field">Сургууль, мэргэжил<input name="school" maxlength="80" autocomplete="organization" placeholder="Жишээ: МУИС эсвэл тогооч" value="${escape(state.profile.school || '')}"></label><label class="field field-full">Товч танилцуулга<textarea name="bio" maxlength="300" rows="3" placeholder="Ямар ажил сонирхдог, ямар туршлагатай вэ?">${escape(state.profile.bio || '')}</textarea></label></div>
+      <div class="listing-foot"><p class="small">${status}</p><div class="listing-actions">${shared ? `<button class="button button-outline" type="button" data-action="unshare" ${ui.sharing ? 'disabled' : ''}>Жагсаалтаас хасах</button>` : ''}<button class="button button-dark" type="submit" ${ui.sharing || !upcoming ? 'disabled' : ''}>${ui.sharing ? 'Илгээж байна…' : shared ? 'Дахин илгээх' : 'Ажил олгогчдод илгээх'}${ui.sharing ? '' : icon('arrow')}</button></div>${upcoming ? '' : '<p class="small muted listing-hint">Илгээхийн тулд эхлээд завтай өдрөө сонгоно уу.</p>'}</div></form>`;
     const open = ui.availOpen.me; ui.availOpen.me = true;
     $('#profile-avail').innerHTML = availPicker('me', ['Сонгосон өдрүүд', 'Завтай цаг']);
     ui.availOpen.me = open;
@@ -540,7 +549,7 @@
     state.role = state.roles[user.uid] || state.role;
     Object.assign(state.profile, { name: user.displayName || user.email.split('@')[0], contact: user.email });
     persist(); renderAll();
-    if (arriving) { navigate(state.role === 'employer' ? 'employer' : 'jobs'); loadInbox(); publishAvailability(); }
+    if (arriving) { navigate(state.role === 'employer' ? 'employer' : 'jobs'); loadInbox(); }
   }
   async function submitSignIn(form) {
     const data = new FormData(form);
@@ -946,6 +955,7 @@
     else if (action === 'account') openAccount();
     else if (action === 'signin' || action === 'signup') openSignIn(action, id, button.dataset.email || '');
     else if (action === 'signout') signOut();
+    else if (action === 'unshare') shareAvailability(false);
     else if (action === 'user-menu') setMenu(!ui.menuOpen);
     else if (action === 'saved-menu') { ui.savedOnly = true; ui.limit = 3; ui.scrollTo = 'jobs'; renderBrowse(); navigate('jobs'); }
     else if (action === 'close') closePanel();
@@ -965,7 +975,7 @@
     else if (action === 'forgot-password') openReset($('#signin-form [name=email]')?.value.trim());
     else if (action === 'verify-email') accountEmail('verify');
     else if (action === 'change-password') accountEmail('password');
-    else if (action === 'student' || action === 'employer') { const changed = state.role !== action; state.role = action; state.roles[state.userId] = action; persist(); publishAvailability(); renderAll(); navigate(action === 'employer' ? 'employer' : 'jobs'); if (changed) toast(`${roleNames[action]} горимд шилжлээ.`); }
+    else if (action === 'student' || action === 'employer') { const changed = state.role !== action; state.role = action; state.roles[state.userId] = action; persist(); renderAll(); navigate(action === 'employer' ? 'employer' : 'jobs'); if (changed) toast(`${roleNames[action]} горимд шилжлээ.`); }
     else if (action === 'save') {
       if (!jobById(id)) return;
       const saved = state.saved.includes(id);
@@ -996,9 +1006,8 @@
     else if (event.target.id === 'listing-form') {
       event.preventDefault();
       const data = new FormData(event.target), district = String(data.get('district'));
-      Object.assign(state.profile, { listed: data.get('listed') === 'on', district: districts.includes(district) ? district : '', school: String(data.get('school')).trim().slice(0, 80), bio: String(data.get('bio')).trim().slice(0, 300) });
-      persist(); renderProfile(); publishAvailability();
-      toast(state.profile.listed ? 'Профайлаа хадгаллаа.' : 'Ажил олгогчдод харагдахгүй болголоо.');
+      Object.assign(state.profile, { district: districts.includes(district) ? district : '', school: String(data.get('school')).trim().slice(0, 80), bio: String(data.get('bio')).trim().slice(0, 300) });
+      persist(); shareAvailability(true);
     }
   });
   document.addEventListener('click', (event) => {

@@ -954,3 +954,13 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
 .listing-foot p{display:inline-flex;align-items:center;gap:6px;color:var(--ink)}
 .listing-foot .button{height:42px}
 @media(max-width:480px){.listing-foot .button{flex:1 1 100%}}
+
+/* Explicit "send to employers" status */
+.listing-actions{display:flex;flex-wrap:wrap;gap:8px}
+.listing-hint{flex:1 1 100%}
+.share-status{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:500}
+.share-status .icon{width:13px;height:13px}
+.share-status.is-off{background:var(--b-gray);color:var(--b-gray-t)}
+.share-status.is-changed{background:var(--b-amber);color:var(--b-amber-t)}
+.share-status.is-on{background:var(--b-green);color:var(--b-green-t)}
+@media(max-width:480px){.listing-actions{flex:1 1 100%}.listing-actions .button{flex:1 1 100%}}
