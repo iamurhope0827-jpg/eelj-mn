@@ -902,7 +902,13 @@
   });
   document.addEventListener('keydown', (event) => {
     const input = event.target;
-    if (event.key !== 'ArrowDown' || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.isComposing) return;
+    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.isComposing) return;
+    if (event.key === 'ArrowRight' && input.form?.id === 'job-form' && input.matches('select[name="category"]')) {
+      const district = input.form.elements.namedItem('district');
+      if (district && !district.disabled) { event.preventDefault(); district.focus(); }
+      return;
+    }
+    if (event.key !== 'ArrowDown') return;
     if (input.form?.id !== 'job-form' || !input.matches('input') || !['text', 'number', 'email', 'tel', 'url', 'search'].includes(input.type)) return;
     const fields = [...input.form.querySelectorAll('input, select, textarea, button')].filter((field) =>
       !field.matches(':disabled') && field.type !== 'hidden' && field.tabIndex >= 0 && field.getClientRects().length &&
