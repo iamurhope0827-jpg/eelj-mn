@@ -681,6 +681,7 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
 .menu-item .nav-count{margin-left:auto}
 .menu-danger,.menu-danger .icon{color:var(--b-red-t)}
 .menu-warn,.menu-warn .icon{color:var(--b-amber-t)}
+.menu-group:empty{display:none}
 @media(prefers-reduced-motion:reduce){.user-dropdown{animation:none}}
 
 /* ===== Landing (signed out) ===== */
@@ -734,6 +735,10 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
 .password-toggle:hover{color:var(--ink);background:var(--hover)}
 .password-toggle:focus-visible{box-shadow:var(--focus)}
 .forgot-link{grid-column:1/-1;margin-top:-6px;text-align:right;font-size:13px}
+.google-button{width:100%;justify-content:center;gap:10px}
+.google-logo{width:18px;height:18px;flex:none}
+.signin-divider{display:flex;align-items:center;gap:12px;margin:18px 0;font-size:12px;color:var(--faint)}
+.signin-divider::before,.signin-divider::after{content:"";flex:1;height:1px;background:var(--line-2)}
 
 /* ===== Responsive ===== */
 @media(max-width:1100px){

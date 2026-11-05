@@ -56,7 +56,7 @@
   let toastTimer;
   let state;
   // Firebase web app config (Project settings → Your apps). These values are public by design.
-  const FIREBASE_CONFIG = { apiKey: '', authDomain: '', projectId: '', appId: '' };
+  const FIREBASE_CONFIG = { apiKey: 'AIzaSyAGFUFrTuhxdBAvGcComeQoud4E4AiGtLU', authDomain: 'tsagiinajil-bde42.firebaseapp.com', projectId: 'tsagiinajil-bde42', appId: '1:296583922372:web:baed6fa189c58ec7ebff91' };
   const FIREBASE_SDK = 'https://www.gstatic.com/firebasejs/10.14.1/';
   let authReady;
   function firebaseAuth() {
@@ -339,7 +339,7 @@
     $('#user-dropdown').innerHTML = `<div class="menu-head"><span class="avatar avatar-lg" aria-hidden="true">${escape(name.trim().charAt(0).toUpperCase())}</span><div><strong>${escape(name)}</strong><small>${escape(state.profile.contact || roleNames[state.role])}</small></div></div>
       <div class="menu-group">${employer ? `<a class="menu-item" href="#employer">${icon('pay')}Ажил олгогчийн самбар</a>` : `<a class="menu-item" href="#applications">${icon('clock')}Миний хүсэлтүүд${sent ? `<span class="nav-count">${sent}</span>` : ''}</a><button class="menu-item" data-action="saved-menu">${icon('bookmark')}Хадгалсан ажлууд</button>`}
       <button class="menu-item" data-action="${employer ? 'student' : 'employer'}">${icon('swap')}${employer ? 'Оюутан болох' : 'Ажил олгогч болох'}</button></div>
-      <div class="menu-group">${ui.verified ? '' : `<button class="menu-item menu-warn" data-action="verify-email">${icon('check')}И-мэйл баталгаажуулах</button>`}<button class="menu-item" data-action="change-password">${icon('edit')}Нууц үг солих</button></div>
+      <div class="menu-group">${ui.verified ? '' : `<button class="menu-item menu-warn" data-action="verify-email">${icon('check')}И-мэйл баталгаажуулах</button>`}${ui.hasPassword ? `<button class="menu-item" data-action="change-password">${icon('edit')}Нууц үг солих</button>` : ''}</div>
       <div class="menu-group"><button class="menu-item menu-danger" data-action="signout">${icon('logout')}Гарах</button></div>`;
   }
   function setMenu(open, focusButton = false) {
@@ -414,6 +414,8 @@
     const password = `<label class="field field-full">Нууц үг<span class="password-field"><input name="password" type="password" required minlength="${signup ? 8 : 1}" maxlength="128" autocomplete="${signup ? 'new-password' : 'current-password'}"${signup ? ' aria-describedby="password-hint"' : ''}><button type="button" class="password-toggle" data-action="toggle-password" aria-pressed="false">Харах</button></span>${signup ? '<span class="field-hint" id="password-hint">8-аас доошгүй тэмдэгт.</span>' : ''}</label>${signup ? '' : '<p class="forgot-link"><button type="button" class="text-button" data-action="forgot-password">Нууц үгээ мартсан уу?</button></p>'}`;
     showPanel(`<h2 class="panel-heading" id="panel-title">${signup ? 'Ээлжид бүртгүүлэх' : 'Тавтай морил'}</h2><p class="panel-subtitle">${signup ? 'Хэдхэн секундэд бүртгэл үүсгээрэй.' : 'И-мэйл, нууц үгээрээ нэвтэрнэ үү.'}</p>
       <form id="signin-form" data-mode="${signup ? 'signup' : 'signin'}" novalidate>${signup ? `<fieldset class="signin-roles"><legend>Та хэн бэ?</legend>${roleCard('student', 'user', 'Оюутан', 'Ажил хайх, хүсэлт илгээх')}${roleCard('employer', 'pay', 'Ажил олгогч', 'Зар нэмэх, ажилтан сонгох')}</fieldset>` : ''}
+      <button type="button" class="button button-outline google-button" data-action="google-signin"><svg class="google-logo" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Google-ээр ${signup ? 'бүртгүүлэх' : 'нэвтрэх'}</button>
+      <p class="signin-divider"><span>эсвэл и-мэйлээр</span></p>
       <div class="form-grid">${signup ? '<label class="field field-full">Нэр<input name="name" required minlength="2" maxlength="80" autocomplete="name" placeholder="Жишээ: Бат"></label>' : ''}<label class="field field-full">И-мэйл<input name="email" type="email" required maxlength="100" autocomplete="email" inputmode="email" spellcheck="false" placeholder="Жишээ: student@example.com" value="${escape(email)}"></label>${password}</div>
       <p id="signin-error" class="form-error" role="alert" hidden></p>
       <div class="form-actions"><button type="submit" class="button button-dark">${signup ? 'Бүртгүүлэх' : 'Нэвтрэх'}${icon('arrow')}</button></div>
@@ -432,12 +434,17 @@
     'auth/user-disabled': 'Энэ бүртгэлийг идэвхгүй болгосон байна.',
     'auth/too-many-requests': 'Хэт олон оролдлого хийлээ. Түр хүлээгээд дахин оролдоно уу.',
     'auth/network-request-failed': 'Интернэт холболтоо шалгаад дахин оролдоно уу.',
+    'auth/popup-blocked': 'Хөтөч Google цонхыг хаасан байна. Pop-up зөвшөөрөөд дахин оролдоно уу.',
+    'auth/operation-not-allowed': 'Энэ нэвтрэх арга одоогоор идэвхжээгүй байна.',
+    'auth/unauthorized-domain': 'Энэ хаягаас Google-ээр нэвтрэх зөвшөөрөлгүй байна.',
+    'auth/account-exists-with-different-credential': 'Энэ и-мэйл өөр аргаар бүртгэгдсэн байна. И-мэйл, нууц үгээрээ нэвтэрнэ үү.',
     'eelj/not-configured': 'Нэвтрэх систем одоогоор тохируулагдаагүй байна.'
   };
   const authMessage = (error) => authMessages[error?.code] || 'Алдаа гарлаа. Дахин оролдоно уу.';
   // Called by Firebase on load and whenever the session changes, including in other tabs.
   function syncUser(user) {
     ui.verified = Boolean(user?.emailVerified);
+    ui.hasPassword = Boolean(user?.providerData?.some((item) => item.providerId === 'password'));
     if (!user) { if (state.signedIn) clearSession(); return; }
     const arriving = !state.signedIn || state.userId !== user.uid;
     if (ui.pendingRole) { state.roles[user.uid] = ui.pendingRole; ui.pendingRole = ''; }
@@ -479,6 +486,23 @@
       syncUser(user);
       toast(`Тавтай морил, ${state.profile.name}!`);
     } catch (error) { button.disabled = false; formError('signin-error', authMessage(error)); }
+  }
+  async function googleSignIn(button) {
+    const form = button.closest('form');
+    $('#signin-error').hidden = true;
+    button.disabled = true;
+    try {
+      const { auth, fb } = await firebaseAuth();
+      // The role cards only exist on the sign-up form; returning users keep their saved role.
+      const role = form.querySelector('[name=role]:checked')?.value;
+      if (role) ui.pendingRole = role === 'employer' ? 'employer' : 'student';
+      const { user } = await fb.signInWithPopup(auth, new fb.GoogleAuthProvider());
+      syncUser(user);
+      toast(`Тавтай морил, ${state.profile.name}!`);
+    } catch (error) {
+      ui.pendingRole = ''; button.disabled = false;
+      if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') formError('signin-error', authMessage(error));
+    }
   }
   function openReset(email = '') {
     ui.panelJob = null;
@@ -838,6 +862,7 @@
     else if (action === 'browse') navigate('jobs');
     else if (action === 'toggle-password') { const input = button.parentElement.querySelector('input'); const show = input.type === 'password'; input.type = show ? 'text' : 'password'; button.textContent = show ? 'Нуух' : 'Харах'; button.setAttribute('aria-pressed', String(show)); input.focus(); }
     else if ((action === 'student' || action === 'employer') && !state.signedIn) openSignIn('signin', action);
+    else if (action === 'google-signin') googleSignIn(button);
     else if (action === 'forgot-password') openReset($('#signin-form [name=email]')?.value.trim());
     else if (action === 'verify-email') accountEmail('verify');
     else if (action === 'change-password') accountEmail('password');

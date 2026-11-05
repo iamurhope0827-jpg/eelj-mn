@@ -18,7 +18,7 @@
       var root = document.documentElement, page = 'landing';
       try {
         var s = JSON.parse(localStorage.getItem('eelj.prototype.v1') || 'null');
-        if (s && s.signedIn === true && s.userId && Array.isArray(s.accounts) && s.accounts.some(function (a) { return a && a.id === s.userId; })) page = 'app';
+        if (s && s.signedIn === true && s.userId) page = 'app';
         var palette = localStorage.getItem('eelj.palette.v1');
         if (page === 'app' && /^(ocean|sand|mono|classic|pastel)$/.test(palette || '')) root.dataset.palette = palette;
       } catch (e) { /* Storage unavailable: show the homepage. */ }
@@ -26,8 +26,8 @@
       if (page === 'landing') document.querySelectorAll('meta[name=theme-color]').forEach(function (m) { m.content = '#0B0E11'; });
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=splash1">
-  <script src="app.js?v=splash1" defer></script>
+  <link rel="stylesheet" href="styles.css?v=firebase1">
+  <script src="app.js?v=firebase1" defer></script>
 </head>
 <body>
   <div class="reload-splash" aria-hidden="true">

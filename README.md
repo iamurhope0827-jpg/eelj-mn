@@ -25,7 +25,7 @@ Repository: https://github.com/iamurhope0827-jpg/eelj-mn
 
 ## Try the connected workflow
 
-1. On the landing page, choose “Бүртгүүлэх”, pick “Оюутан”, and create an account with your name, email, and a password of at least 8 characters. A verification email is sent; later visits use “Нэвтрэх”, and “Нууц үгээ мартсан уу?” sends a reset link.
+1. On the landing page, choose “Бүртгүүлэх”, pick “Оюутан”, and create an account with your name, email, and a password of at least 8 characters, or use “Google-ээр бүртгүүлэх”. A verification email is sent; later visits use “Нэвтрэх”, and “Нууц үгээ мартсан уу?” sends a reset link.
 2. Filter shifts by role and district, sort, save a job, or open its details.
 3. Apply to a shift, then open “Миний хүсэлтүүд” to see the received application.
 4. Open the profile menu (top right) → “Ажил олгогч болох” → “Ирсэн хүсэлтүүд”. Change the application to reviewing, selected, or declined.
@@ -38,7 +38,7 @@ The footer has a reset action with confirmation. Seed shifts use upcoming dates 
 
 Listings and employers are examples. Both roles share the same data in this browser's `localStorage` under `eelj.prototype.v1`. Applications keep a snapshot of the shift terms at submission. A selected application consumes one opening; full shifts disappear from available results. Saved shifts remain viewable even if paused or full.
 
-Accounts use Firebase Authentication (email and password, verification and password-reset emails, sessions on every device); the web config is `FIREBASE_CONFIG` at the top of `app.js`. Listings, applications, and the chosen role still live in this browser only. There is no remote database, real applications, employer notifications, payments, or cross-device sync. Role switching demonstrates the workflow and provides no production access control. Use sample contact data. The interface reports when browser storage is unavailable.
+Accounts use Firebase Authentication (Google or email and password, verification and password-reset emails, sessions on every device); the web config is `FIREBASE_CONFIG` at the top of `app.js`. Listings, applications, and the chosen role still live in this browser only. There is no remote database, real applications, employer notifications, payments, or cross-device sync. Role switching demonstrates the workflow and provides no production access control. Use sample contact data. The interface reports when browser storage is unavailable.
 
 ## Source
 
