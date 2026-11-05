@@ -368,6 +368,7 @@
     setMenu(false);
     syncPalette();
     document.documentElement.dataset.page = state.signedIn ? 'app' : 'landing';
+    syncFavicon();
     if (!state.signedIn) {
       ui.view = 'landing';
       $('#landing-view').hidden = false;
@@ -667,13 +668,6 @@
     paletteProperties = [];
     selectedPalette = id;
     root.dataset.palette = id;
-    const favicon = document.querySelector('link[rel="icon"]');
-    if (favicon) {
-      const background = palette.button || '#05AD98';
-      const foreground = palette.buttonText || '#062A25';
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="${background}"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z" fill="${foreground}"/></svg>`;
-      favicon.href = 'data:image/svg+xml,' + encodeURIComponent(svg);
-    }
     if (id !== 'original') {
       const values = {
         '--bg': palette.bg, '--surface': palette.surface, '--bg-2': palette.soft, '--hover': palette.soft,
@@ -690,10 +684,22 @@
       Object.entries(values).forEach(([key, value]) => root.style.setProperty(key, value));
     }
     document.querySelectorAll('[data-action="palette"]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.id === id)));
+    syncFavicon();
     if (!remember) return;
     chosenPalette = id;
     try { localStorage.setItem(paletteKey, id); } catch { /* Keep the selection for this page session. */ }
   }
+  // The logo inverts the page colors: text-color square, background-color mark. The tab icon follows.
+  function syncFavicon() {
+    const favicon = document.querySelector('link[rel="icon"]');
+    if (!favicon) return;
+    const css = getComputedStyle(document.documentElement);
+    const square = css.getPropertyValue('--ink').trim() || '#1C1F1F';
+    const mark = css.getPropertyValue('--bg').trim() || '#FFFFFF';
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="${square}"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z" fill="${mark}"/></svg>`;
+    favicon.href = 'data:image/svg+xml,' + encodeURIComponent(svg);
+  }
+  matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => syncFavicon());
   // Colors are a signed-in preference; the public landing page always uses the original look.
   function syncPalette() {
     const want = state.signedIn ? chosenPalette : 'original';
@@ -705,6 +711,15 @@
     $('#panel').classList.add('job-detail-dialog');
   }
   try { const savedPalette = localStorage.getItem(paletteKey); if (palettes.some((item) => item.id === savedPalette)) chosenPalette = savedPalette; } catch { /* Use the original palette. */ }
+
+  // The logo opens home once; a double-click reloads and plays the dot animation.
+  document.addEventListener('click', (event) => {
+    const logo = event.target.closest('a.wordmark');
+    if (!logo || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    if (event.detail >= 2) { location.reload(); return; }
+    navigate(logo.hash.slice(1) || 'top');
+  });
 
   document.addEventListener('click', (event) => {
     const button = event.target.closest('[data-action]'); if (!button || button.disabled) return;

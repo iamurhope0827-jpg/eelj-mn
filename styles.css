@@ -74,8 +74,8 @@ svg.icon{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-w
 /* Header */
 .wordmark{display:inline-flex;align-items:center;gap:9px;font-weight:600;font-size:19px;letter-spacing:-.04em;line-height:1}
 .logo-mark{width:26px;height:26px;flex:none}
-.logo-mark rect{fill:#05AD98}
-.logo-mark path,.logo-mark circle{fill:#062A25}
+.logo-mark rect{fill:var(--ink)}
+.logo-mark path,.logo-mark circle{fill:var(--bg)}
 .logo-dots{opacity:0}
 .logo-mark circle{transform-box:fill-box;transform-origin:center}
 .is-reloading .logo-mark path{animation:logo-solid-return 1800ms ease both}
@@ -481,8 +481,6 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
 .palette-option:hover{box-shadow:inset 0 0 0 2px var(--muted)}
 .palette-option[aria-pressed=true]{box-shadow:inset 0 0 0 2px var(--ink)}
 .palette-button-preview{display:block;width:100%;height:72px;border-radius:inherit}
-:root[data-palette]:not([data-palette=original]) .logo-mark rect{fill:var(--dark-bg)}
-:root[data-palette]:not([data-palette=original]) .logo-mark :is(path,circle){fill:var(--dark-fg)}
 @media(max-width:370px){.palette-options{grid-template-columns:1fr}}
 
 /* Availability: days + hours picker (student filter, employer seeker search) */
@@ -786,8 +784,6 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
 }
 :root[data-page=landing] body{background:var(--bg);color:var(--ink)}
 :root[data-page=landing] ::selection{background:#CDB4DB;color:#17121F}
-:root[data-page=landing] .logo-mark rect{fill:#CDB4DB}
-:root[data-page=landing] .logo-mark path,:root[data-page=landing] .logo-mark circle{fill:#17121F}
 :root[data-page=landing] .topbar-inner{background:rgb(23 27 33 / 70%);box-shadow:0 0 0 1px rgb(255 255 255 / 7%),0 16px 32px -20px rgb(0 0 0 / 80%)}
 
 /* Section 1: hero, one full viewport */
