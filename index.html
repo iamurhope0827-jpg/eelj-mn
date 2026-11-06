@@ -37,11 +37,11 @@
         if (page === 'app' && /^(ocean|sand|mono|classic|pastel)$/.test(palette || '')) root.dataset.palette = palette;
       } catch (e) { /* Storage unavailable: show the homepage. */ }
       root.dataset.page = page;
-      if (page === 'landing') document.querySelectorAll('meta[name=theme-color]').forEach(function (m) { m.content = '#0B0E11'; });
+      if (page === 'landing') document.querySelectorAll('meta[name=theme-color]').forEach(function (m) { m.content = '#0A0A0A'; });
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=hero1">
-  <script src="app.js?v=hero1" defer></script>
+  <link rel="stylesheet" href="styles.css?v=lime1">
+  <script src="app.js?v=lime1" defer></script>
 </head>
 <body id="top">
   <div class="reload-splash" aria-hidden="true">
@@ -85,40 +85,44 @@
   <main id="main" tabindex="-1">
     <div id="landing-view" class="view">
       <section class="landing-hero" aria-labelledby="landing-title">
-        <div class="hero-glass" aria-hidden="true"><span class="hero-glow"></span><span class="hero-ribs"></span></div>
+        <div class="hero-beam" aria-hidden="true"><span class="beam-core"></span><span class="beam-rays"></span></div>
         <div class="landing-hero-inner content-width">
-          <aside class="hero-card" aria-label="Жишээ ээлжүүд">
-            <div class="hc-head"><span><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Баянгол, Сүхбаатар · энэ долоо хоногт</span><span class="hc-dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
-            <article class="hc-row">
-              <div class="hc-title"><strong>Хүргэлтийн туслах</strong><span>15,000₮ / цаг</span></div>
-              <div class="hc-times"><p><small>Баасан · эхлэх</small><b>14:00</b></p><span class="hc-chip">4 цаг</span><p class="hc-end"><small>дуусах</small><b>18:00</b></p></div>
-            </article>
-            <article class="hc-row">
-              <div class="hc-title"><strong>Номын сангийн туслах</strong><span>13,000₮ / цаг</span></div>
-              <div class="hc-times"><p><small>Бямба · эхлэх</small><b>10:00</b></p><span class="hc-chip">4 цаг</span><p class="hc-end"><small>дуусах</small><b>14:00</b></p></div>
-            </article>
-            <p class="hc-badge"><svg class="icon" aria-hidden="true"><use href="#i-meal"/></svg>Хоолтой ээлжүүд бий</p>
-            <dl class="landing-stats" id="landing-stats"></dl>
-          </aside>
+          <dl class="hero-stats hero-stats-left" id="hero-stats-left"></dl>
           <div class="hero-copy">
             <p class="eyebrow"><span class="demo-dot" aria-hidden="true"></span>Туршилтын хувилбар · Жишээ зарууд</p>
-            <h1 id="landing-title">Завтай цагтаа <span>ээлжээ ол.</span></h1>
-          </div>
-          <div class="hero-foot">
+            <h1 id="landing-title">Завтай цагтаа <em>ээлжээ ол.</em></h1>
             <p class="landing-lead">Хуваарьт тань таарсан цагийн ажил. Байршил, цаг, цалингаа нэг дор харьцуулж, хүсэлтээ хэдхэн товшилтоор илгээ.</p>
             <div class="landing-ctas">
               <button class="button hero-cta" data-action="signup" data-id="student">Ажил хайж эхлэх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
-              <button class="hero-link" data-action="signup" data-id="employer">Ажилтан хайх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+              <button class="button hero-ghost" data-action="signup" data-id="employer">Ажилтан хайх</button>
             </div>
           </div>
-          <ul class="hero-features">
-            <li class="is-lead"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg><span>Хуваарьт тань<br>таарсан ээлж</span></li>
-            <li><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span>Гэрийнхээ<br>ойролцоо</span></li>
-            <li><svg class="icon" aria-hidden="true"><use href="#i-pay"/></svg><span>Цагийн хөлс<br>урьдчилан тодорхой</span></li>
-            <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span>Хүсэлтээ<br>хэдхэн товшилтоор</span></li>
-            <li><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg><span>Ажил олгогч<br>шууд урина</span></li>
-          </ul>
+          <dl class="hero-stats hero-stats-right" id="hero-stats-right"></dl>
         </div>
+        <div class="hero-panels content-width" aria-hidden="true">
+          <div class="hp-card hp-list">
+            <p class="hp-head"><span>Шинэ ээлжүүд</span><i></i></p>
+            <p class="hp-row"><b class="hp-ava">Х</b><span>Хүргэлтийн туслах<small>15,000₮ / цаг</small></span><em class="hp-tag is-lime">Хоолтой</em></p>
+            <p class="hp-row"><b class="hp-ava">Н</b><span>Номын сангийн туслах<small>13,000₮ / цаг</small></span><em class="hp-tag">Шинэ</em></p>
+            <p class="hp-row"><b class="hp-ava">Т</b><span>Тасалбар шалгагч<small>16,000₮ / цаг</small></span><em class="hp-tag">4 орон</em></p>
+            <p class="hp-row"><b class="hp-ava">К</b><span>Кафены туслах<small>14,000₮ / цаг</small></span><em class="hp-tag">Орой</em></p>
+          </div>
+          <div class="hp-card hp-chart">
+            <p class="hp-head"><span>Энэ долоо хоногийн орлого</span><i></i></p>
+            <p class="hp-big">180,000₮<small>16 цаг · 4 ээлж</small><em class="hp-tag is-lime">+12%</em></p>
+            <svg class="hp-spark" viewBox="0 0 300 90" preserveAspectRatio="none"><defs><linearGradient id="hp-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#89F336" stop-opacity=".35"/><stop offset="1" stop-color="#89F336" stop-opacity="0"/></linearGradient></defs><path d="M0 78 L30 70 L60 74 L90 58 L120 62 L150 44 L180 50 L210 32 L240 36 L270 18 L300 22 L300 90 L0 90Z" fill="url(#hp-fill)"/><path d="M0 78 L30 70 L60 74 L90 58 L120 62 L150 44 L180 50 L210 32 L240 36 L270 18 L300 22" fill="none" stroke="#89F336" stroke-width="2.5" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="hp-card hp-plan">
+            <p class="hp-head"><span>Миний хуваарь</span><i></i></p>
+            <div class="hp-hours"><span>10</span><span>12</span><span>14</span><span>16</span><span>18</span><span>20</span></div>
+            <p class="hp-lane"><span>Да</span><b style="--a:10%;--w:30%"></b></p>
+            <p class="hp-lane"><span>Лх</span><b class="is-dim" style="--a:40%;--w:25%"></b></p>
+            <p class="hp-lane"><span>Ба</span><b style="--a:45%;--w:40%"></b></p>
+            <p class="hp-lane"><span>Бя</span><b style="--a:0%;--w:40%"></b></p>
+            <p class="hp-lane"><span>Ня</span><b class="is-dim" style="--a:60%;--w:30%"></b></p>
+          </div>
+        </div>
+        <a class="scroll-cue" href="#landing-jobs"><span>Шинэ зарууд</span><svg class="icon" aria-hidden="true"><use href="#i-down"/></svg></a>
       </section>
 
       <!-- Fixed homepage showcase: exactly three example listings. Static on purpose — not a live feed. -->

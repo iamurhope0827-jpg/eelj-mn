@@ -532,7 +532,9 @@
   function renderLanding() {
     const open = state.jobs.filter((job) => availability(job) === 'active').sort((a, b) => b.createdAt - a.createdAt);
     const avg = open.length ? Math.round(open.reduce((sum, job) => sum + job.pay, 0) / open.length / 100) * 100 : 0;
-    $('#landing-stats').innerHTML = `<div><dt>Нээлттэй ээлж</dt><dd>${open.length}</dd></div><div><dt>Дундаж цагийн хөлс</dt><dd>${money(avg)}</dd></div><div><dt>Дүүрэг</dt><dd>${districts.length}</dd></div>`;
+    const stat = (value, label) => `<div><dd>${value}</dd><dt>${label}</dt></div>`;
+    $('#hero-stats-left').innerHTML = stat(open.length, 'Нээлттэй ээлж') + stat(money(avg), 'Дундаж цагийн хөлс');
+    $('#hero-stats-right').innerHTML = stat(allSeekers().length, 'Ажил хайгч') + stat(districts.length, 'Дүүрэгт');
   }
   // Homepage showcase: three static cards that slide in left → right → left, exactly once per page load.
   // A card only ever gains `is-in`; nothing removes it, and the cards are static markup that no render touches.
