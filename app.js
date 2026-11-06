@@ -555,6 +555,44 @@
     }, { threshold: 0.25, rootMargin: '0px 0px -8% 0px' });
     cards.forEach((card) => observer.observe(card));
   }
+  // Homepage paging: one wheel notch or trackpad swipe moves to the next/previous section.
+  // A section taller than the screen (the showcase) is paged in even steps of at most one screen.
+  // Desktop-sized screens only; keyboard, touch and the signed-in app keep normal scrolling.
+  function setupLandingPaging() {
+    const wide = matchMedia('(min-width: 761px) and (min-height: 600px)');
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+    let lockUntil = 0;
+    addEventListener('wheel', (event) => {
+      if (document.documentElement.dataset.page !== 'landing' || !wide.matches || event.ctrlKey || $('#panel').open || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+      // One gesture = one move: a running move, and any wheel events (trackpad momentum, fast notches)
+      // until 200ms of quiet, are swallowed.
+      const now = performance.now(), locked = now < lockUntil;
+      lockUntil = Math.max(lockUntil, now + 200);
+      if (locked) { event.preventDefault(); return; }
+      const dir = Math.sign(event.deltaY), y = scrollY, vh = innerHeight, max = document.documentElement.scrollHeight - vh;
+      const sections = [...document.querySelectorAll('#landing-view > section'), document.querySelector('.site-footer')];
+      const stops = sections.map((el) => Math.min(max, Math.max(0, Math.round(el.getBoundingClientRect().top + y - (parseFloat(getComputedStyle(el).scrollMarginTop) || 0)))));
+      let i = 0; stops.forEach((stop, k) => { if (stop <= y + 4) i = k; });
+      const bottom = sections[i].getBoundingClientRect().bottom, height = sections[i].offsetHeight;
+      // A tall section is paged in even steps of at most one screen before moving on.
+      const step = height > vh + 4 ? (height - vh) / (Math.ceil(height / vh) - 1) : Infinity;
+      let target = y;
+      if (dir > 0 && bottom > vh + 4) target = Math.min(y + step, y + bottom - vh);
+      else if (dir < 0 && stops[i] < y - 4) target = Math.max(stops[i], y - step);
+      else if (dir > 0) { const k = stops.findIndex((stop) => stop > y + 4); if (k >= 0) target = stops[k]; }
+      else {
+        // Stops can coincide near the page end (CTA and footer), so take the nearest one above.
+        const k = stops.findLastIndex((stop) => stop < y - 4);
+        // Going back into a tall section lands on its last screen, not its top.
+        if (k >= 0) target = sections[k].offsetHeight > vh ? Math.min(stops[k] + sections[k].offsetHeight - vh, stops[i]) : stops[k];
+      }
+      target = Math.round(target);
+      if (Math.abs(target - y) < 2) return;
+      event.preventDefault();
+      lockUntil = now + 800;
+      scrollTo({ top: target, behavior: reduce.matches ? 'auto' : 'smooth' });
+    }, { passive: false });
+  }
   function navigate(view) { closePanel(); setMenu(false); if (location.hash === '#' + view) route(); else location.hash = view; }
   function route() {
     const hash = location.hash.slice(1);
@@ -1166,7 +1204,7 @@
   state = loadState();
   $('#footer-year').textContent = new Date().getFullYear();
   if (!FIREBASE_CONFIG.apiKey && state.signedIn) { state.signedIn = false; state.userId = ''; persist(); }
-  renderAll(); route(); setupShowcase();
+  renderAll(); route(); setupShowcase(); setupLandingPaging();
   if (FIREBASE_CONFIG.apiKey) firebaseAuth().then(({ auth, fb }) => fb.onAuthStateChanged(auth, syncUser)).catch(() => {});
   if (isPageReload) {
     const showHeader = () => requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'instant' }));

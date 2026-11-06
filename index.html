@@ -40,8 +40,8 @@
       if (page === 'landing') document.querySelectorAll('meta[name=theme-color]').forEach(function (m) { m.content = '#0B0E11'; });
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=polish1">
-  <script src="app.js?v=polish1" defer></script>
+  <link rel="stylesheet" href="styles.css?v=hero1">
+  <script src="app.js?v=hero1" defer></script>
 </head>
 <body id="top">
   <div class="reload-splash" aria-hidden="true">
@@ -85,18 +85,40 @@
   <main id="main" tabindex="-1">
     <div id="landing-view" class="view">
       <section class="landing-hero" aria-labelledby="landing-title">
-        <div class="hero-grid" aria-hidden="true"></div>
+        <div class="hero-glass" aria-hidden="true"><span class="hero-glow"></span><span class="hero-ribs"></span></div>
         <div class="landing-hero-inner content-width">
-          <p class="eyebrow"><span class="demo-dot" aria-hidden="true"></span>Туршилтын хувилбар · Жишээ зарууд</p>
-          <h1 id="landing-title">Завтай цагтаа <span>ээлжээ ол.</span></h1>
-          <p class="landing-lead">Ээлж ажил горилогчдыг хуваарьт нь таарсан цагийн ажилтай холбоно. Байршил, цаг, цалингаа нэг дор харьцуулж, хүсэлтээ хэдхэн товшилтоор илгээ.</p>
-          <div class="landing-ctas">
-            <button class="button button-dark button-lg" data-action="signup" data-id="student">Ажил хайж эхлэх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
-            <button class="button button-outline button-lg" data-action="signup" data-id="employer">Ажилтан хайх</button>
+          <aside class="hero-card" aria-label="Жишээ ээлжүүд">
+            <div class="hc-head"><span><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Баянгол, Сүхбаатар · энэ долоо хоногт</span><span class="hc-dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
+            <article class="hc-row">
+              <div class="hc-title"><strong>Хүргэлтийн туслах</strong><span>15,000₮ / цаг</span></div>
+              <div class="hc-times"><p><small>Баасан · эхлэх</small><b>14:00</b></p><span class="hc-chip">4 цаг</span><p class="hc-end"><small>дуусах</small><b>18:00</b></p></div>
+            </article>
+            <article class="hc-row">
+              <div class="hc-title"><strong>Номын сангийн туслах</strong><span>13,000₮ / цаг</span></div>
+              <div class="hc-times"><p><small>Бямба · эхлэх</small><b>10:00</b></p><span class="hc-chip">4 цаг</span><p class="hc-end"><small>дуусах</small><b>14:00</b></p></div>
+            </article>
+            <p class="hc-badge"><svg class="icon" aria-hidden="true"><use href="#i-meal"/></svg>Хоолтой ээлжүүд бий</p>
+            <dl class="landing-stats" id="landing-stats"></dl>
+          </aside>
+          <div class="hero-copy">
+            <p class="eyebrow"><span class="demo-dot" aria-hidden="true"></span>Туршилтын хувилбар · Жишээ зарууд</p>
+            <h1 id="landing-title">Завтай цагтаа <span>ээлжээ ол.</span></h1>
           </div>
-          <dl class="landing-stats" id="landing-stats"></dl>
+          <div class="hero-foot">
+            <p class="landing-lead">Хуваарьт тань таарсан цагийн ажил. Байршил, цаг, цалингаа нэг дор харьцуулж, хүсэлтээ хэдхэн товшилтоор илгээ.</p>
+            <div class="landing-ctas">
+              <button class="button hero-cta" data-action="signup" data-id="student">Ажил хайж эхлэх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+              <button class="hero-link" data-action="signup" data-id="employer">Ажилтан хайх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+            </div>
+          </div>
+          <ul class="hero-features">
+            <li class="is-lead"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg><span>Хуваарьт тань<br>таарсан ээлж</span></li>
+            <li><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span>Гэрийнхээ<br>ойролцоо</span></li>
+            <li><svg class="icon" aria-hidden="true"><use href="#i-pay"/></svg><span>Цагийн хөлс<br>урьдчилан тодорхой</span></li>
+            <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span>Хүсэлтээ<br>хэдхэн товшилтоор</span></li>
+            <li><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg><span>Ажил олгогч<br>шууд урина</span></li>
+          </ul>
         </div>
-        <a class="scroll-cue" href="#landing-jobs"><span>Шинэ зарууд</span><svg class="icon" aria-hidden="true"><use href="#i-down"/></svg></a>
       </section>
 
       <!-- Fixed homepage showcase: exactly three example listings. Static on purpose — not a live feed. -->

@@ -783,7 +783,7 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
   --blue:#2CC7B3;--teal:#2CC7B3;--teal-text:#5FD8C8;--red:#F0787D;--grad-end:#9CA3AF;
   --accent:rgb(5 173 152 / 14%);--accent-t:#7FE0D2;
   --dark-bg:#05AD98;--dark-fg:#04201C;--dark-hover:#0BC0A9;
-  --glow-1:rgb(185 163 214 / 10%);--glow-2:rgb(255 255 255 / 3%);--grid:rgb(255 255 255 / 3%);
+  --glow-1:rgb(5 173 152 / 10%);--glow-2:rgb(255 255 255 / 3%);--grid:rgb(255 255 255 / 3%);
   --shadow:0 0 0 1px rgb(255 255 255 / 7%),0 1px 2px rgb(0 0 0 / 40%);
   --shadow-lg:0 0 0 1px rgb(255 255 255 / 8%),0 24px 48px -16px rgb(0 0 0 / 70%);
   --b-red:rgb(240 120 125 / 12%);--b-red-t:#F2A5A9;--b-gray:#1E2329;--b-gray-t:#C9CED6;
@@ -792,24 +792,85 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
 }
 :root[data-page=landing] body{background:var(--bg);color:var(--ink)}
 :root[data-page=landing] ::selection{background:#05AD98;color:#04201C}
-:root[data-page=landing] .topbar-inner{background:rgb(23 27 33 / 70%);box-shadow:0 0 0 1px rgb(255 255 255 / 7%),0 16px 32px -20px rgb(0 0 0 / 80%)}
+:root[data-page=landing] .topbar-inner{display:grid;grid-template-columns:1fr auto 1fr;background:rgb(15 19 25 / 62%);box-shadow:0 0 0 1px rgb(255 255 255 / 7%)}
+:root[data-page=landing] .topbar-actions{grid-column:3;justify-self:end}
+:root[data-page=landing] .public-nav{margin:0;padding:4px;border-radius:999px;background:rgb(255 255 255 / 7%);box-shadow:inset 0 0 0 1px rgb(255 255 255 / 10%);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+:root[data-page=landing] .public-nav a{height:32px;color:rgb(255 255 255 / 74%)}
+:root[data-page=landing] .public-nav a:hover{color:#fff;background:rgb(255 255 255 / 10%)}
+:root[data-page=landing] .topbar-signup{border-radius:999px}
+/* Where supported, the bar is clear over the hero and turns solid once the page scrolls. */
+@supports (animation-timeline:scroll()){
+  :root[data-page=landing] .topbar-inner{background:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;animation:bar-solid linear both;animation-timeline:scroll();animation-range:0 180px}
+  @keyframes bar-solid{to{background:rgb(15 19 25 / 72%);box-shadow:0 0 0 1px rgb(255 255 255 / 7%);backdrop-filter:saturate(160%) blur(14px);-webkit-backdrop-filter:saturate(160%) blur(14px)}}
+}
 
-/* Section 1: hero, one full viewport */
-.landing-hero{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;justify-content:center;min-height:100vh;min-height:100dvh;margin-top:-68px;padding:108px 0 96px;background:radial-gradient(ellipse 55% 45% at 50% 0%,var(--glow-1),transparent 72%),linear-gradient(180deg,transparent 55%,rgb(30 35 41 / 40%));border-bottom:1px solid var(--line)}
-.landing-hero .hero-grid{mask-image:radial-gradient(ellipse 60% 55% at 50% 35%,#000 15%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse 60% 55% at 50% 35%,#000 15%,transparent 70%)}
-.landing-hero-inner{display:flex;flex-direction:column;align-items:center;text-align:center}
-.landing-hero h1{max-width:16ch;margin-top:28px;font-size:clamp(46px,min(7.2vw,10.5vh),108px);line-height:.98;letter-spacing:-.005em;color:var(--ink);text-wrap:balance}
-.landing-hero h1 span{color:#5FD8C8}
-.landing-hero .landing-lead{max-width:52ch;margin:28px auto 0;font-size:clamp(16px,1.35vw,19px);text-wrap:balance}
-.landing-hero .landing-ctas{justify-content:center;margin-top:clamp(28px,4.5vh,40px)}
-.landing-hero .landing-stats{grid-template-columns:repeat(3,minmax(0,auto));justify-content:center;gap:12px 64px;margin-top:clamp(36px,6vh,64px);padding:22px 8px 0;text-align:center}
-.scroll-cue{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 12px;border-radius:12px;font-size:12px;color:var(--faint);transition:color .2s}
-.scroll-cue:hover{color:var(--ink)}
-.scroll-cue .icon{animation:cue 2.4s ease-in-out infinite}
-@keyframes cue{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+/* Section 1: hero, one full viewport. Warm glow seen through vertical fluted glass;
+   headline bottom-left, sample-shift card top-right, feature strip along the bottom. */
+.landing-hero{position:relative;isolation:isolate;overflow:hidden;min-height:100vh;min-height:100dvh;margin-top:-68px;padding:96px 0 0;background:#0D1118;border-bottom:1px solid var(--line)}
+.hero-glass{position:absolute;inset:0;z-index:-1;overflow:hidden}
+.hero-glow{position:absolute;inset:-12%;background:radial-gradient(ellipse 22% 34% at 54% 62%,rgb(44 199 179 / 90%),rgb(5 173 152 / 0) 72%),radial-gradient(ellipse 38% 46% at 60% 74%,rgb(3 120 128 / 60%),transparent 72%),radial-gradient(ellipse 44% 52% at 16% 22%,rgb(92 112 150 / 55%),transparent 70%),radial-gradient(ellipse 46% 48% at 90% 12%,rgb(54 68 100 / 70%),transparent 70%),linear-gradient(180deg,#1B2333,#131925 60%,#0D1118);filter:blur(28px);animation:glow-drift 20s ease-in-out infinite alternate}
+@keyframes glow-drift{to{transform:translate3d(3%,-2.5%,0) scale(1.06)}}
+.hero-ribs{position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgb(255 255 255 / 9%) 0,rgb(255 255 255 / 0) 4px,rgb(0 0 0 / 0) 10px,rgb(0 0 0 / 26%) 15px,rgb(255 255 255 / 5%) 16px);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.hero-glass::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgb(13 17 24 / 30%),transparent 30%,transparent 50%,rgb(13 17 24 / 82%)),linear-gradient(90deg,rgb(13 17 24 / 55%),transparent 55%)}
+.landing-hero-inner{display:grid;grid-template-columns:minmax(0,1fr) 340px;grid-template-rows:1fr auto auto auto;grid-template-areas:". card" "copy card" "foot foot" "feat feat";column-gap:40px;min-height:calc(100vh - 97px);min-height:calc(100dvh - 97px)}
+.hero-copy{grid-area:copy;padding-top:32px}
+.landing-hero h1{max-width:12ch;margin-top:20px;font-family:var(--font);font-size:clamp(46px,min(8vw,12vh),124px);font-weight:300;line-height:.98;letter-spacing:-.035em;color:#fff;text-wrap:balance}
+.landing-hero h1 span{color:inherit}
+.landing-hero .eyebrow{background:rgb(255 255 255 / 7%);box-shadow:inset 0 0 0 1px rgb(255 255 255 / 10%);color:rgb(255 255 255 / 72%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.hero-foot{grid-area:foot;display:flex;align-items:flex-end;justify-content:space-between;gap:24px 40px;margin-top:22px}
+.landing-hero .landing-lead{max-width:44ch;margin:0;font-size:16px;line-height:1.55;color:rgb(255 255 255 / 72%)}
+.landing-hero .landing-ctas{flex:none;align-items:center;gap:22px;margin:0}
+.hero-cta{height:52px;padding:0 26px;border-radius:999px;background:var(--dark-bg);color:var(--dark-fg);font-size:15px;font-weight:500;box-shadow:0 12px 32px -12px rgb(5 173 152 / 70%)}
+.hero-cta:hover{background:var(--dark-hover)}
+.hero-link{display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 4px;background:none;color:#fff;font-size:15px;font-weight:500}
+.hero-link .icon,.hero-cta .icon{transition:transform .2s var(--ease)}
+.hero-link:hover .icon,.hero-cta:hover .icon{transform:translateX(3px)}
+.hero-features{grid-area:feat;list-style:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));margin:clamp(24px,4.5vh,56px) 0 0;padding:0;border-top:1px solid rgb(255 255 255 / 12%)}
+.hero-features li{position:relative;display:flex;flex-direction:column;gap:10px;padding:16px 16px 24px 0;font-size:13px;line-height:1.4;color:rgb(255 255 255 / 70%)}
+.hero-features .icon{width:18px;height:18px}
+.hero-features .is-lead{color:#7FE0D2}
+.hero-features .is-lead::before{content:"";position:absolute;top:-1px;left:0;right:16px;height:2px;border-radius:2px;background:var(--teal)}
+.hero-card{grid-area:card;align-self:start;justify-self:end;width:340px;margin-top:4px;padding:12px;border-radius:22px;background:rgb(28 34 46 / 42%);box-shadow:0 0 0 1px rgb(255 255 255 / 12%),inset 0 1px 0 rgb(255 255 255 / 10%),0 32px 64px -32px rgb(0 0 0 / 80%);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%)}
+.hc-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 6px 10px;font-size:12px;color:rgb(255 255 255 / 66%)}
+.hc-head>span:first-child{display:inline-flex;align-items:center;gap:6px;min-width:0}
+.hc-head .icon{width:14px;height:14px;flex:none}
+.hc-dots{display:inline-flex;gap:3px}
+.hc-dots i{width:4px;height:4px;border-radius:50%;background:rgb(255 255 255 / 55%)}
+.hc-row{padding:14px;border-radius:14px;background:rgb(255 255 255 / 6%);box-shadow:inset 0 0 0 1px rgb(255 255 255 / 8%)}
+.hc-row+.hc-row{margin-top:8px}
+.hc-title{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.hc-title strong{font-size:14px;font-weight:500;color:#fff}
+.hc-title span{flex:none;font-family:var(--mono);font-size:11px;color:rgb(255 255 255 / 60%)}
+.hc-times{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:8px;margin-top:12px}
+.hc-times p{display:grid;gap:4px;margin:0}
+.hc-times small{font-size:11px;color:rgb(255 255 255 / 58%)}
+.hc-times b{font-size:26px;font-weight:300;line-height:1;letter-spacing:-.02em;color:#fff;font-variant-numeric:tabular-nums}
+.hc-end{text-align:right}
+.hc-chip{align-self:center;padding:3px 9px;border-radius:999px;background:rgb(255 255 255 / 9%);font-size:11px;color:rgb(255 255 255 / 75%);white-space:nowrap}
+.hc-badge{display:inline-flex;align-items:center;gap:6px;height:28px;margin:12px 2px 0;padding:0 12px;border-radius:999px;background:var(--dark-bg);color:var(--dark-fg);font-size:12px;font-weight:500}
+.hc-badge .icon{width:14px;height:14px}
+.hero-card .landing-stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0 0;padding:12px 6px 4px;border-top:1px solid rgb(255 255 255 / 10%)}
+.hero-card .landing-stats dt{font-size:11px;color:rgb(255 255 255 / 58%)}
+.hero-card .landing-stats dd{margin-top:4px;font-family:var(--mono);font-size:16px;font-weight:500}
+@media(max-width:1000px){
+  .landing-hero-inner{grid-template-columns:minmax(0,1fr);grid-template-rows:auto;grid-template-areas:"copy" "foot" "card" "feat";align-content:end}
+  .hero-card{justify-self:start;width:min(420px,100%);margin-top:40px}
+  .hero-foot{flex-direction:column;align-items:flex-start}
+  .hero-features{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
+/* Homepage paging (setupLandingPaging in app.js): one wheel or trackpad swipe moves to the next section.
+   On desktop-sized screens the middle sections fill the screen so each step lands on one whole section. */
+@media(min-width:761px) and (min-height:600px){
+  :root[data-page=landing]{scroll-padding-top:0}
+  :root[data-page=landing] :is(#how,#for-employers){min-height:100vh;min-height:100dvh;padding-block:96px 48px;scroll-margin-top:0}
+  :root[data-page=landing] #how{display:flex;flex-direction:column;justify-content:center}
+  :root[data-page=landing] #for-employers{align-content:center}
+  :root[data-page=landing] .landing-cta{scroll-margin-top:96px}
+}
 
 /* Section 2: fixed three-card showcase */
-.showcase{position:relative;overflow:hidden;min-height:100vh;min-height:100dvh;padding:128px 0 136px;background:radial-gradient(ellipse 45% 28% at 50% 0%,rgb(185 163 214 / 6%),transparent 72%)}
+.showcase{position:relative;overflow:hidden;min-height:100vh;min-height:100dvh;padding:128px 0 136px;background:radial-gradient(ellipse 45% 28% at 50% 0%,rgb(5 173 152 / 6%),transparent 72%)}
 .showcase-inner{max-width:1080px}
 .showcase-head{text-align:center;margin-bottom:76px}
 .showcase-head h2{margin-top:18px;font-size:clamp(40px,5.4vw,72px);line-height:1}
@@ -819,7 +880,7 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
 .showcase-card.from-left{justify-self:start;--from:-340px}
 .showcase-card.from-right{justify-self:end;--from:340px}
 .sc-card{padding:30px 32px 28px;border-radius:24px;background:linear-gradient(180deg,rgb(255 255 255 / 3%),transparent 45%),var(--surface);box-shadow:0 0 0 1px rgb(255 255 255 / 7%),0 32px 64px -32px rgb(0 0 0 / 85%);transition:box-shadow .3s}
-.sc-card:hover{box-shadow:0 0 0 1px rgb(205 180 219 / 26%),0 32px 64px -32px rgb(0 0 0 / 85%)}
+.sc-card:hover{box-shadow:0 0 0 1px rgb(44 199 179 / 30%),0 32px 64px -32px rgb(0 0 0 / 85%)}
 .sc-top{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:26px}
 .sc-cat{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
 .sc-tag{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:999px;background:var(--accent);color:var(--accent-t);font-size:12px;font-weight:500;white-space:nowrap}
@@ -850,8 +911,11 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
   .showcase-card.from-right{--from:140px}
 }
 @media(max-width:760px){
-  .landing-hero{margin-top:-66px;padding:104px 0 104px}
-  .landing-hero .landing-stats{gap:12px 28px;margin-top:52px;padding-top:20px}
+  .landing-hero{margin-top:-66px;padding-top:96px}
+  .landing-hero h1{font-size:clamp(42px,12vw,64px)}
+  .hero-features{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hero-features li{padding-bottom:18px}
+  :root[data-page=landing] .topbar-inner{display:flex}
   .showcase{padding:88px 0 100px}
   .showcase-head{margin-bottom:44px}
   .showcase-list{gap:20px}
@@ -864,18 +928,19 @@ h1,h2,h3,h4,.hero h1,.guide-intro h2,.workspace-heading h1,.panel-heading,.headi
   .showcase-more{margin-top:44px}
 }
 @media(max-width:480px){
-  .landing-hero .landing-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .landing-hero .landing-ctas{width:100%}
+  .hero-cta{flex:1 1 auto}
   .sc-foot{flex-wrap:wrap}
   .sc-foot .button{flex:1 1 100%}
 }
 @media(prefers-reduced-motion:reduce){
   .reveal-on .showcase-card{opacity:1;transform:none;transition:none}
-  .scroll-cue .icon{animation:none}
+  .hero-glow{animation:none}
 }
 
 /* First paint, before app.js runs: the inline <head> script sets data-page (and a saved palette),
    so the right header, view and colors show immediately on reload. app.js keeps them in sync after. */
-.landing-hero .landing-stats{min-height:78px}
+.hero-card .landing-stats{min-height:52px}
 :root[data-page=landing] #app-header,:root[data-page=landing] #browse-view,:root[data-page=app] #public-header,:root[data-page=app] #landing-view{display:none!important}
 :root[data-page=app][data-palette=ocean]{--bg:#CAF0F8;--surface:#FFFFFF;--ink:#03045E;color-scheme:light}
 :root[data-page=app][data-palette=sand]{--bg:#F5EBE0;--surface:#EDEDE9;--ink:#352B26;color-scheme:light}
