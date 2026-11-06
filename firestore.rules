@@ -1,0 +1,36 @@
+rules_version = '2';
+
+// Firestore security rules for Ээлж (project tsagiinajil-bde42).
+// Paste into Firebase Console → Firestore Database → Rules, then press Publish.
+// Covers everything app.js reads and writes: seekers/{uid} and invites/{id}.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+
+    // Job seekers' listings ("Ажил олгогчдод илгээх"). Anyone signed in can read them
+    // (employers browse "Ажил хайгчид"); only the owner can create, change or delete theirs,
+    // including the `replies` map used as a second delivery path for invite answers.
+    match /seekers/{uid} {
+      allow read: if signedIn();
+      allow create, update, delete: if signedIn() && request.auth.uid == uid;
+    }
+
+    // Invitations from an employer to a job seeker.
+    match /invites/{id} {
+      // Only the two people involved can see an invite.
+      allow read: if signedIn()
+        && (resource.data.employerId == request.auth.uid || resource.data.seekerId == request.auth.uid);
+      // Employers send invites as themselves.
+      allow create: if signedIn() && request.resource.data.employerId == request.auth.uid;
+      // Employers can withdraw ("Цуцлах") their own invites.
+      allow delete: if signedIn() && resource.data.employerId == request.auth.uid;
+      // The invited job seeker answers once: only status and respondedAt change,
+      // only to accepted or declined, and only while the invite is still pending.
+      allow update: if signedIn()
+        && resource.data.seekerId == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'respondedAt'])
+        && request.resource.data.status in ['accepted', 'declined']
+        && resource.data.get('status', 'pending') == 'pending';
+    }
+  }
+}
