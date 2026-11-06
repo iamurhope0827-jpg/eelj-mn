@@ -639,6 +639,7 @@
     state.userId = user.uid; state.signedIn = true;
     state.role = state.roles[user.uid] || state.role;
     Object.assign(state.profile, { name: user.displayName || user.email.split('@')[0], contact: user.email });
+    if (arriving) resetFilters();
     persist(); renderAll();
     if (arriving) { navigate(state.role === 'employer' ? 'employer' : 'jobs'); loadInbox(); }
   }
@@ -731,6 +732,11 @@
     firebaseAuth().then(({ auth, fb }) => fb.signOut(auth)).catch(() => {});
     clearSession();
     toast('Системээс гарлаа.');
+  }
+  // Every new sign-in starts with no filters, so last session's choices don't hide listings.
+  function resetFilters() {
+    Object.assign(ui, { category: '', district: '', limit: 3, savedOnly: false, seekDates: [], seekFrom: '', seekTo: '', seekDistrict: '', seekJob: '', seekLimit: 10, pickedOnly: false, applicantJob: '' });
+    delete state.profile.days; Object.assign(state.profile, { dates: [], from: '', to: '' });
   }
   function clearSession() {
     state.signedIn = false; state.userId = ''; ui.savedOnly = false; ui.verified = false;
