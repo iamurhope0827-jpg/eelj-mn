@@ -584,7 +584,7 @@
     view.querySelectorAll('[data-lp-rv]').forEach((el) => {
       const d = el.dataset, type = d.lpRv, lines = type === 'lines';
       const parts = lines ? d.lines.split('|') : el.textContent.trim().split(/\s+/);
-      const limeFrom = d.limeFrom === undefined ? Infinity : Number(d.limeFrom);
+      const accentFrom = d.accentFrom === undefined ? Infinity : Number(d.accentFrom);
       const breakAt = d.breakAt === undefined ? -1 : Number(d.breakAt);
       const stagger = Number(d.stagger ?? (lines ? 120 : 140)), base = Number(d.delay ?? 0);
       el.classList.add('lp-rv', `lp-rv-${type}`);
@@ -602,7 +602,7 @@
         inner.style.setProperty('--d', `${base + i * stagger}ms`);
         let node = inner;
         if (type !== 'fade') { node = document.createElement('span'); node.className = 'lp-clip'; node.append(inner); }
-        if (i >= limeFrom) node.classList.add('is-lime');
+        if (i >= accentFrom) node.classList.add('is-accent');
         node.setAttribute('aria-hidden', 'true');
         el.append(node);
         if (!lines && i < parts.length - 1) el.append(' ');
