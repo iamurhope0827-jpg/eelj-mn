@@ -6,6 +6,9 @@ services:
     runtime: static
     buildCommand: npm run build
     staticPublishPath: dist
+    # Every pull request gets its own preview URL; it is removed when the PR closes.
+    previews:
+      generation: automatic
     headers:
       - path: /*
         name: X-Content-Type-Options

@@ -74,7 +74,7 @@
     return storeReady;
   }
   // Students who marked free days (Firestore seekers/{uid}) and invites sent to this student (invites).
-  let remoteSeekers = [], inbox = [], inboxToasted = false, publishTimer;
+  let remoteSeekers = [], inbox = [], inboxToasted = false;
   const toSeeker = (id, d) => ({ id, real: true, name: string(d.name, 80) && d.name.trim() ? d.name : 'Ажил горилогч', school: string(d.school, 80) ? d.school : '', major: '', year: 0, district: districts.includes(d.district) ? d.district : '', dates: (Array.isArray(d.dates) ? d.dates : []).filter((date) => validDate(date) && date >= today()), from: validTime(d.from) ? d.from : '', to: validTime(d.to) ? d.to : '', likes: [], bio: string(d.bio, 300) ? d.bio : '' });
   function listingData() {
     const a = myAvail();
@@ -301,7 +301,6 @@
     if (!value || value.version !== 1 || !Array.isArray(value.jobs) || value.jobs.length > 500 || !value.jobs.every(validJob) || new Set(value.jobs.map((j) => j.id)).size !== value.jobs.length || !Array.isArray(value.applications) || value.applications.length > 2000 || !Array.isArray(value.saved)) return false;
     return value.applications.every((app) => app && string(app.id, 100) && value.jobs.some((job) => job.id === app.jobId) && string(app.name, 80) && string(app.contact, 100) && string(app.note, 600) && Object.hasOwn(statusNames, app.status) && Number.isFinite(app.createdAt) && validJob(app.snapshot)) && value.saved.every((id) => string(id, 100)) && (value.picked === undefined || Array.isArray(value.picked)) && (value.invites === undefined || (Array.isArray(value.invites) && value.invites.length <= 2000 && value.invites.every((item) => item && string(item.id, 100) && string(item.seekerId, 100) && string(item.jobId, 100) && string(item.message, 600) && Number.isFinite(item.createdAt)))) && value.profile && string(value.profile.name, 80) && string(value.profile.contact, 100) && ['student', 'employer'].includes(value.role) && (value.signedIn === undefined || typeof value.signedIn === 'boolean') && (value.accounts === undefined || Array.isArray(value.accounts)) && (value.roles === undefined || (value.roles && typeof value.roles === 'object' && !Array.isArray(value.roles) && Object.values(value.roles).every((role) => ['student', 'employer'].includes(role)))) && (value.userId === undefined || string(value.userId, 128));
   }
-  function validAccount(item) { return item && string(item.id, 100) && string(item.name, 80) && string(item.email, 100) && ['student', 'employer'].includes(item.role) && string(item.salt, 64) && string(item.hash, 64) && Number.isFinite(item.createdAt); }
   function loadState() {
     try { const raw = localStorage.getItem(KEY); if (!raw) return freshState(); const parsed = JSON.parse(raw); if (validState(parsed)) return upgrade(parsed); storageMessage = 'Хадгалсан өгөгдлийг уншиж чадсангүй. Жишээ мэдээллийг шинээр ачааллаа.'; }
     catch { storageMessage = 'Энэ хөтөч мэдээлэл хадгалах боломжгүй байна. Өөрчлөлтүүд хуудас нээлттэй байх хугацаанд ажиллана.'; }
