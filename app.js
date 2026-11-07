@@ -535,64 +535,260 @@
     $('#hero-stats-left').innerHTML = stat(open.length, 'Нээлттэй ээлж') + stat(money(avg), 'Дундаж цагийн хөлс');
     $('#hero-stats-right').innerHTML = stat(allSeekers().length, 'Ажил хайгч') + stat(districts.length, 'Дүүрэгт');
   }
-  // Homepage showcase: three static cards that slide in left → right → left, exactly once per page load.
-  // A card only ever gains `is-in`; nothing removes it, and the cards are static markup that no render touches.
-  function setupShowcase() {
-    const cards = [...document.querySelectorAll('.showcase-card')];
-    if (!cards.length || matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
-    document.documentElement.classList.add('reveal-on');
-    let next = 0; let target = -1; let timer = 0;
-    const step = () => {
-      timer = 0;
-      if (next > target) return;
-      cards[next].classList.add('is-in');
-      next += 1;
-      if (next <= target) timer = setTimeout(step, 240);
-      else if (next >= cards.length) observer.disconnect();
+  let landing = null;
+  // ===== Homepage (signed out) motion =====
+  // Intro curtain, word/line reveals, in-view fades, the hero shift slider, the ghost-word carousel,
+  // scroll parallax, the fullscreen menu and Lenis smooth scrolling. It only touches the static
+  // #landing-view markup (renderLanding() still fills the stats) and switches itself off when signed in.
+  const landingSlides = [
+    { letter: 'Х', cat: 'Агуулах, хүргэлт', title: 'Хүргэлтийн туслах', pay: '15,000₮ / цаг', tag: 'Хоолтой' },
+    { letter: 'Н', cat: 'Оффис, үйлчилгээ', title: 'Номын сангийн туслах', pay: '13,000₮ / цаг', tag: 'Шинэ' },
+    { letter: 'Т', cat: 'Эвент, арга хэмжээ', title: 'Тасалбар шалгагч', pay: '16,000₮ / цаг', tag: '4 орон' },
+    { letter: 'К', cat: 'Кафе, ресторан', title: 'Кафены туслах', pay: '14,000₮ / цаг', tag: 'Орой' },
+  ];
+  const landingShifts = [
+    { words: ['Хичээлийн', 'дараа', 'оройн', 'ээлж'], cat: 'Кафе, ресторан', title: 'Кафены туслах', day: 'Баасан · 4 цагийн ээлж', from: '17:00', to: '21:00', pay: '14,000₮ / цаг', place: 'Чингэлтэй дүүрэг' },
+    { words: ['Амралтын', 'өдөр', 'нэмэлт', 'орлого'], cat: 'Оффис, үйлчилгээ', title: 'Номын сангийн туслах', day: 'Бямба · 4 цагийн ээлж', from: '10:00', to: '14:00', pay: '13,000₮ / цаг', place: 'Сүхбаатар дүүрэг' },
+    { words: ['Ойрхон', 'байршил', 'шударга', 'цалин'], cat: 'Эвент, арга хэмжээ', title: 'Тасалбар шалгагч', day: 'Ням · 4 цагийн ээлж', from: '18:00', to: '22:00', pay: '16,000₮ / цаг', place: 'Хан-Уул дүүрэг' },
+  ];
+  function setupLanding() {
+    const root = document.documentElement;
+    const view = $('#landing-view');
+    const menu = $('#lp-menu');
+    const curtain = $('#lp-curtain');
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const onLanding = () => root.dataset.page === 'landing';
+    root.classList.add('lp-js');
+    view.querySelectorAll('[data-lp-year]').forEach((el) => { el.textContent = new Date().getFullYear(); });
+
+    // Scroll lock shared by the curtain and the menu.
+    let lenis = null, locks = 0;
+    const lock = () => { locks += 1; root.classList.add('lp-locked'); lenis?.stop(); };
+    const unlock = () => { locks = Math.max(0, locks - 1); if (!locks) { root.classList.remove('lp-locked'); lenis?.start(); } };
+
+    // Play once in view; some hero pieces also wait for the curtain ("ready").
+    let ready = false;
+    const readyQueue = [];
+    const whenReady = (fn) => (ready ? fn() : readyQueue.push(fn));
+    const seen = new Map();
+    const io = new IntersectionObserver((entries) => entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      io.unobserve(entry.target);
+      seen.get(entry.target)?.();
+      seen.delete(entry.target);
+    }), { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+    const whenSeen = (el, fn) => { seen.set(el, fn); io.observe(el); };
+    const play = (el) => { el.classList.remove('is-in'); void el.offsetWidth; el.classList.add('is-in'); };
+
+    // Split text into clipped words or lines. Screen readers get the plain text once.
+    view.querySelectorAll('[data-lp-rv]').forEach((el) => {
+      const d = el.dataset, type = d.lpRv, lines = type === 'lines';
+      const parts = lines ? d.lines.split('|') : el.textContent.trim().split(/\s+/);
+      const accentFrom = d.accentFrom === undefined ? Infinity : Number(d.accentFrom);
+      const breakAt = d.breakAt === undefined ? -1 : Number(d.breakAt);
+      const stagger = Number(d.stagger ?? (lines ? 120 : 140)), base = Number(d.delay ?? 0);
+      el.classList.add('lp-rv', `lp-rv-${type}`);
+      el.style.setProperty('--dur', `${d.dur ?? 950}ms`);
+      if (d.ease === 'quart') el.style.setProperty('--ease', 'var(--lp-quart)');
+      if (type === 'fade') el.style.setProperty('--from', '18px');
+      el.textContent = '';
+      const label = document.createElement('span');
+      label.className = 'sr-only'; label.textContent = parts.join(' ');
+      el.append(label);
+      parts.forEach((text, i) => {
+        if (i === breakAt) { const br = document.createElement('span'); br.className = 'lp-br'; br.setAttribute('aria-hidden', 'true'); el.append(br); }
+        const inner = document.createElement('span');
+        inner.className = 'lp-rv-i'; inner.textContent = text;
+        inner.style.setProperty('--d', `${base + i * stagger}ms`);
+        let node = inner;
+        if (type !== 'fade') { node = document.createElement('span'); node.className = 'lp-clip'; node.append(inner); }
+        if (i >= accentFrom) node.classList.add('is-accent');
+        node.setAttribute('aria-hidden', 'true');
+        el.append(node);
+        if (!lines && i < parts.length - 1) el.append(' ');
+      });
+      if (d.gate === 'ready') whenReady(() => play(el)); else whenSeen(el, () => play(el));
+    });
+    view.querySelectorAll('[data-lp-iv]').forEach((el) => {
+      el.style.setProperty('--d', `${el.dataset.delay || 0}ms`);
+      const show = () => el.classList.add('is-in');
+      if (el.dataset.gate === 'ready') whenReady(() => whenSeen(el, show)); else whenSeen(el, show);
+    });
+
+    // The headline fills the hero width on one line (two lines on phones).
+    const title = $('#landing-title');
+    const fitTitle = () => {
+      title.style.setProperty('--lp-fit', '100px');
+      const wrap = title.parentElement, cs = getComputedStyle(wrap);
+      const room = wrap.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      const width = title.getBoundingClientRect().width;
+      if (width > 0 && room > 0) title.style.setProperty('--lp-fit', `${Math.min(100 * room / width, innerHeight * 0.22)}px`);
     };
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => { if (entry.isIntersecting) { target = Math.max(target, cards.indexOf(entry.target)); observer.unobserve(entry.target); } });
-      if (!timer && next <= target) step();
-    }, { threshold: 0.25, rootMargin: '0px 0px -8% 0px' });
-    cards.forEach((card) => observer.observe(card));
-  }
-  // Homepage paging: one wheel notch or trackpad swipe moves to the next/previous section.
-  // A section taller than the screen (the showcase) is paged in even steps of at most one screen.
-  // Desktop-sized screens only; keyboard, touch and the signed-in app keep normal scrolling.
-  function setupLandingPaging() {
-    const wide = matchMedia('(min-width: 761px) and (min-height: 600px)');
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)');
-    let lockUntil = 0;
-    addEventListener('wheel', (event) => {
-      if (document.documentElement.dataset.page !== 'landing' || !wide.matches || event.ctrlKey || $('#panel').open || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
-      // One gesture = one move: a running move, and any wheel events (trackpad momentum, fast notches)
-      // until 200ms of quiet, are swallowed.
-      const now = performance.now(), locked = now < lockUntil;
-      lockUntil = Math.max(lockUntil, now + 200);
-      if (locked) { event.preventDefault(); return; }
-      const dir = Math.sign(event.deltaY), y = scrollY, vh = innerHeight, max = document.documentElement.scrollHeight - vh;
-      const sections = [...document.querySelectorAll('#landing-view > section'), document.querySelector('.site-footer')];
-      const stops = sections.map((el) => Math.min(max, Math.max(0, Math.round(el.getBoundingClientRect().top + y - (parseFloat(getComputedStyle(el).scrollMarginTop) || 0)))));
-      let i = 0; stops.forEach((stop, k) => { if (stop <= y + 4) i = k; });
-      const bottom = sections[i].getBoundingClientRect().bottom, height = sections[i].offsetHeight;
-      // A tall section is paged in even steps of at most one screen before moving on.
-      const step = height > vh + 4 ? (height - vh) / (Math.ceil(height / vh) - 1) : Infinity;
-      let target = y;
-      if (dir > 0 && bottom > vh + 4) target = Math.min(y + step, y + bottom - vh);
-      else if (dir < 0 && stops[i] < y - 4) target = Math.max(stops[i], y - step);
-      else if (dir > 0) { const k = stops.findIndex((stop) => stop > y + 4); if (k >= 0) target = stops[k]; }
-      else {
-        // Stops can coincide near the page end (CTA and footer), so take the nearest one above.
-        const k = stops.findLastIndex((stop) => stop < y - 4);
-        // Going back into a tall section lands on its last screen, not its top.
-        if (k >= 0) target = sections[k].offsetHeight > vh ? Math.min(stops[k] + sections[k].offsetHeight - vh, stops[i]) : stops[k];
-      }
-      target = Math.round(target);
-      if (Math.abs(target - y) < 2) return;
+    fitTitle();
+    document.fonts?.ready.then(fitTitle);
+    addEventListener('resize', fitTitle);
+
+    const makeDots = (box, count, label, pick) => {
+      box.innerHTML = Array.from({ length: count }, (_, i) => `<button class="lp-dot" type="button" aria-label="${label} ${i + 1}"><i></i></button>`).join('');
+      const buttons = [...box.children];
+      buttons.forEach((button, i) => button.addEventListener('click', () => pick(i)));
+      return (active) => buttons.forEach((button, i) => button.setAttribute('aria-current', String(i === active)));
+    };
+
+    // Hero slider: example shifts cross-fade every 3.8s once the curtain lifts.
+    const stage = $('#lp-slider-stage');
+    stage.innerHTML = landingSlides.map((s, i) => `<button class="lp-slide lp-glass${i ? ' is-hidden' : ''}" type="button" data-action="signin" data-id="student"${i ? ' tabindex="-1" aria-hidden="true"' : ''}><span class="lp-slide-ava" aria-hidden="true">${s.letter}</span><span class="lp-slide-meta"><span class="lp-slide-cat">${s.cat}</span><span class="lp-slide-title">${s.title}</span><span class="lp-slide-pay">${s.pay}</span></span><span class="lp-slide-tag">${s.tag}</span></button>`).join('');
+    const slides = [...stage.children];
+    let slide = 0, slideTimer = 0;
+    const showSlide = (i) => {
+      slide = i;
+      slides.forEach((el, k) => { el.classList.toggle('is-hidden', k !== i); el.toggleAttribute('aria-hidden', k !== i); el.tabIndex = k === i ? 0 : -1; });
+      setSlideDot(i);
+    };
+    const autoplay = () => { clearInterval(slideTimer); slideTimer = setInterval(() => { if (onLanding() && !document.hidden) showSlide((slide + 1) % slides.length); }, 3800); };
+    const setSlideDot = makeDots($('#lp-slider-dots'), slides.length, 'Жишээ ээлж', (i) => { showSlide(i); autoplay(); });
+    setSlideDot(0);
+    whenReady(autoplay);
+
+    // Ghost words and the tilted example shift change together.
+    const ghosts = [...view.querySelectorAll('.lp-gw')].map((slot) => {
+      slot.innerHTML = '<span class="lp-rv lp-rv-words" style="--dur:700ms"><span class="lp-clip"><span class="lp-rv-i"></span></span></span>';
+      return slot.firstElementChild;
+    });
+    const shiftBox = $('#lp-shift');
+    shiftBox.innerHTML = landingShifts.map((s, i) => `<div class="lp-shift-layer${i ? ' is-hidden' : ''}"${i ? ' aria-hidden="true"' : ''}><p class="lp-shift-cat">${s.cat}</p><p class="lp-shift-time"><span>${s.from}</span><span>– ${s.to}</span></p><p class="lp-shift-title">${s.title}</p><p class="lp-shift-day">${s.day}</p><p class="lp-cap"><b>${s.pay}</b><span>${s.place}</span></p></div>`).join('');
+    const layers = [...shiftBox.children];
+    let ghostSeen = false, shift = 0;
+    const setGhost = (words) => {
+      ghosts.forEach((g, i) => { g.querySelector('.lp-rv-i').textContent = words[i]; });
+      $('#lp-ghost-sr').textContent = words.join(' ');
+      if (ghostSeen) ghosts.forEach(play);
+    };
+    const showShift = (i) => {
+      shift = (i + landingShifts.length) % landingShifts.length;
+      setGhost(landingShifts[shift].words);
+      layers.forEach((el, k) => { el.classList.toggle('is-hidden', k !== shift); el.toggleAttribute('aria-hidden', k !== shift); });
+      setShiftDot(shift);
+    };
+    const setShiftDot = makeDots($('#lp-trust-dots'), landingShifts.length, 'Жишээ', showShift);
+    setGhost(landingShifts[0].words);
+    setShiftDot(0);
+    whenSeen($('#lp-trust-title'), () => { ghostSeen = true; ghosts.forEach(play); });
+    $('#lp-prev').addEventListener('click', () => showShift(shift - 1));
+    $('#lp-next').addEventListener('click', () => showShift(shift + 1));
+
+    // Parallax: map each section's pass through the viewport (0 → 1) onto a translate.
+    const parallax = [...view.querySelectorAll('[data-lp-px]')].map((el) => {
+      const [axis, from, to] = el.dataset.lpPx.split(':');
+      return { el, axis, from: Number(from), to: Number(to), section: el.closest('section') };
+    });
+    let lastY = NaN, lastH = NaN;
+    const updateParallax = (force) => {
+      const y = scrollY, h = innerHeight;
+      if (!force && y === lastY && h === lastH) return;
+      lastY = y; lastH = h;
+      parallax.forEach((p) => {
+        const r = p.section.getBoundingClientRect();
+        if (r.bottom < -100 || r.top > h + 100) return;
+        const t = Math.min(1, Math.max(0, (h - r.top) / (h + r.height)));
+        const v = p.from + (p.to - p.from) * t;
+        p.el.style.transform = p.axis === 'y' ? `translate3d(0,${v}%,0)` : `translate3d(${v}%,0,0)`;
+      });
+    };
+
+    // Fullscreen menu.
+    const burger = view.ownerDocument.querySelector('[data-lp-open="menu"]');
+    let menuOpen = false;
+    const openMenu = () => {
+      if (menuOpen) return;
+      menuOpen = true; menu.inert = false; menu.setAttribute('aria-hidden', 'false'); menu.classList.add('is-open');
+      burger.setAttribute('aria-expanded', 'true'); lock();
+      setTimeout(() => menu.querySelector('.lp-menu-x').focus({ preventScroll: true }), 60);
+    };
+    const closeMenu = (refocus = true) => {
+      if (!menuOpen) return;
+      menuOpen = false; menu.inert = true; menu.setAttribute('aria-hidden', 'true'); menu.classList.remove('is-open');
+      burger.setAttribute('aria-expanded', 'false'); unlock();
+      if (refocus) burger.focus({ preventScroll: true });
+    };
+    burger.addEventListener('click', openMenu);
+    menu.addEventListener('click', (event) => {
+      if (event.target.closest('[data-lp-close]')) closeMenu();
+      else if (event.target.closest('[data-action]')) closeMenu(false);
+    });
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && menuOpen) closeMenu(); });
+
+    // In-page links scroll smoothly instead of jumping (the logo keeps its own handler).
+    document.addEventListener('click', (event) => {
+      const link = event.target.closest('a[href^="#"]');
+      if (!link || !onLanding() || link.classList.contains('wordmark') || event.button !== 0 || event.metaKey || event.ctrlKey) return;
+      const target = document.getElementById(link.hash.slice(1));
+      if (!target || !view.contains(target)) return;
       event.preventDefault();
-      lockUntil = now + 800;
-      scrollTo({ top: target, behavior: reduce.matches ? 'auto' : 'smooth' });
-    }, { passive: false });
+      closeMenu(false);
+      if (lenis) lenis.scrollTo(target, { force: true }); else target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+    });
+
+    // Lenis smooth scrolling on the homepage only; the signed-in app keeps native scrolling.
+    let loading = false;
+    const startLenis = () => {
+      if (lenis || loading || reduce) return;
+      loading = true;
+      import('./assets/vendor/lenis.js').then(({ default: Lenis }) => {
+        loading = false;
+        if (lenis || !onLanding()) return;
+        lenis = new Lenis({ smoothWheel: true });
+        if (locks || $('#panel').open) lenis.stop();
+      }).catch(() => { loading = false; /* Native scrolling still works. */ });
+    };
+    let running = false, panelOpen = false;
+    const frame = (time) => {
+      if (!onLanding()) { running = false; return; }
+      if (lenis) {
+        const open = $('#panel').open;
+        if (open !== panelOpen) { panelOpen = open; if (open) lenis.stop(); else if (!locks) lenis.start(); }
+        lenis.raf(time);
+      }
+      updateParallax(false);
+      requestAnimationFrame(frame);
+    };
+    addEventListener('resize', () => updateParallax(true));
+
+    // Intro curtain: at least 1.4s after load (2.6s at most), then it slides up and the hero plays in.
+    const finish = () => {
+      if (ready) return;
+      ready = true;
+      readyQueue.splice(0).forEach((fn) => fn());
+      if (curtain?.isConnected) {
+        unlock();
+        curtain.classList.add('is-out');
+        setTimeout(() => curtain.remove(), reduce ? 0 : 850);
+      }
+    };
+    if (!curtain || !onLanding()) { curtain?.remove(); finish(); }
+    else {
+      lock();
+      requestAnimationFrame(() => requestAnimationFrame(() => curtain.classList.add('is-go')));
+      const start = () => setTimeout(finish, reduce ? 200 : 1400);
+      if (document.readyState === 'complete') start(); else addEventListener('load', start, { once: true });
+      setTimeout(finish, 2600);
+    }
+
+    // route() calls this whenever the signed-in state may have changed.
+    return {
+      sync() {
+        if (onLanding()) {
+          startLenis();
+          if (!running) { running = true; updateParallax(true); requestAnimationFrame(frame); }
+          requestAnimationFrame(fitTitle);
+        } else {
+          closeMenu(false);
+          if (curtain?.isConnected) finish();
+          lenis?.destroy(); lenis = null;
+          root.classList.remove('lp-locked');
+        }
+      },
+    };
   }
   function navigate(view) { closePanel(); setMenu(false); if (location.hash === '#' + view) route(); else location.hash = view; }
   function route() {
@@ -600,6 +796,7 @@
     setMenu(false);
     syncPalette();
     document.documentElement.dataset.page = state.signedIn ? 'app' : 'landing';
+    landing?.sync();
     syncFavicon();
     if (!state.signedIn) {
       ui.view = 'landing';
@@ -1205,7 +1402,7 @@
   state = loadState();
   $('#footer-year').textContent = new Date().getFullYear();
   if (!FIREBASE_CONFIG.apiKey && state.signedIn) { state.signedIn = false; state.userId = ''; persist(); }
-  renderAll(); route(); setupShowcase(); setupLandingPaging();
+  renderAll(); landing = setupLanding(); route();
   if (FIREBASE_CONFIG.apiKey) firebaseAuth().then(({ auth, fb }) => fb.onAuthStateChanged(auth, syncUser)).catch(() => {});
   if (isPageReload) {
     const showHeader = () => requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'instant' }));
