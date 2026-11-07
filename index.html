@@ -40,27 +40,30 @@
       if (page === 'landing') document.querySelectorAll('meta[name=theme-color]').forEach(function (m) { m.content = '#0A0A0A'; });
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=lime1">
-  <script src="app.js?v=lime1" defer></script>
+  <link rel="stylesheet" href="styles.css?v=lp1">
+  <script src="app.js?v=lp1" defer></script>
 </head>
 <body id="top">
+  <div class="lp-curtain" id="lp-curtain" aria-hidden="true">
+    <div class="lp-curtain-mark"><svg class="logo-mark lp-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z"/></svg><span>eelj.mn</span></div>
+    <div class="lp-curtain-track"><div class="lp-curtain-fill"></div></div>
+  </div>
   <div class="reload-splash" aria-hidden="true">
     <svg class="splash-mark" viewBox="0 0 64 64"><rect width="64" height="64" rx="14"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z"/></svg>
     <span class="splash-domain">eelj.mn</span>
   </div>
   <a class="skip-link" href="#main">Үндсэн хэсэгт очих</a>
-  <header class="site-header topbar topbar-public" id="public-header">
-    <div class="topbar-inner">
-      <a class="wordmark" href="#top" aria-label="Ээлж — нүүр хуудас"><svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z"/><g class="logo-dots"><circle cx="32" cy="16" r="3.2" style="--dot-delay:192ms"/><circle cx="40" cy="16" r="3.2" style="--dot-delay:96ms"/><circle cx="48" cy="16" r="3.2" style="--dot-delay:0ms"/><circle cx="40" cy="24" r="3.2" style="--dot-delay:192ms"/><circle cx="48" cy="24" r="3.2" style="--dot-delay:96ms"/><circle cx="32" cy="32" r="3.2" style="--dot-delay:384ms"/><circle cx="48" cy="32" r="3.2" style="--dot-delay:192ms"/><circle cx="24" cy="40" r="3.2" style="--dot-delay:576ms"/><circle cx="16" cy="48" r="3.2" style="--dot-delay:768ms"/></g></svg><span>Ээлж</span></a>
-      <nav class="public-nav" aria-label="Нүүр хуудасны цэс">
-        <a href="#landing-jobs">Шинэ зарууд</a>
-        <a href="#how">Хэрхэн ажилладаг</a>
-        <a href="#for-employers">Ажил олгогчдод</a>
-      </nav>
-      <div class="topbar-actions">
-        <button class="button button-quiet topbar-signin" data-action="signin">Нэвтрэх</button>
-        <button class="button button-dark topbar-signup" data-action="signup">Бүртгүүлэх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
-      </div>
+  <header class="lp-header" id="public-header">
+    <nav class="lp-nav" aria-label="Нүүр хуудасны цэс">
+      <a href="#landing-jobs">Шинэ зарууд</a>
+      <a href="#how">Хэрхэн ажилладаг</a>
+      <a href="#for-employers">Ажил олгогчдод</a>
+    </nav>
+    <a class="wordmark lp-brand" href="#top" aria-label="Ээлж — нүүр хуудас"><svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z"/><g class="logo-dots"><circle cx="32" cy="16" r="3.2" style="--dot-delay:192ms"/><circle cx="40" cy="16" r="3.2" style="--dot-delay:96ms"/><circle cx="48" cy="16" r="3.2" style="--dot-delay:0ms"/><circle cx="40" cy="24" r="3.2" style="--dot-delay:192ms"/><circle cx="48" cy="24" r="3.2" style="--dot-delay:96ms"/><circle cx="32" cy="32" r="3.2" style="--dot-delay:384ms"/><circle cx="48" cy="32" r="3.2" style="--dot-delay:192ms"/><circle cx="24" cy="40" r="3.2" style="--dot-delay:576ms"/><circle cx="16" cy="48" r="3.2" style="--dot-delay:768ms"/></g></svg><span>Ээлж</span></a>
+    <div class="lp-header-right">
+      <button class="lp-text-btn topbar-signin" type="button" data-action="signin">Нэвтрэх</button>
+      <button class="lp-pill lp-pill-light lp-pill-sm topbar-signup" type="button" data-action="signup">Бүртгүүлэх<span class="lp-arrow"><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></span></button>
+      <button class="lp-burger" type="button" data-lp-open="menu" aria-label="Цэс нээх" aria-expanded="false" aria-controls="lp-menu"><span></span><span></span></button>
     </div>
   </header>
 
@@ -83,133 +86,203 @@
   <div id="storage-warning" class="storage-warning" role="status" hidden>Энэ хөтөч мэдээлэл хадгалах боломжгүй байна. Өөрчлөлтүүд хуудас нээлттэй байх хугацаанд ажиллана.</div>
 
   <main id="main" tabindex="-1">
-    <div id="landing-view" class="view">
-      <section class="landing-hero" aria-labelledby="landing-title">
-        <div class="hero-beam" aria-hidden="true"><span class="beam-core"></span><span class="beam-rays"></span></div>
-        <div class="landing-hero-inner content-width">
-          <dl class="hero-stats hero-stats-left" id="hero-stats-left"></dl>
-          <div class="hero-copy">
-            <p class="eyebrow"><span class="demo-dot" aria-hidden="true"></span>Туршилтын хувилбар · Жишээ зарууд</p>
-            <h1 id="landing-title">Завтай цагтаа <em>ээлжээ ол.</em></h1>
-            <p class="landing-lead">Хуваарьт тань таарсан цагийн ажил. Байршил, цаг, цалингаа нэг дор харьцуулж, хүсэлтээ хэдхэн товшилтоор илгээ.</p>
-            <div class="landing-ctas">
-              <button class="button hero-cta" data-action="signup" data-id="student">Ажил хайж эхлэх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
-              <button class="button hero-ghost" data-action="signup" data-id="employer">Ажилтан хайх</button>
+    <div id="landing-view" class="view lp">
+      <!-- Hero: dark rounded card, giant headline revealed word by word after the intro curtain lifts. -->
+      <section class="lp-hero" aria-labelledby="landing-title">
+        <div class="lp-hero-plate" aria-hidden="true">
+          <div class="lp-hero-plate-inner" data-lp-px="y:0:12"><div class="lp-hero-grid"></div><div class="lp-hero-glow"></div></div>
+          <div class="lp-plan-pos" data-lp-px="y:8:-14">
+            <div class="lp-plan lp-glass">
+              <p class="lp-plan-head"><span>Миний хуваарь</span><i></i></p>
+              <div class="lp-plan-hours"><span>10</span><span>12</span><span>14</span><span>16</span><span>18</span><span>20</span></div>
+              <p class="lp-plan-lane"><span>Да</span><b style="--a:10%;--w:30%"></b></p>
+              <p class="lp-plan-lane"><span>Лх</span><b class="is-dim" style="--a:40%;--w:25%"></b></p>
+              <p class="lp-plan-lane"><span>Ба</span><b style="--a:45%;--w:40%"></b></p>
+              <p class="lp-plan-lane"><span>Бя</span><b style="--a:0%;--w:40%"></b></p>
+              <p class="lp-plan-lane"><span>Ня</span><b class="is-dim" style="--a:60%;--w:30%"></b></p>
             </div>
           </div>
-          <dl class="hero-stats hero-stats-right" id="hero-stats-right"></dl>
         </div>
-        <div class="hero-panels content-width" aria-hidden="true">
-          <div class="hp-card hp-list">
-            <p class="hp-head"><span>Шинэ ээлжүүд</span><i></i></p>
-            <p class="hp-row"><b class="hp-ava">Х</b><span>Хүргэлтийн туслах<small>15,000₮ / цаг</small></span><em class="hp-tag is-lime">Хоолтой</em></p>
-            <p class="hp-row"><b class="hp-ava">Н</b><span>Номын сангийн туслах<small>13,000₮ / цаг</small></span><em class="hp-tag">Шинэ</em></p>
-            <p class="hp-row"><b class="hp-ava">Т</b><span>Тасалбар шалгагч<small>16,000₮ / цаг</small></span><em class="hp-tag">4 орон</em></p>
-            <p class="hp-row"><b class="hp-ava">К</b><span>Кафены туслах<small>14,000₮ / цаг</small></span><em class="hp-tag">Орой</em></p>
+
+        <div class="lp-hero-title-wrap">
+          <h1 id="landing-title" class="lp-hero-title" data-lp-rv="words" data-lime-from="2" data-break-at="2" data-stagger="140" data-dur="1100" data-gate="ready">Завтай цагтаа ээлжээ ол.</h1>
+        </div>
+
+        <div class="lp-hero-bottom">
+          <div class="lp-hero-copy">
+            <p class="lp-demo-chip" data-lp-iv="up" data-delay="250" data-gate="ready"><span class="demo-dot" aria-hidden="true"></span>Туршилтын хувилбар · Жишээ зарууд</p>
+            <p class="lp-tagline" data-lp-rv="lines" data-lines="Хуваарьт тань|таарсан ажил" data-delay="350" data-stagger="110" data-dur="900" data-gate="ready"></p>
+            <p class="lp-lead" data-lp-iv="up" data-delay="520" data-gate="ready">Байршил, цаг, цалингаа нэг дор харьцуулж, хүсэлтээ хэдхэн товшилтоор илгээ.</p>
+            <div class="lp-ctas" data-lp-iv="up" data-delay="600" data-gate="ready">
+              <button class="lp-pill lp-pill-lime" type="button" data-action="signup" data-id="student">Ажил хайж эхлэх<span class="lp-arrow"><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></span></button>
+              <button class="lp-pill lp-pill-glass" type="button" data-action="signup" data-id="employer">Ажилтан хайх</button>
+            </div>
           </div>
-          <div class="hp-card hp-chart">
-            <p class="hp-head"><span>Энэ долоо хоногийн орлого</span><i></i></p>
-            <p class="hp-big">180,000₮<small>16 цаг · 4 ээлж</small><em class="hp-tag is-lime">+12%</em></p>
-            <svg class="hp-spark" viewBox="0 0 300 90" preserveAspectRatio="none"><defs><linearGradient id="hp-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#89F336" stop-opacity=".35"/><stop offset="1" stop-color="#89F336" stop-opacity="0"/></linearGradient></defs><path d="M0 78 L30 70 L60 74 L90 58 L120 62 L150 44 L180 50 L210 32 L240 36 L270 18 L300 22 L300 90 L0 90Z" fill="url(#hp-fill)"/><path d="M0 78 L30 70 L60 74 L90 58 L120 62 L150 44 L180 50 L210 32 L240 36 L270 18 L300 22" fill="none" stroke="#89F336" stroke-width="2.5" stroke-linejoin="round"/></svg>
-          </div>
-          <div class="hp-card hp-plan">
-            <p class="hp-head"><span>Миний хуваарь</span><i></i></p>
-            <div class="hp-hours"><span>10</span><span>12</span><span>14</span><span>16</span><span>18</span><span>20</span></div>
-            <p class="hp-lane"><span>Да</span><b style="--a:10%;--w:30%"></b></p>
-            <p class="hp-lane"><span>Лх</span><b class="is-dim" style="--a:40%;--w:25%"></b></p>
-            <p class="hp-lane"><span>Ба</span><b style="--a:45%;--w:40%"></b></p>
-            <p class="hp-lane"><span>Бя</span><b style="--a:0%;--w:40%"></b></p>
-            <p class="hp-lane"><span>Ня</span><b class="is-dim" style="--a:60%;--w:30%"></b></p>
+          <div class="lp-hero-cluster">
+            <div class="lp-slider" data-lp-iv="up" data-delay="650" data-gate="ready" aria-roledescription="carousel" aria-label="Шинэ ээлжүүд">
+              <div class="lp-slider-stage" id="lp-slider-stage" aria-live="polite"></div>
+              <div class="lp-dots is-light" id="lp-slider-dots"></div>
+            </div>
+            <article class="lp-earn lp-glass" data-lp-iv="up" data-delay="780" data-gate="ready" aria-label="Жишээ: энэ долоо хоногийн орлого">
+              <p class="lp-earn-head"><span>Энэ долоо хоногийн орлого</span><em>+12%</em></p>
+              <p class="lp-earn-value">180,000₮</p>
+              <svg class="lp-earn-spark" viewBox="0 0 300 90" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="lp-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#89F336" stop-opacity=".35"/><stop offset="1" stop-color="#89F336" stop-opacity="0"/></linearGradient></defs><path d="M0 78 L30 70 L60 74 L90 58 L120 62 L150 44 L180 50 L210 32 L240 36 L270 18 L300 22 L300 90 L0 90Z" fill="url(#lp-fill)"/><path d="M0 78 L30 70 L60 74 L90 58 L120 62 L150 44 L180 50 L210 32 L240 36 L270 18 L300 22" fill="none" stroke="#89F336" stroke-width="2.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>
+              <p class="lp-earn-cap">16 цаг · 4 ээлж · жишээ</p>
+            </article>
           </div>
         </div>
-        <a class="scroll-cue" href="#landing-jobs"><span>Шинэ зарууд</span><svg class="icon" aria-hidden="true"><use href="#i-down"/></svg></a>
       </section>
 
-      <!-- Fixed homepage showcase: exactly three example listings. Static on purpose — not a live feed. -->
-      <section class="showcase" id="landing-jobs" aria-labelledby="showcase-title">
-        <div class="showcase-inner content-width">
-          <div class="showcase-head">
-            <p class="eyebrow">Жишээ зарууд</p>
-            <h2 id="showcase-title">Шинэ зарууд</h2>
-            <p>Өдөр, цаг, байршлаараа өөрт таарсан ээлжээ сонго.</p>
+      <!-- Why: oversized ghost words and a tilted example shift that change together. -->
+      <section class="lp-trust" aria-labelledby="lp-trust-title" aria-roledescription="carousel">
+        <div class="lp-trust-top">
+          <div class="lp-round" data-lp-iv="scale"><b>1 мин</b><small>Бүртгүүлэхэд зарцуулах хугацаа</small></div>
+          <article class="lp-badge" data-lp-iv="up24" data-delay="120">
+            <span class="lp-chip">#01</span>
+            <div><p class="lp-badge-title">Оюутны хуваарьт зориулав</p><p class="lp-badge-text">Хичээлийн хуваарь өөрчлөгдөхөд ажил саад болохгүй. Завтай өдөр, цагаа сонгоод таарах ээлжээ ол.</p></div>
+          </article>
+        </div>
+        <h2 id="lp-trust-title" class="lp-ghost">
+          <span class="sr-only" id="lp-ghost-sr"></span>
+          <span class="lp-ghost-row" aria-hidden="true"><span class="lp-gw" data-lp-px="x:-3:3"></span><span class="lp-gw" data-lp-px="x:3:-3"></span></span>
+          <span class="lp-ghost-row" aria-hidden="true"><span class="lp-gw is-ink" data-lp-px="x:-2:4"></span><span class="lp-gw" data-lp-px="x:4:-3"></span></span>
+        </h2>
+        <div class="lp-shift-pos"><div class="lp-shift-iv" data-lp-iv="rise"><div class="lp-shift" id="lp-shift"></div></div></div>
+        <div class="lp-controls">
+          <button class="lp-abtn" type="button" id="lp-prev" aria-label="Өмнөх жишээ"><span class="lp-abtn-ic"><svg class="icon lp-flip" aria-hidden="true"><use href="#i-arrow"/></svg></span></button>
+          <div class="lp-dots" id="lp-trust-dots"></div>
+          <button class="lp-abtn is-solid" type="button" id="lp-next" aria-label="Дараах жишээ"><span class="lp-abtn-ic"><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></span></button>
+        </div>
+      </section>
+
+      <!-- Fixed example listings (static on purpose, not a live feed). Each row opens sign-in. -->
+      <section class="lp-jobs" id="landing-jobs" aria-labelledby="showcase-title">
+        <p class="lp-eyebrow">Жишээ зарууд</p>
+        <h2 id="showcase-title" class="lp-h2" data-lp-rv="lines" data-lines="Шинэ|зарууд"></h2>
+        <ul class="lp-rows">
+          <li><button class="lp-row" type="button" data-action="signin" data-id="student"><span class="lp-row-in" data-lp-iv="up26" data-delay="0">
+            <span class="lp-row-idx">01</span>
+            <span class="lp-row-main"><span class="lp-row-name">Хүргэлтийн туслах</span><span class="lp-row-meta">Шуурхай хүргэлт · Баянгол · Баасан, 14:00 – 18:00</span></span>
+            <span class="lp-row-tag">Хоолтой</span><span class="lp-row-pay"><b>15,000₮</b> / цаг</span>
+            <span class="lp-row-arrow"><span class="lp-arrow"><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></span></span>
+          </span></button></li>
+          <li><button class="lp-row" type="button" data-action="signin" data-id="student"><span class="lp-row-in" data-lp-iv="up26" data-delay="90">
+            <span class="lp-row-idx">02</span>
+            <span class="lp-row-main"><span class="lp-row-name">Номын сангийн туслах</span><span class="lp-row-meta">Мэдлэг номын сан · Сүхбаатар · Бямба, 10:00 – 14:00</span></span>
+            <span class="lp-row-pay"><b>13,000₮</b> / цаг</span>
+            <span class="lp-row-arrow"><span class="lp-arrow"><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></span></span>
+          </span></button></li>
+          <li><button class="lp-row" type="button" data-action="signin" data-id="student"><span class="lp-row-in" data-lp-iv="up26" data-delay="180">
+            <span class="lp-row-idx">03</span>
+            <span class="lp-row-main"><span class="lp-row-name">Тоглолтын тасалбар шалгагч</span><span class="lp-row-meta">Тайз продакшн · Хан-Уул · Ням, 18:00 – 22:00</span></span>
+            <span class="lp-row-tag">+7,000₮ хоол</span><span class="lp-row-pay"><b>16,000₮</b> / цаг</span>
+            <span class="lp-row-arrow"><span class="lp-arrow"><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></span></span>
+          </span></button></li>
+          <li><button class="lp-row" type="button" data-action="signin" data-id="student"><span class="lp-row-in" data-lp-iv="up26" data-delay="270">
+            <span class="lp-row-idx">04</span>
+            <span class="lp-row-main"><span class="lp-row-name">Кафены туслах</span><span class="lp-row-meta">Үдшийн кафе · Чингэлтэй · Баасан, 17:00 – 21:00</span></span>
+            <span class="lp-row-tag">Орой</span><span class="lp-row-pay"><b>14,000₮</b> / цаг</span>
+            <span class="lp-row-arrow"><span class="lp-arrow"><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></span></span>
+          </span></button></li>
+        </ul>
+        <div class="lp-jobs-more"><button class="lp-pill lp-pill-solid" type="button" data-action="signin" data-id="student">Бүх зарыг харах<span class="lp-arrow"><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></span></button></div>
+      </section>
+
+      <section class="lp-how" id="how" aria-labelledby="how-title">
+        <div class="lp-how-grid">
+          <div class="lp-how-intro">
+            <div class="lp-how-icon" data-lp-iv="scale85"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></div>
+            <h2 id="how-title" class="lp-h2" data-lp-rv="lines" data-lines="Гурван алхам.|Нэг ээлж." data-stagger="120"></h2>
+            <p class="lp-how-body" data-lp-rv="fade" data-stagger="28" data-delay="250" data-dur="700" data-ease="quart">Бүртгүүлээд завтай өдөр, цагаа сонго. Таарсан ээлжид хүсэлт илгээж, хариуг нь нэг дороос хяна.</p>
           </div>
-          <ol class="showcase-list">
-            <li class="showcase-card from-left">
-              <article class="sc-card" aria-labelledby="sc-1">
-                <div class="sc-top"><span class="sc-cat">Агуулах, хүргэлт</span><span class="sc-tag"><svg class="icon" aria-hidden="true"><use href="#i-meal"/></svg>Хоолтой</span></div>
-                <h3 id="sc-1">Хүргэлтийн туслах</h3>
-                <p class="sc-company">Шуурхай хүргэлт <span>· Жишээ байгууллага</span></p>
-                <p class="sc-desc">Захиалгыг ангилж, хүргэлтийн жолоочтой хамт хаягаар хүргэх үдээс хойшхи ээлж.</p>
-                <dl class="sc-meta">
-                  <div><dt><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Дүүрэг</dt><dd>Баянгол</dd><dd class="sc-sub">10-р хороолол</dd></div>
-                  <div><dt><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Ажлын өдөр</dt><dd>11/6</dd><dd class="sc-sub">Баасан</dd></div>
-                  <div><dt><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>Ажлын цаг</dt><dd>14:00 – 18:00</dd><dd class="sc-sub">4 цагийн ээлж</dd></div>
-                </dl>
-                <div class="sc-foot"><p class="sc-pay"><strong>15,000₮</strong><span>/ цаг</span></p><button class="button button-dark" data-action="signin" data-id="student">Дэлгэрэнгүй<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button></div>
-              </article>
-            </li>
-            <li class="showcase-card from-right">
-              <article class="sc-card" aria-labelledby="sc-2">
-                <div class="sc-top"><span class="sc-cat">Оффис, үйлчилгээ</span></div>
-                <h3 id="sc-2">Номын сангийн туслах</h3>
-                <p class="sc-company">Мэдлэг номын сан <span>· Жишээ байгууллага</span></p>
-                <p class="sc-desc">Буцаж ирсэн номыг байранд нь тавих, уншигчдад туслах амралтын өдрийн ээлж.</p>
-                <dl class="sc-meta">
-                  <div><dt><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Дүүрэг</dt><dd>Сүхбаатар</dd><dd class="sc-sub">Бага тойруу</dd></div>
-                  <div><dt><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Ажлын өдөр</dt><dd>11/7</dd><dd class="sc-sub">Бямба</dd></div>
-                  <div><dt><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>Ажлын цаг</dt><dd>10:00 – 14:00</dd><dd class="sc-sub">4 цагийн ээлж</dd></div>
-                </dl>
-                <div class="sc-foot"><p class="sc-pay"><strong>13,000₮</strong><span>/ цаг</span></p><button class="button button-dark" data-action="signin" data-id="student">Дэлгэрэнгүй<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button></div>
-              </article>
-            </li>
-            <li class="showcase-card from-left">
-              <article class="sc-card" aria-labelledby="sc-3">
-                <div class="sc-top"><span class="sc-cat">Эвент, арга хэмжээ</span><span class="sc-tag">+7,000₮ хоолны мөнгө</span></div>
-                <h3 id="sc-3">Тоглолтын тасалбар шалгагч</h3>
-                <p class="sc-company">Тайз продакшн <span>· Жишээ байгууллага</span></p>
-                <p class="sc-desc">Үзэгчдийн тасалбар шалгаж, суудал руу нь чиглүүлэх оройн ээлж.</p>
-                <dl class="sc-meta">
-                  <div><dt><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Дүүрэг</dt><dd>Хан-Уул</dd><dd class="sc-sub">Зайсангийн гудамж</dd></div>
-                  <div><dt><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Ажлын өдөр</dt><dd>11/8</dd><dd class="sc-sub">Ням</dd></div>
-                  <div><dt><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>Ажлын цаг</dt><dd>18:00 – 22:00</dd><dd class="sc-sub">4 цагийн ээлж</dd></div>
-                </dl>
-                <div class="sc-foot"><p class="sc-pay"><strong>16,000₮</strong><span>/ цаг</span></p><button class="button button-dark" data-action="signin" data-id="student">Дэлгэрэнгүй<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button></div>
-              </article>
-            </li>
+          <ol class="lp-steps">
+            <li class="lp-step" data-lp-iv="up48" data-delay="0"><figure class="lp-step-card">
+              <div class="lp-mock" aria-hidden="true">
+                <p class="lp-mock-chips"><span class="is-on">Баянгол</span><span class="is-on">Орой</span><span>15,000₮+</span></p>
+                <p class="lp-mock-line"><b>Хүргэлтийн туслах</b><em>15,000₮</em></p>
+                <p class="lp-mock-line"><b>Кафены туслах</b><em>14,000₮</em></p>
+                <p class="lp-mock-line is-dim"><b>Агуулахын туслах</b><em>13,500₮</em></p>
+              </div>
+              <figcaption class="lp-cap"><span class="lp-cap-idx">01</span><b>Зараа харьцуул</b><span>Дүүрэг, өдөр, цагийн хөлсөөр шүүж, хуваарьт таарах ээлжээ ол.</span></figcaption>
+            </figure></li>
+            <li class="lp-step" data-lp-iv="up48" data-delay="140"><figure class="lp-step-card">
+              <div class="lp-mock" aria-hidden="true">
+                <p class="lp-mock-field"><span>Нэр</span><i></i></p>
+                <p class="lp-mock-field"><span>Завтай өдөр</span><i class="is-short"></i></p>
+                <p class="lp-mock-send">Хүсэлт илгээх →</p>
+              </div>
+              <figcaption class="lp-cap"><span class="lp-cap-idx">02</span><b>Хүсэлтээ илгээ</b><span>Богино хүсэлт бөглөж, завтай өдөр, цагаа хамт илгээнэ.</span></figcaption>
+            </figure></li>
+            <li class="lp-step" data-lp-iv="up48" data-delay="280"><figure class="lp-step-card">
+              <div class="lp-mock" aria-hidden="true">
+                <p class="lp-mock-status"><b>Номын сан</b><em>Хүлээн авсан</em></p>
+                <p class="lp-mock-status"><b>Тасалбар</b><em class="is-amber">Шалгаж байна</em></p>
+                <p class="lp-mock-status"><b>Хүргэлт</b><em class="is-lime">Сонгогдсон</em></p>
+              </div>
+              <figcaption class="lp-cap"><span class="lp-cap-idx">03</span><b>Явцаа хяна</b><span>Ажил олгогч сонгоход “Миний хүсэлтүүд” хэсэгт төлөв шууд шинэчлэгдэнэ.</span></figcaption>
+            </figure></li>
           </ol>
-          <div class="showcase-more"><button class="button button-outline button-lg" data-action="signin" data-id="student">Бүх зарыг харах<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button></div>
         </div>
       </section>
 
-      <section class="landing-section content-width" id="how" aria-labelledby="how-title">
-        <div class="landing-section-head"><p class="eyebrow">Хэрхэн ажилладаг</p><h2 id="how-title">Гурван алхам. Нэг ээлж.</h2></div>
-        <ol class="landing-steps">
-          <li><span class="step-icon"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg></span><span class="step-index">01</span><h3>Зараа харьцуул</h3><p>Дүүрэг, ажлын өдөр, цагийн хөлсөөр шүүж, өөрийн хуваарьт таарах ээлжийг ол.</p></li>
-          <li><span class="step-icon"><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></span><span class="step-index">02</span><h3>Хүсэлтээ илгээ</h3><p>Ажлын дэлгэрэнгүйг уншаад богино хүсэлт бөглөнө. Завтай өдөр, цагаа хамт илгээнэ.</p></li>
-          <li><span class="step-icon"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span><span class="step-index">03</span><h3>Явцаа хяна</h3><p>Ажил олгогч хүсэлтийг шалгаж сонгоход “Миний хүсэлтүүд” хэсэгт төлөв нь шууд шинэчлэгдэнэ.</p></li>
-        </ol>
+      <section class="lp-stats" aria-labelledby="lp-stats-title">
+        <p class="lp-eyebrow is-light">Яг одоо</p>
+        <h2 id="lp-stats-title" class="lp-h2" data-lp-rv="lines" data-lines="Ээлж|тоогоор"></h2>
+        <div class="lp-stats-grid" data-lp-iv="stats">
+          <dl class="lp-stats-dl" id="hero-stats-left"></dl>
+          <dl class="lp-stats-dl" id="hero-stats-right"></dl>
+        </div>
       </section>
 
-      <section class="landing-split content-width" id="for-employers" aria-label="Хэнд зориулсан бэ">
-        <article class="split-card">
-          <span class="role-icon"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg></span>
-          <h2>Ажил горилогчдод</h2>
-          <ul><li>Хуваарьт таарах ээлжийг өдөр, цагаар шүүнэ</li><li>Цалин, хоол, нийт орлогоо урьдчилан харна</li><li>Сонирхсон ажлаа хадгалж, дараа нь харьцуулна</li></ul>
-          <button class="button button-dark" data-action="signup" data-id="student">Ажил горилогчоор нэвтрэх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
-        </article>
-        <article class="split-card">
-          <span class="role-icon"><svg class="icon" aria-hidden="true"><use href="#i-pay"/></svg></span>
-          <h2>Ажил олгогчдод</h2>
-          <ul><li>Нэг өдрийн болон олон өдрийн ээлж зарлана</li><li>Завтай ажил горилогчдыг хайж, шууд урилга илгээнэ</li><li>Ирсэн хүсэлтийг шалгаж, сонгож, орон тоогоо хянана</li></ul>
-          <button class="button button-outline" data-action="signup" data-id="employer">Ажил олгогчоор нэвтрэх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
-        </article>
+      <section class="lp-roles" id="for-employers" aria-labelledby="lp-roles-title">
+        <p class="lp-eyebrow">Хэнд зориулсан бэ</p>
+        <h2 id="lp-roles-title" class="lp-h2" data-lp-rv="lines" data-lines="Ажил хайгчид ч,|ажил олгогчид ч"></h2>
+        <ul class="lp-role-grid">
+          <li data-lp-iv="up40" data-delay="0"><article class="lp-role-card">
+            <span class="lp-role-icon"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg></span>
+            <h3>Ажил горилогчдод</h3>
+            <ul><li>Хуваарьт таарах ээлжийг өдөр, цагаар шүүнэ</li><li>Цалин, хоол, нийт орлогоо урьдчилан харна</li><li>Сонирхсон ажлаа хадгалж, дараа нь харьцуулна</li></ul>
+            <button class="lp-pill lp-pill-solid" type="button" data-action="signup" data-id="student">Ажил горилогчоор нэвтрэх<span class="lp-arrow"><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></span></button>
+          </article></li>
+          <li data-lp-iv="up40" data-delay="120"><article class="lp-role-card">
+            <span class="lp-role-icon"><svg class="icon" aria-hidden="true"><use href="#i-pay"/></svg></span>
+            <h3>Ажил олгогчдод</h3>
+            <ul><li>Нэг өдрийн болон олон өдрийн ээлж зарлана</li><li>Завтай ажил горилогчдыг хайж, шууд урилга илгээнэ</li><li>Ирсэн хүсэлтийг шалгаж, сонгож, орон тоогоо хянана</li></ul>
+            <button class="lp-pill lp-pill-outline" type="button" data-action="signup" data-id="employer">Ажил олгогчоор нэвтрэх<span class="lp-arrow"><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></span></button>
+          </article></li>
+        </ul>
       </section>
 
-      <section class="landing-cta content-width" aria-labelledby="cta-title">
-        <div class="hero-grid" aria-hidden="true"></div>
-        <h2 id="cta-title">Чиний цаг. <span>Чиний ээлж.</span></h2>
-        <p>Google эсвэл и-мэйлээр нэг минутад бүртгүүлээд, завтай өдрөө сонго.</p>
-        <button class="button button-dark button-lg" data-action="signup">Бүртгүүлэх<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+      <section class="lp-footer" aria-labelledby="cta-title">
+        <div class="lp-footer-cta">
+          <div>
+            <p class="lp-eyebrow is-light">Эхлэх</p>
+            <h2 id="cta-title" class="lp-big" data-lp-rv="lines" data-lines="Чиний цаг.|Чиний ээлж." data-lime-from="1"></h2>
+            <p class="lp-footer-sub">Google эсвэл и-мэйлээр нэг минутад бүртгүүлээд, завтай өдрөө сонго.</p>
+          </div>
+          <div class="lp-footer-actions" data-lp-iv="up20" data-delay="150">
+            <button class="lp-pill lp-pill-lime" type="button" data-action="signup">Бүртгүүлэх<span class="lp-arrow"><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></span></button>
+            <button class="lp-text-btn" type="button" data-action="signin">Нэвтрэх</button>
+          </div>
+        </div>
+        <div class="lp-footer-cols">
+          <div class="lp-footer-brand">
+            <p class="lp-footer-mark"><svg class="logo-mark lp-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z"/></svg><span>Ээлж</span></p>
+            <p>Улаанбаатарын оюутнуудад хичээлийн хуваарьт нь таарах цагийн ажил олоход туслах туршилтын платформ.</p>
+          </div>
+          <nav class="lp-footer-nav" aria-label="Ажил горилогчдод">
+            <p class="lp-footer-h">Ажил горилогчдод</p>
+            <ul><li><a href="#landing-jobs">Шинэ зарууд</a></li><li><a href="#how">Хэрхэн ажилладаг</a></li><li><button type="button" data-action="signup" data-id="student">Бүртгүүлэх</button></li></ul>
+          </nav>
+          <nav class="lp-footer-nav" aria-label="Ажил олгогчдод">
+            <p class="lp-footer-h">Ажил олгогчдод</p>
+            <ul><li><a href="#for-employers">Боломжууд</a></li><li><button type="button" data-action="signup" data-id="employer">Ажилтан хайх</button></li><li><button type="button" data-action="signin">Нэвтрэх</button></li></ul>
+          </nav>
+        </div>
+        <div class="lp-footer-bottom">
+          <p>&copy; <span data-lp-year>2026</span> Ээлж · Улаанбаатар</p>
+          <p class="lp-footer-demo"><span class="demo-dot" aria-hidden="true"></span>Туршилтын хувилбар · Жишээ зарууд</p>
+        </div>
       </section>
     </div>
 
@@ -285,9 +358,28 @@
     </section>
   </main>
 
+  <div class="lp-menu" id="lp-menu" aria-hidden="true" inert>
+    <div class="lp-menu-bd" data-lp-close></div>
+    <div class="lp-menu-panel" role="dialog" aria-modal="true" aria-label="Цэс">
+      <div class="lp-menu-inner">
+        <div class="lp-menu-top"><p class="lp-menu-brand"><svg class="logo-mark lp-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z"/></svg><span>Ээлж</span></p><button class="lp-menu-x" type="button" data-lp-close aria-label="Цэс хаах"><span class="lp-x"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></span></button></div>
+        <nav class="lp-menu-nav" aria-label="Цэс">
+          <a href="#landing-jobs">Шинэ зарууд</a>
+          <a href="#how">Хэрхэн ажилладаг</a>
+          <a href="#for-employers">Ажил олгогчдод</a>
+          <button type="button" data-action="signin">Нэвтрэх</button>
+        </nav>
+        <div class="lp-menu-bottom">
+          <button class="lp-pill lp-pill-lime" type="button" data-action="signup">Бүртгүүлэх<span class="lp-arrow"><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></span></button>
+          <p class="lp-menu-note"><span class="demo-dot" aria-hidden="true"></span>Туршилтын хувилбар · Жишээ зарууд</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <footer class="site-footer content-width"><div><a class="wordmark" href="#top"><svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14"/><path d="m14 44 20-20H22l10-10h20v20L42 44V32L22 52Z"/><g class="logo-dots"><circle cx="32" cy="16" r="3.2" style="--dot-delay:192ms"/><circle cx="40" cy="16" r="3.2" style="--dot-delay:96ms"/><circle cx="48" cy="16" r="3.2" style="--dot-delay:0ms"/><circle cx="40" cy="24" r="3.2" style="--dot-delay:192ms"/><circle cx="48" cy="24" r="3.2" style="--dot-delay:96ms"/><circle cx="32" cy="32" r="3.2" style="--dot-delay:384ms"/><circle cx="48" cy="32" r="3.2" style="--dot-delay:192ms"/><circle cx="24" cy="40" r="3.2" style="--dot-delay:576ms"/><circle cx="16" cy="48" r="3.2" style="--dot-delay:768ms"/></g></svg><span>Ээлж</span></a><p>Чиний цаг. Чиний ээлж.</p></div><div class="footer-links"><a href="#faq" id="footer-faq">Түгээмэл асуулт</a><button class="text-button" data-action="reset" id="footer-reset">Туршилтын өгөгдөл шинэчлэх</button><span class="small muted">© <span id="footer-year">2026</span> Ээлж · Улаанбаатар</span></div></footer>
 
-  <dialog id="panel" class="panel-dialog" aria-labelledby="panel-title"><div class="panel-shell"><div class="panel-top"><span aria-hidden="true"></span><button class="icon-button" data-action="close" aria-label="Цонх хаах"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div><div id="panel-content"></div></div></dialog>
+  <dialog id="panel" class="panel-dialog" aria-labelledby="panel-title" data-lenis-prevent><div class="panel-shell"><div class="panel-top"><span aria-hidden="true"></span><button class="icon-button" data-action="close" aria-label="Цонх хаах"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div><div id="panel-content"></div></div></dialog>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
   <svg class="svg-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
