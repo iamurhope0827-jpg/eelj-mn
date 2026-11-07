@@ -4,22 +4,25 @@ A Mongolian student shift marketplace in plain HTML, CSS, and JavaScript, with a
 
 ## Run
 
-Requires Node.js. No package installation is needed.
+Requires Node.js 22 or newer.
 
 ```sh
+npm install
 npm run dev
 ```
 
 Open http://127.0.0.1:4173/. Use the `PORT` environment variable to choose another local port.
 
 ```sh
-npm run check
-npm run build
+npm run check   # syntax check
+npm run lint    # ESLint
+npm test        # Playwright tests (uses the installed Microsoft Edge locally)
+npm run build   # copies the site into dist/
 ```
 
-The build copies the website into `dist/` for optional static export. GitHub Pages serves the root files from the `main` branch; pushes publish updates automatically. The empty `.nojekyll` file keeps the site as plain static files.
+Pull requests run the same checks in GitHub Actions and get a Render preview site. Merging to `main` deploys to Render. See AGENTS.md for the workflow.
 
-Live prototype: https://iamurhope0827-jpg.github.io/eelj-mn/
+Live site: https://eelj-mn.onrender.com/
 
 Repository: https://github.com/iamurhope0827-jpg/eelj-mn
 

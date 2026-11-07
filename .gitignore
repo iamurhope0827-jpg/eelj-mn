@@ -8,3 +8,5 @@ dist/
 PRODUCT.md
 FUNCTIONAL-FLOWS.md
 BUILD-NOTES.md
+test-results/
+playwright-report/
