@@ -415,6 +415,23 @@
     $('#visible-count').textContent = `${jobs.length} жишээ зараас ${Math.min(ui.limit, jobs.length)}-ыг харуулж байна`;
     $('#greeting-name').textContent = state.profile.name ? ' ' + state.profile.name : '';
     $('#greeting-name').hidden = !state.profile.name;
+    renderDashboard();
+  }
+
+  // Home dashboard: earnings from accepted applications, and how many active jobs fall on each weekday.
+  function renderDashboard() {
+    const earned = state.applications.filter((app) => app.status === 'accepted').reduce((sum, app) => {
+      const pay = Number(app.snapshot?.pay) || 0, length = hours(app.snapshot || {});
+      return sum + (Number.isFinite(length) ? Math.round(pay * length) : 0);
+    }, 0);
+    $('#dash-total').textContent = money(earned).replace('₮', '');
+    $('#dash-sent').textContent = state.applications.filter((app) => app.status !== 'withdrawn').length;
+    $('#dash-saved').textContent = state.saved.filter((id) => jobById(id)).length;
+    const labels = ['Да', 'Мя', 'Лх', 'Пү', 'Ба', 'Бя', 'Ня'];
+    const counts = [1, 2, 3, 4, 5, 6, 0].map((wd) => state.jobs.filter((job) => availability(job) === 'active' && daysOf(job).some((date) => wdOf(date) === wd)).length);
+    const max = Math.max(1, ...counts);
+    const top = counts.indexOf(Math.max(...counts));
+    $('#dash-bars').innerHTML = counts.map((count, i) => `<div class="dash-bar${i === top ? ' is-top' : ''}" style="--h:${Math.round(count / max * 100)}%" title="${labels[i]}: ${count} зар"><b></b><span>${labels[i]}</span></div>`).join('');
   }
 
   function renderApplications() {
