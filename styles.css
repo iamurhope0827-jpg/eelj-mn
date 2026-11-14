@@ -1217,3 +1217,75 @@ html.lp-locked{overflow:hidden}
 .button[aria-busy] .icon,.button[aria-busy] .google-logo{display:none}
 @keyframes button-spin{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.button[aria-busy]::before{animation-duration:2s}}
+
+/* ===== Signed-in app: restyled to match the editorial homepage =====
+   Scoped to :root[data-page=app]. Tokens only, so the colour picker palettes (inline custom properties) still win. */
+:root[data-page=app]{
+  --dark-bg:#0A0A0A;--dark-fg:#FFFFFF;--dark-hover:#262626;
+  --accent:#E8F1F7;--accent-t:#2C5872;--teal-text:#3B6A86;
+  --line-2:#C9C9C5;--focus:0 0 0 2px #FFFFFF,0 0 0 4px #0A0A0A;
+  --lp-accent:#98C1D9;
+}
+@media(prefers-color-scheme:dark){:root[data-page=app]{
+  --dark-bg:#F2F4F4;--dark-fg:#0A0A0A;--dark-hover:#D9DDDD;
+  --accent:#16303D;--accent-t:#98C1D9;--teal-text:#98C1D9;--line-2:#3E4343;
+  --focus:0 0 0 2px #121414,0 0 0 4px #F2F4F4
+}}
+:root[data-page=app] .button,:root[data-page=app] .search-button{border-radius:999px}
+:root[data-page=app] .button{letter-spacing:.01em}
+:root[data-page=app] .topbar-inner{border-radius:999px;padding-left:14px}
+:root[data-page=app] .topbar .wordmark span{font-family:var(--display);font-weight:600;letter-spacing:.005em}
+:root[data-page=app] .app-nav,:root[data-page=app] .app-nav a{border-radius:999px}
+:root[data-page=app] .app-nav a[aria-current=page]{background:var(--dark-bg);color:var(--dark-fg);box-shadow:none}
+:root[data-page=app] .app-nav a[aria-current=page] .nav-count{background:rgb(255 255 255 / 18%);color:inherit}
+
+/* Home: dark rounded hero card, as on the signed-out homepage */
+:root[data-page=app] #browse-view .hero{
+  margin:8px;border-radius:28px;padding:88px 24px 72px;border:0;
+  background:var(--dark-bg);color:var(--dark-fg);
+}
+:root[data-page=app] #browse-view .hero::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse 60% 55% at 50% 0%,color-mix(in srgb,var(--lp-accent) 28%,transparent),transparent 70%)}
+:root[data-page=app] .hero-grid{background-image:linear-gradient(color-mix(in srgb,var(--dark-fg) 7%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--dark-fg) 7%,transparent) 1px,transparent 1px)}
+:root[data-page=app] .hero h1{font-family:var(--display);font-size:clamp(44px,7vw,84px);line-height:1;letter-spacing:.005em;font-weight:600;background:none;-webkit-background-clip:border-box;background-clip:border-box;-webkit-text-fill-color:currentColor;color:var(--dark-fg)}
+:root[data-page=app] .hero-lead{color:color-mix(in srgb,var(--dark-fg) 72%,transparent)}
+:root[data-page=app] .greeting-name{color:var(--lp-accent)}
+:root[data-page=app] .search-form{border-radius:24px}
+:root[data-page=app] .search-field{border-radius:16px}
+:root[data-page=app] .search-field>span:first-child{text-transform:uppercase;letter-spacing:.14em;font-size:11px}
+:root[data-page=app] .search-button{border-radius:999px}
+:root[data-page=app] .avail-slot{border-top-color:var(--line)}
+
+/* Section headings and lists: larger Oswald titles, softer cards */
+:root[data-page=app] .heading-with-count h2,:root[data-page=app] .workspace-heading h1{font-size:clamp(34px,4vw,48px);line-height:1;letter-spacing:.005em}
+:root[data-page=app] .heading-with-count>span{border-radius:999px;background:var(--accent);color:var(--accent-t)}
+:root[data-page=app] .job-list,:root[data-page=app] .application-list,:root[data-page=app] .summary-strip,:root[data-page=app] .profile-card,:root[data-page=app] .invite-card,:root[data-page=app] .seek-picker,:root[data-page=app] .range-cal{border-radius:24px}
+:root[data-page=app] .job-row{padding:26px 28px}
+:root[data-page=app] .job-title,:root[data-page=app] .application-row h3,:root[data-page=app] .employer-job h3{font-size:26px;line-height:1.1}
+:root[data-page=app] .job-row:hover,:root[data-page=app] .application-row:hover{background:var(--bg-2)}
+:root[data-page=app] .pay-meta strong{font-size:18px}
+:root[data-page=app] .pay-perk,:root[data-page=app] .meta-fit,:root[data-page=app] .invite-tag{border-radius:999px}
+:root[data-page=app] .summary-item strong{font-family:var(--display);font-size:44px;font-weight:600;letter-spacing:0}
+:root[data-page=app] .summary-item span{text-transform:uppercase;letter-spacing:.12em;font-size:11px}
+:root[data-page=app] .workspace-tabs button[aria-selected=true]::after{height:3px;border-radius:3px;background:var(--dark-bg)}
+:root[data-page=app] .workspace-tabs button{font-family:var(--display);font-size:17px;letter-spacing:.01em}
+:root[data-page=app] .employer-notice,:root[data-page=app] .invite-banner{border-radius:16px}
+:root[data-page=app] .profile-card-head h2,:root[data-page=app] .profile-id h2{font-size:34px;line-height:1}
+:root[data-page=app] .guide-section,:root[data-page=app] .faq-section{}
+:root[data-page=app] .guide-steps{border-radius:24px}
+:root[data-page=app] .guide-intro h2 span{color:var(--lp-accent)}
+:root[data-page=app] .faq-section h2,:root[data-page=app] .guide-intro h2{font-family:var(--display)}
+:root[data-page=app] .palette-option[aria-pressed=true]{box-shadow:inset 0 0 0 2px var(--ink)}
+
+/* Panels: rounded sheet and dialog */
+:root[data-page=app] .panel-dialog{border-radius:24px 0 0 24px}
+:root[data-page=app] .panel-dialog.job-detail-dialog{border-radius:24px}
+:root[data-page=app] .panel-heading{font-family:var(--display);font-size:36px;line-height:1}
+:root[data-page=app] .detail-pay{border-radius:20px}
+:root[data-page=app] .detail-pay strong{font-family:var(--display);font-size:40px;font-weight:600;letter-spacing:0}
+:root[data-page=app] .toast{border-radius:20px;background:var(--dark-bg);color:var(--dark-fg);box-shadow:var(--shadow-lg)}
+
+@media(max-width:760px){
+  :root[data-page=app] #browse-view .hero{margin:4px;border-radius:24px;padding:64px 18px 48px;text-align:left}
+  :root[data-page=app] .job-row{padding:22px 18px}
+  :root[data-page=app] .job-title{font-size:23px}
+}
