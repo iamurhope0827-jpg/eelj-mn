@@ -1289,3 +1289,71 @@ html.lp-locked{overflow:hidden}
   :root[data-page=app] .job-row{padding:22px 18px}
   :root[data-page=app] .job-title{font-size:23px}
 }
+
+/* ===== Signed-in home: sidebar layout, stats card, promo and job cards (reference: "lemon" dashboard) =====
+   Desktop (1025px+): the top bar becomes a grey left sidebar. Narrower screens keep the top bar. */
+:root[data-page=app]{--app-side:#EDEEEA;--app-yellow:#F4F46B;--app-sidebar-w:240px}
+:root[data-page=app] #browse-view .hero{margin:0;border-radius:0;border:0;padding:48px 0 8px;background:none;color:var(--ink);text-align:left}
+:root[data-page=app] #browse-view .hero::before,:root[data-page=app] .hero-grid{display:none}
+:root[data-page=app] .hero h1{color:var(--ink);-webkit-text-fill-color:currentColor;background:none;font-size:clamp(34px,4.6vw,52px)}
+:root[data-page=app] .hero-lead{margin:12px 0 0;max-width:60ch;color:var(--muted);text-align:left}
+:root[data-page=app] .hero .search-form{margin:28px 0 0;max-width:none}
+:root[data-page=app] .greeting-name{color:var(--ink)}
+
+.dash-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:20px;margin-top:8px;margin-bottom:8px}
+.dash-card,.dash-promo,.dash-tips{padding:28px;border-radius:24px;background:var(--surface);box-shadow:var(--shadow)}
+.dash-title{font-family:var(--display);font-size:26px;font-weight:600;line-height:1.1}
+.dash-figure{display:flex;align-items:baseline;gap:8px;margin-top:18px;font-family:var(--mono);font-size:56px;font-weight:500;line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.dash-figure small{font-family:var(--font);font-size:22px;color:var(--muted)}
+.dash-sub{margin-top:8px;font-size:14px;color:var(--muted)}
+.dash-stats{display:flex;flex-wrap:wrap;gap:12px 40px;margin:22px 0 0}
+.dash-stats dt{font-size:13px;color:var(--muted)}
+.dash-stats dd{margin:4px 0 0;font-family:var(--mono);font-size:22px;font-weight:500}
+.dash-bars{display:flex;align-items:stretch;gap:14px;height:200px;margin-top:26px;padding-top:12px;border-bottom:1px solid var(--line)}
+.dash-bar{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
+.dash-bar b{display:block;width:100%;height:var(--h);min-height:6px;border-radius:10px 10px 0 0;background:var(--line-2)}
+.dash-bar.is-top b{background:var(--ink)}
+.dash-bar span{padding:8px 0 0;font-size:12px;color:var(--muted)}
+.dash-side{display:grid;gap:20px;align-content:start}
+.dash-promo{background:var(--ink);color:var(--surface)}
+.dash-promo-title{font-family:var(--display);font-size:30px;font-weight:600;line-height:1.05}
+.dash-promo-text{margin-top:12px;font-size:14px;line-height:1.55;color:color-mix(in srgb,var(--surface) 72%,transparent)}
+.dash-promo-link{display:inline-block;margin-top:20px;font-size:14px;font-weight:500;color:var(--app-yellow)}
+.dash-tips ol{margin:16px 0 0;padding-left:20px;display:grid;gap:10px;font-size:14px;line-height:1.5;color:var(--muted)}
+@media(max-width:1000px){.dash-grid{grid-template-columns:1fr}}
+
+/* Job list as a two-column grid of cards */
+:root[data-page=app] .job-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;overflow:visible;background:none;box-shadow:none}
+:root[data-page=app] .job-row{grid-template-columns:minmax(0,1fr);gap:16px;padding:24px;border-radius:24px;background:var(--surface);box-shadow:var(--shadow)}
+:root[data-page=app] .job-row+.job-row{border-top:0}
+:root[data-page=app] .job-row:hover{background:var(--surface);box-shadow:0 0 0 1px var(--line-2),var(--shadow)}
+:root[data-page=app] .job-actions{justify-content:space-between}
+:root[data-page=app] .job-actions>.button{flex:1}
+@media(max-width:1100px){:root[data-page=app] .job-list{grid-template-columns:1fr}}
+
+/* Desktop: grey sidebar replaces the top bar */
+@media(min-width:1025px){
+  :root[data-page=app] body{background:#FFFFFF}
+  :root[data-page=app] #app-header{position:fixed;top:0;bottom:0;left:0;width:var(--app-sidebar-w);height:100vh;padding:0;background:var(--app-side);z-index:40}
+  :root[data-page=app] #app-header .topbar-inner{flex-direction:column;align-items:stretch;gap:4px;height:100%;max-width:none;margin:0;padding:28px 16px 24px;border-radius:0;background:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+  :root[data-page=app] #app-header .wordmark{padding:0 10px 22px}
+  :root[data-page=app] #app-header .role-chip,:root[data-page=app] #app-header .demo-chip{display:none}
+  :root[data-page=app] #app-header .app-nav{flex-direction:column;align-items:stretch;gap:2px;margin:0;padding:0;background:none;box-shadow:none;border-radius:0;overflow:visible}
+  :root[data-page=app] #app-header .app-nav a{justify-content:flex-start;height:44px;padding:0 14px;border-radius:10px;font-size:15px;color:var(--ink)}
+  :root[data-page=app] #app-header .app-nav a:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
+  :root[data-page=app] #app-header .app-nav a[aria-current=page]{background:var(--app-yellow);color:#0A0A0A;box-shadow:none;font-weight:500}
+  :root[data-page=app] #app-header .app-nav a[aria-current=page] .nav-count{background:rgb(0 0 0 / 10%);color:inherit}
+  :root[data-page=app] #app-header .topbar-actions{margin:auto 0 0;flex-direction:column;align-items:stretch;gap:4px}
+  :root[data-page=app] #app-header .user-menu{width:100%}
+  :root[data-page=app] #app-header .user-button{width:100%;height:auto;padding:10px;border-radius:12px}
+  :root[data-page=app] #app-header .user-text{display:grid;max-width:none}
+  :root[data-page=app] #app-header .user-dropdown{top:auto;bottom:calc(100% + 8px);left:0;right:auto;width:100%}
+  :root[data-page=app] #app-header .dot-button{width:100%;justify-content:flex-start;padding:0 12px;height:40px}
+  :root[data-page=app] main,:root[data-page=app] .site-footer,:root[data-page=app] .storage-warning{margin-left:var(--app-sidebar-w)}
+  :root[data-page=app] .site-footer{width:calc(100% - var(--app-sidebar-w));max-width:none;padding-left:max(24px,calc((100% - var(--app-sidebar-w) - 1200px) / 2 + 24px));padding-right:max(24px,calc((100% - var(--app-sidebar-w) - 1200px) / 2 + 24px))}
+}
+@media(max-width:760px){
+  :root[data-page=app] #browse-view .hero{padding:16px 0 4px}
+  :root[data-page=app] .dash-figure{font-size:44px}
+  :root[data-page=app] .dash-title{font-size:22px}
+}
